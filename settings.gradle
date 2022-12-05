@@ -1,4 +1,4 @@
-rootProject.name = 'template'
-
+rootProject.name = 'Delft Blue'
 include 'authentication-microservice'
 include 'example-microservice'
+include 'kafka-example'
