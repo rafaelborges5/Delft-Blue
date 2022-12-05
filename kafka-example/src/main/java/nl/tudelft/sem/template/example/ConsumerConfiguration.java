@@ -53,11 +53,7 @@ public class ConsumerConfiguration {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         final JsonDeserializer<ExampleUser> jsonDeserializer = new JsonDeserializer<>(ExampleUser.class, false);
         jsonDeserializer.addTrustedPackages("*");
-        try {
-            return new DefaultKafkaConsumerFactory<>(props);
-        } finally {
-            jsonDeserializer.close();
-        }
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
     }
 
     /**
