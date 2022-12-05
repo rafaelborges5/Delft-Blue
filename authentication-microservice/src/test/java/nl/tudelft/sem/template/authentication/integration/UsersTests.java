@@ -10,12 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
-import nl.tudelft.sem.template.authentication.domain.user.AppUser;
-import nl.tudelft.sem.template.authentication.domain.user.HashedPassword;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.Password;
-import nl.tudelft.sem.template.authentication.domain.user.PasswordHashingService;
-import nl.tudelft.sem.template.authentication.domain.user.UserRepository;
+import nl.tudelft.sem.template.authentication.domain.user.*;
 import nl.tudelft.sem.template.authentication.framework.integration.utils.JsonUtil;
 import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
@@ -64,11 +59,13 @@ public class UsersTests {
         final NetId testUser = new NetId("SomeUser");
         final Password testPassword = new Password("password123");
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Role testRole = Role.Employee;
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(testPassword.toString());
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/register")
@@ -82,6 +79,7 @@ public class UsersTests {
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
+        //TODO: is it possible to generate a test case for the role, because UserDetails is a predefined class
     }
 
     @Test
@@ -90,13 +88,15 @@ public class UsersTests {
         final NetId testUser = new NetId("SomeUser");
         final Password newTestPassword = new Password("password456");
         final HashedPassword existingTestPassword = new HashedPassword("password123");
+        final Role testRole = Role.Employee;
 
-        AppUser existingAppUser = new AppUser(testUser, existingTestPassword);
+        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole);
         userRepository.save(existingAppUser);
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(newTestPassword.toString());
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/register")
@@ -110,6 +110,7 @@ public class UsersTests {
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
+        //TODO: is it possible to generate a test case for the role, because UserDetails is a predefined class
     }
 
     @Test
@@ -118,6 +119,7 @@ public class UsersTests {
         final NetId testUser = new NetId("SomeUser");
         final Password testPassword = new Password("password123");
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Role testRole = Role.Employee;
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
@@ -130,12 +132,13 @@ public class UsersTests {
             argThat(userDetails -> userDetails.getUsername().equals(testUser.toString())))
         ).thenReturn(testToken);
 
-        AppUser appUser = new AppUser(testUser, testHashedPassword);
+        AppUser appUser = new AppUser(testUser, testHashedPassword, testRole);
         userRepository.save(appUser);
 
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(testPassword.toString());
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")
@@ -163,6 +166,7 @@ public class UsersTests {
         // Arrange
         final String testUser = "SomeUser";
         final String testPassword = "password123";
+        final Role testRole = Role.Employee;
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal())
@@ -172,6 +176,7 @@ public class UsersTests {
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser);
         model.setPassword(testPassword);
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")
@@ -195,6 +200,8 @@ public class UsersTests {
         final String wrongPassword = "password1234";
         final String testPassword = "password123";
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Role testRole = Role.Employee;
+
         when(mockPasswordEncoder.hash(new Password(testPassword))).thenReturn(testHashedPassword);
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
@@ -202,12 +209,13 @@ public class UsersTests {
                     && wrongPassword.equals(authentication.getCredentials())
         ))).thenThrow(new BadCredentialsException("Invalid password"));
 
-        AppUser appUser = new AppUser(new NetId(testUser), testHashedPassword);
+        AppUser appUser = new AppUser(new NetId(testUser), testHashedPassword, testRole);
         userRepository.save(appUser);
 
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser);
         model.setPassword(wrongPassword);
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")
