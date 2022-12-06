@@ -34,6 +34,16 @@ class RequestTest {
     }
 
     @Test
+    void testConstructor() {
+        assertThat(request.getRequestId()).isEqualTo(0L);
+        assertThat(request.getNetId()).isEqualTo(netId);
+        assertThat(request.getName()).isEqualTo(name);
+        assertThat(request.getDescription()).isEqualTo(descr);
+        assertThat(request.getPreferredDate()).isEqualTo(date);
+        assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
+    }
+
+    @Test
     void testToString() {
         String requestString = "Request{requestId='0', "
                 + "netId='NETID', "
@@ -43,6 +53,27 @@ class RequestTest {
                 + "status=PENDING"
                 + "}";
         assertThat(request.toString()).isEqualTo(requestString);
+    }
+
+    @Test
+    void testEquals() {
+        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING);
+        r1.setRequestId(0);
+        assertThat(r1).isEqualTo(request);
+        assertThat(request).isEqualTo(request);
+    }
+
+    @Test
+    void testNotEquals() {
+        Request r = new Request("Other", netId, descr, date, RequestStatus.PENDING);
+        assertThat(r).isNotEqualTo(request);
+    }
+
+    @Test
+    public void equalsHashCode() {
+        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING);
+        assertThat(request).isEqualTo(r);
+        assertThat(r.hashCode()).isEqualTo(request.hashCode());
     }
 
     @Test

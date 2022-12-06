@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "requests")
 @Getter
 @Setter
 public class Request {
