@@ -1,13 +1,26 @@
 package domain;
 
 import java.time.LocalDate;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+@Entity
+@Table(name = "requests")
+@NoArgsConstructor
 @EqualsAndHashCode
 public class Request {
+    @Id
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "description", nullable = false)
     private String description;
+    @Column(name = "preferredDate", nullable = false)
     private LocalDate preferredDate;
+    @Column(name = "status", nullable = false)
     private Status status;
 
     /**
