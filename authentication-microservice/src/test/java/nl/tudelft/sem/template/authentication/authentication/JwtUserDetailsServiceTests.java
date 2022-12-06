@@ -8,10 +8,14 @@ import nl.tudelft.sem.template.authentication.domain.user.HashedPassword;
 import nl.tudelft.sem.template.authentication.domain.user.NetId;
 import nl.tudelft.sem.template.authentication.domain.user.UserRepository;
 import org.assertj.core.api.ThrowableAssert;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
@@ -23,6 +27,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 // activate profiles to have spring use mocks during auto-injection of certain beans.
 @ActiveProfiles({"test", "mockPasswordEncoder"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 public class JwtUserDetailsServiceTests {
 
     @Autowired
@@ -65,5 +70,11 @@ public class JwtUserDetailsServiceTests {
         // Assert
         assertThatExceptionOfType(UsernameNotFoundException.class)
                 .isThrownBy(action);
+    }
+
+    @AfterAll
+    static void afterAll(@Autowired ApplicationContext applicationContext) {
+        EmbeddedKafkaBroker embeddedKafkaBroker = applicationContext.getBean(EmbeddedKafkaBroker.class);
+        embeddedKafkaBroker.destroy();
     }
 }

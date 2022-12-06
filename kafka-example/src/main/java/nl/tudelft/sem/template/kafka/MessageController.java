@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.kafka;
 
 
-import org.springframework.data.annotation.Transient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,7 @@ public class MessageController {
 
     private KafkaTemplate<String, String> kafkaTemplate;
 
+    @Autowired
     public MessageController(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
@@ -32,6 +33,7 @@ public class MessageController {
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     public void publish(@RequestBody String request) {
+        System.out.println("got a request");
         kafkaTemplate.send("example", request);
     }
 }

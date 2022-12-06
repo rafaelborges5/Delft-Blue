@@ -5,7 +5,6 @@ buildscript {
 		//maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 	}
 	dependencies {
-
 		classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.5.2'
 	}
 }
@@ -43,13 +42,13 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-	implementation 'org.springframework.kafka:spring-kafka' // add kafka to project
-//	implementation 'org.apache.kafka:kafka-clients:3.2.3'
-
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	implementation 'org.springframework.kafka:spring-kafka'
 
 
 	// Local test database (in-memory)
@@ -106,6 +105,8 @@ checkstyle {
 pmd {
 	incrementalAnalysis = true
 	sourceSets = [sourceSets.main]
+	ignoreFailures = true
+
 }
 
 apply plugin: 'info.solidsoft.pitest'

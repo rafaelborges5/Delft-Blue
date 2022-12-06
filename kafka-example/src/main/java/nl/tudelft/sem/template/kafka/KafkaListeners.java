@@ -8,7 +8,8 @@ public class KafkaListeners {
 
     @KafkaListener(
             topics = "example",
-            groupId = "foo"
+            groupId = "foo",
+            containerFactory = "kafkaListenerContainerFactory2"
     )
     void listener(String data) {
         System.out.println("\nYou said " + data + ".\n Hello Producer! I am the listener");
