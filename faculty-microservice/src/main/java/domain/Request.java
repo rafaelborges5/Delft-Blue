@@ -1,8 +1,11 @@
 package domain;
 
 import java.time.LocalDate;
-import javax.persistence.*;
-
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +25,7 @@ public class Request {
     private LocalDate preferredDate;
     private RequestStatus status;
 
-    //Resources here!
+    //TODO: Resources here!
 
     /**
      * Empty Constructor.
