@@ -1,33 +1,41 @@
 package domain;
 
 import java.time.LocalDate;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "requests")
-@NoArgsConstructor
 @EqualsAndHashCode
+@Getter
+@Setter
 public class Request {
     @Id
-    @Column(name = "name", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long requestId;
+    private String netId;
     private String name;
-    @Column(name = "description", nullable = false)
     private String description;
-    @Column(name = "preferredDate", nullable = false)
     private LocalDate preferredDate;
-    @Column(name = "status", nullable = false)
-    private Status status;
+    private RequestStatus status;
+
+    //Resources here!
+
+    /**
+     * Empty Constructor.
+     */
+    public Request() {
+    }
 
     /**
      * Constructor method.
      */
-    public Request(String name, String description, LocalDate preferredDate, Status status) {
+    public Request(String name, String netId, String description, LocalDate preferredDate, RequestStatus status) {
         this.name = name;
+        this.netId = netId;
         this.description = description;
         this.preferredDate = preferredDate;
         this.status = status;
@@ -39,45 +47,12 @@ public class Request {
     @Override
     public String toString() {
         return "Request{"
-                + "name='" + name + '\''
+                + "requestId='" + requestId + '\''
+                + ", netId='" + netId + '\''
+                + ", name='" + name + '\''
                 + ", description='" + description + '\''
                 + ", preferredDate=" + preferredDate
                 + ", status=" + status
                 + '}';
-    }
-
-    /**
-     * Getter for name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Getter for description.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Getter for preferred date.
-     */
-    public LocalDate getPreferredDate() {
-        return preferredDate;
-    }
-
-    /**
-     * Getter for status.
-     */
-    public Status getStatus() {
-        return status;
-    }
-
-    /**
-     * Setter for status.
-     */
-    public void setStatus(Status status) {
-        this.status = status;
     }
 }
