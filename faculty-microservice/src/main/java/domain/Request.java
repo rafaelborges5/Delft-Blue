@@ -1,18 +1,17 @@
 package domain;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "requests")
-@EqualsAndHashCode
 @Getter
 @Setter
 public class Request {
@@ -57,5 +56,27 @@ public class Request {
                 + ", preferredDate=" + preferredDate
                 + ", status=" + status
                 + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Request)) {
+            return false;
+        }
+        Request request = (Request) o;
+        return requestId == request.requestId
+                && Objects.equals(netId, request.netId)
+                && Objects.equals(name, request.name)
+                && Objects.equals(description, request.description)
+                && Objects.equals(preferredDate, request.preferredDate)
+                && status == request.status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(requestId, netId, name, description, preferredDate, status);
     }
 }
