@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,13 +11,15 @@ public class RegistrationService {
     private final transient UserRepository userRepository;
     private final transient PasswordHashingService passwordHashingService;
 
+
     /**
      * Instantiates a new UserService.
      *
      * @param userRepository  the user repository
      * @param passwordHashingService the password encoder
      */
-    public RegistrationService(UserRepository userRepository, PasswordHashingService passwordHashingService) {
+    public RegistrationService(UserRepository userRepository,
+                               PasswordHashingService passwordHashingService) {
         this.userRepository = userRepository;
         this.passwordHashingService = passwordHashingService;
     }
