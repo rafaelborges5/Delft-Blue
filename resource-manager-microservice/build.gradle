@@ -26,7 +26,7 @@ plugins {
 	id 'info.solidsoft.pitest' version '1.5.2'
 }
 
-group = 'java'
+group = 'nl.tudelft.cse.sem.template'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -48,6 +48,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+	implementation 'org.springframework.kafka:spring-kafka'
+
 
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
@@ -59,13 +61,15 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
 	testImplementation('org.assertj:assertj-core:3.23.1')
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	testImplementation("org.scala-lang:scala-library:2.12.11")
 }
 
 test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['domain.*']
+		includes = ['nl.tudelft.sem.template.*']
 		excludes = []
 	}
 }
@@ -80,7 +84,7 @@ jacocoTestCoverageVerification() {
 		rule {
 			enabled = true
 			element = 'CLASS'
-			includes = ['domain.*']
+			includes = ['nl.tudelft.sem.template.*']
 
 			limit {
 				counter = 'BRANCH'
@@ -109,7 +113,7 @@ pitest {
 	//adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
 	junit5PluginVersion = '0.12'
 
-	targetClasses = ['domain.*']  //by default "${project.group}.*"
+	targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']
