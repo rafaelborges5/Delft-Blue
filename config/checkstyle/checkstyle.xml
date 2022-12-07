@@ -56,11 +56,11 @@
         </module>
         <module name="AvoidStarImport"/>
         <module name="OneTopLevelClass"/>
-        <module name="NoLineWrap">
-            <property name="tokens" value="PACKAGE_DEF, IMPORT, STATIC_IMPORT"/>
-        </module>
+<!--        <module name="NoLineWrap">-->
+<!--            <property name="tokens" value="PACKAGE_DEF, IMPORT, STATIC_IMPORT"/>-->
+<!--        </module>-->
         <module name="EmptyBlock">
-            <property name="ohttps://www.youtube.com/watch?v=_8Ks4EdHWckption" value="TEXT"/>
+            <property name="option" value="TEXT"/>
             <property name="tokens"
                       value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
         </module>
@@ -122,7 +122,7 @@
                      value="WhitespaceAround: ''{0}'' is not preceded with whitespace."/>
         </module>
         <module name="OneStatementPerLine"/>
-<!--        <module name="MultipleVariableDeclarations"/>-->  <!-- I don't think this is a problem -->
+<!--        <module name="MultipleVariableDeclarations"/>-->
         <module name="ArrayTypeStyle"/>
         <module name="MissingSwitchDefault"/>
         <module name="FallThrough"/>
@@ -242,16 +242,16 @@
             <property name="lineWrappingIndentation" value="4"/>
             <property name="arrayInitIndent" value="4"/>
         </module>
-        <module name="AbbreviationAsWordInName">
-            <property name="ignoreFinal" value="false"/>
-            <property name="allowedAbbreviationLength" value="0"/>
-            <property name="tokens"
-                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, ANNOTATION_FIELD_DEF,
-                    PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF, PATTERN_VARIABLE_DEF, RECORD_DEF,
-                    RECORD_COMPONENT_DEF"/>
-        </module>
+<!--        <module name="AbbreviationAsWordInName">-->
+<!--            <property name="ignoreFinal" value="false"/>-->
+<!--            <property name="allowedAbbreviationLength" value="0"/>-->
+<!--            <property name="tokens"-->
+<!--                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, ANNOTATION_FIELD_DEF,-->
+<!--                    PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF, PATTERN_VARIABLE_DEF, RECORD_DEF,-->
+<!--                    RECORD_COMPONENT_DEF"/>-->
+<!--        </module>-->
 <!--        <module name="OverloadMethodsDeclarationOrder"/>-->
-        <module name="VariableDeclarationUsageDistance"/>
+<!--        <module name="VariableDeclarationUsageDistance"/>-->
         <module name="CustomImportOrder">
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>
@@ -303,11 +303,11 @@
         </module>
 <!--        <module name="JavadocParagraph"/>-->
 <!--        <module name="RequireEmptyLineBeforeBlockTagGroup"/>-->
-        <module name="AtclauseOrder">
-            <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
-            <property name="target"
-                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
-        </module>
+<!--        <module name="AtclauseOrder">-->
+<!--            <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>-->
+<!--            <property name="target"-->
+<!--                      value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>-->
+<!--        </module>-->
         <module name="JavadocMethod">
             <property name="scope" value="public"/>
             <property name="allowMissingParamTags" value="true"/>
