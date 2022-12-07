@@ -21,9 +21,7 @@ public class ResourceTest {
     }
 
     @Test
-    public void testGetGpu() {
-        assertEquals(2, resource.getGpu());
-    }
+    public void testGetGpu() {assertEquals(2, resource.getGpu());}
 
     @Test
     public void testGetMemory() {

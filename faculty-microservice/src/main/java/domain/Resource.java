@@ -1,27 +1,32 @@
 package domain;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
+@Getter
 @ToString
 @EqualsAndHashCode
 public class Resource {
 
+    @Column(name = "resource_cpu", nullable = false)
     private int cpu;
+    @Column(name = "resource_gpu", nullable = false)
     private int gpu;
+    @Column(name = "resource_memory", nullable = false)
     private int memory;
+
+    @SuppressWarnings("unused")
+    Resource() {
+    }
 
     public Resource(int cpu, int gpu, int memory) {
         this.cpu = cpu;
         this.gpu = gpu;
         this.memory = memory;
     }
-
-    public int getCpu() {return cpu;}
-    public int getGpu() {return gpu;}
-    public int getMemory() {return memory;}
 }
-
-//TODO: delete the two lines below or try to use them instead, outcome will be the same either way (I get an error when I try to use the "record" type, even though i should be on java 17) ~ Jasper
-//public record Resource(int cpu, int gpu, int memory){
-//}
