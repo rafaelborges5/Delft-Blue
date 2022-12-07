@@ -3,3 +3,4 @@ include:
   - example-microservice/.gitlab-ci.yml
   - kafka-example/.gitlab-ci.yml
   - faculty-microservice/.gitlab-ci.yml
+  - resource-manager-microservice/.gitlab-ci.yml
