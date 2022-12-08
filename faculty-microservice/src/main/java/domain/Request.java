@@ -22,8 +22,7 @@ public class Request {
     private String description;
     private LocalDate preferredDate;
     private RequestStatus status;
-
-    //TODO: Resources here!
+    private Resource resource;
 
     /**
      * Empty Constructor.
@@ -34,12 +33,14 @@ public class Request {
     /**
      * Constructor method.
      */
-    public Request(String name, String netId, String description, LocalDate preferredDate, RequestStatus status) {
+    public Request(String name, String netId, String description,
+                   LocalDate preferredDate, RequestStatus status, Resource resource) {
         this.name = name;
         this.netId = netId;
         this.description = description;
         this.preferredDate = preferredDate;
         this.status = status;
+        this.resource = resource;
     }
 
     /**
@@ -48,14 +49,16 @@ public class Request {
     @Override
     public String toString() {
         return "Request{"
-                + "requestId='" + requestId + '\''
+                + "requestId=" + requestId
                 + ", netId='" + netId + '\''
                 + ", name='" + name + '\''
                 + ", description='" + description + '\''
                 + ", preferredDate=" + preferredDate
                 + ", status=" + status
+                + ", resource='" + resource.toString() + '\''
                 + '}';
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -71,11 +74,12 @@ public class Request {
                 && Objects.equals(name, request.name)
                 && Objects.equals(description, request.description)
                 && Objects.equals(preferredDate, request.preferredDate)
-                && status == request.status;
+                && status == request.status
+                && Objects.equals(resource, request.resource);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, netId, name, description, preferredDate, status);
+        return Objects.hash(requestId, netId, name, description, preferredDate, status, resource);
     }
 }

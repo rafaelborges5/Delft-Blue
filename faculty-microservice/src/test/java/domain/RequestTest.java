@@ -12,6 +12,7 @@ class RequestTest {
     String netId;
     String descr;
     LocalDate date;
+    Resource resource;
 
     @BeforeEach
     void createRequest() {
@@ -19,7 +20,8 @@ class RequestTest {
         netId = "NETID";
         descr = "Description";
         date = LocalDate.of(2022, 12, 5);
-        request = new Request(name, netId, descr, date, RequestStatus.PENDING);
+        resource = new Resource(1, 1, 1);
+        request = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
     }
 
     @Test
@@ -31,6 +33,7 @@ class RequestTest {
         assertThat(empty.getDescription()).isNull();
         assertThat(empty.getPreferredDate()).isNull();
         assertThat(empty.getStatus()).isNull();
+        assertThat(empty.getResource()).isNull();
     }
 
     @Test
@@ -41,23 +44,25 @@ class RequestTest {
         assertThat(request.getDescription()).isEqualTo(descr);
         assertThat(request.getPreferredDate()).isEqualTo(date);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
+        assertThat(request.getResource()).isEqualTo(resource);
     }
 
     @Test
     void testToString() {
-        String requestString = "Request{requestId='0', "
+        String requestString = "Request{requestId=0, "
                 + "netId='NETID', "
                 + "name='Name', "
                 + "description='Description', "
                 + "preferredDate=2022-12-05, "
-                + "status=PENDING"
+                + "status=PENDING, "
+                + "resource='Resource(cpu=1, gpu=1, memory=1)'"
                 + "}";
         assertThat(request.toString()).isEqualTo(requestString);
     }
 
     @Test
     void testEquals() {
-        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING);
+        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
         r1.setRequestId(0);
         assertThat(r1).isEqualTo(request);
         assertThat(request).isEqualTo(request);
@@ -65,13 +70,13 @@ class RequestTest {
 
     @Test
     void testNotEquals() {
-        Request r = new Request("Other", netId, descr, date, RequestStatus.PENDING);
+        Request r = new Request("Other", netId, descr, date, RequestStatus.PENDING, resource);
         assertThat(r).isNotEqualTo(request);
     }
 
     @Test
     public void equalsHashCode() {
-        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING);
+        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
         assertThat(request).isEqualTo(r);
         assertThat(r.hashCode()).isEqualTo(request.hashCode());
     }
@@ -104,6 +109,11 @@ class RequestTest {
     @Test
     void getStatus() {
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
+    }
+
+    @Test
+    void getResource() {
+        assertThat(request.getResource()).isEqualTo(resource);
     }
 
     @Test
