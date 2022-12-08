@@ -36,7 +36,7 @@ class SchedulerTest {
     void testScheduleRequestException() {
         Request requestError = new Request("Name", "NetID", "Desription",
                 LocalDate.of(2022, Month.DECEMBER, 7),
-                RequestStatus.DROPPED);
+                RequestStatus.DROPPED, new Resource(1, 1, 1));
         assertThrows(RejectRequestException.class, () -> {
             scheduler.scheduleRequest(requestError);
         });
@@ -50,13 +50,13 @@ class SchedulerTest {
         when(timeProvider.getCurrentTime()).thenReturn(today);
 
         Request request1 = new Request("Name1", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Request request2 = new Request("Name2", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Request request3 = new Request("Name3", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         assertThrows(NotEnoughResourcesLeftException.class, () -> {
             scheduler.scheduleRequest(request1);
@@ -73,13 +73,13 @@ class SchedulerTest {
         when(timeProvider.getCurrentTime()).thenReturn(today);
 
         Request request1 = new Request("Name1", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Request request2 = new Request("Name2", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Request request3 = new Request("Name3", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED);
+                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         try {
             scheduler.scheduleRequest(request1);
@@ -103,7 +103,7 @@ class SchedulerTest {
     void scheduleDate_creates_new_list() {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED);
+                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1));
@@ -116,9 +116,9 @@ class SchedulerTest {
     void scheduleDate_add_to_list() {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED);
+                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
         Request request2 = new Request("Name2", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED);
+                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1, request2));
@@ -133,7 +133,7 @@ class SchedulerTest {
     void canScheduleForDate() {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED);
+                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
         assertThat(scheduler.canScheduleForDate(request1, date)).isTrue();
     }
 }
