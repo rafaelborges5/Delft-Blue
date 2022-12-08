@@ -1,11 +1,10 @@
 package domain;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
 @Embeddable
 @Getter
@@ -24,6 +23,13 @@ public class Resource {
     Resource() {
     }
 
+    /**
+     * Constructor for Resource class.
+     *
+     * @param cpu - integer of cpu resources needed
+     * @param gpu - integer of gpu resources needed
+     * @param memory - integer of memory resources needed
+     */
     public Resource(int cpu, int gpu, int memory) {
         this.cpu = cpu;
         this.gpu = gpu;

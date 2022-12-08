@@ -1,7 +1,8 @@
 package domain;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 public class ResourceTest {
 
@@ -21,7 +22,9 @@ public class ResourceTest {
     }
 
     @Test
-    public void testGetGpu() {assertEquals(2, resource.getGpu());}
+    public void testGetGpu() {
+        assertEquals(2, resource.getGpu());
+    }
 
     @Test
     public void testGetMemory() {

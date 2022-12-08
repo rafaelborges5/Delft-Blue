@@ -33,7 +33,8 @@ public class Request {
     /**
      * Constructor method.
      */
-    public Request(String name, String netId, String description, LocalDate preferredDate, RequestStatus status, Resource resource) {
+    public Request(String name, String netId, String description,
+                   LocalDate preferredDate, RequestStatus status, Resource resource) {
         this.name = name;
         this.netId = netId;
         this.description = description;
@@ -47,15 +48,15 @@ public class Request {
      */
     @Override
     public String toString() {
-        return "Request{" +
-                "requestId=" + requestId +
-                ", netId='" + netId + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", preferredDate=" + preferredDate +
-                ", status=" + status +
-                ", resource='" + resource.toString() + '\'' +
-                '}';
+        return "Request{"
+                + "requestId=" + requestId
+                + ", netId='" + netId + '\''
+                + ", name='" + name + '\''
+                + ", description='" + description + '\''
+                + ", preferredDate=" + preferredDate
+                + ", status=" + status
+                + ", resource='" + resource.toString() + '\''
+                + '}';
     }
 
 
