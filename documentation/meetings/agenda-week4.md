@@ -42,6 +42,9 @@ Note taker:     Razvan Nistor
 - Can we disable PMD, another checkstyle framework? We had problems with it alerting that we didn't close the serializers...
 - "Request should have name and description", says the scenario description. Is this necessary? Or could we have just description
 - Should we do the whole class diagram for the entire system for task 2 assignment 2? Or should we do other type of diagram? What was the type of diagram that you showed us in the first meeting? (the larger one)
+- What should be part of the domain module vs the models module?
+- What is the node token mentioned in the scenario domain specs?
+- What does the build.gradle group property do?
 
 # Question round
 
