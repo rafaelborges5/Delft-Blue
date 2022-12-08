@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import lombok.Getter;
 import org.springframework.stereotype.Service;
-import provider.CurrentTimeProvider;
 import provider.TimeProvider;
 
 @Service
@@ -52,7 +50,7 @@ public class Scheduler {
     /**
      * Check if a request can be scheduled on a given day.
      *
-     * @param request - Request that will be scheduled.
+     * @param request       - Request that will be scheduled.
      * @param scheduledDate - Date on which to check if the request can be run.
      * @return true iff the request can be run on the given date.
      */
@@ -73,7 +71,7 @@ public class Scheduler {
      * This is extracted for easier additions and changes in the future.
      * It updates the map with the request on the specified scheduledDate.
      *
-     * @param request - Request that is added to schedule.
+     * @param request       - Request that is added to schedule.
      * @param scheduledDate - LocalDate on which the request is scheduled.
      */
     protected void scheduleForDate(Request request, LocalDate scheduledDate) {

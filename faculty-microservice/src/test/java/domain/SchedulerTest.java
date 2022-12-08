@@ -2,11 +2,14 @@ package domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import provider.CurrentTimeProvider;
 import provider.TimeProvider;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashMap;
@@ -23,6 +26,7 @@ class SchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     private Scheduler scheduler;
+
     @BeforeEach
     void setUp() {
         scheduler = new Scheduler(timeProvider);
@@ -33,10 +37,11 @@ class SchedulerTest {
         Request requestError = new Request("Name", "NetID", "Desription",
                 LocalDate.of(2022, Month.DECEMBER, 7),
                 RequestStatus.DROPPED);
-        assertThrows(RejectRequestException.class, ()-> {
-           scheduler.scheduleRequest(requestError);
+        assertThrows(RejectRequestException.class, () -> {
+            scheduler.scheduleRequest(requestError);
         });
     }
+
     @Test
     void testScheduleNotEnoughResourcesLeftException() {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 5);
@@ -53,12 +58,13 @@ class SchedulerTest {
         Request request3 = new Request("Name3", "NetID", "Desription",
                 preferredDate, RequestStatus.ACCEPTED);
 
-        assertThrows(NotEnoughResourcesLeftException.class, ()-> {
+        assertThrows(NotEnoughResourcesLeftException.class, () -> {
             scheduler.scheduleRequest(request1);
             scheduler.scheduleRequest(request2);
             scheduler.scheduleRequest(request3);
         });
     }
+
     @Test
     void testScheduleRequest() {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 5);
