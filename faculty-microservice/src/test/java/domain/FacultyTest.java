@@ -21,15 +21,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.times;
 
-class SchedulerTest {
+class FacultyTest {
 
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
-    private Scheduler scheduler;
+    private Faculty faculty;
 
     @BeforeEach
     void setUp() {
-        scheduler = new Scheduler(timeProvider);
+        faculty = new Faculty(FacultyName.EEMCS, timeProvider);
     }
 
     @Test
@@ -38,7 +38,7 @@ class SchedulerTest {
                 LocalDate.of(2022, Month.DECEMBER, 7),
                 RequestStatus.DROPPED, new Resource(1, 1, 1));
         assertThrows(RejectRequestException.class, () -> {
-            scheduler.scheduleRequest(requestError);
+            faculty.scheduleRequest(requestError);
         });
     }
 
@@ -59,9 +59,9 @@ class SchedulerTest {
                 preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         assertThrows(NotEnoughResourcesLeftException.class, () -> {
-            scheduler.scheduleRequest(request1);
-            scheduler.scheduleRequest(request2);
-            scheduler.scheduleRequest(request3);
+            faculty.scheduleRequest(request1);
+            faculty.scheduleRequest(request2);
+            faculty.scheduleRequest(request3);
         });
     }
 
@@ -82,9 +82,9 @@ class SchedulerTest {
                 preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
 
         try {
-            scheduler.scheduleRequest(request1);
-            scheduler.scheduleRequest(request2);
-            scheduler.scheduleRequest(request3);
+            faculty.scheduleRequest(request1);
+            faculty.scheduleRequest(request2);
+            faculty.scheduleRequest(request3);
 
         } catch (NotEnoughResourcesLeftException | RejectRequestException e) {
             throw new RuntimeException(e);
@@ -96,7 +96,7 @@ class SchedulerTest {
         expected.put(preferredDate, List.of(request1, request2));
         expected.put(preferredDate.minusDays(1), List.of(request3));
 
-        assertThat(scheduler.getSchedule()).isEqualTo(expected);
+        assertThat(faculty.getSchedule()).isEqualTo(expected);
     }
 
     @Test
@@ -108,8 +108,8 @@ class SchedulerTest {
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1));
 
-        scheduler.scheduleForDate(request1, date);
-        assertThat(scheduler.getSchedule()).isEqualTo(expected);
+        faculty.scheduleForDate(request1, date);
+        assertThat(faculty.getSchedule()).isEqualTo(expected);
     }
 
     @Test
@@ -123,9 +123,9 @@ class SchedulerTest {
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1, request2));
 
-        scheduler.scheduleForDate(request1, date);
-        scheduler.scheduleForDate(request2, date);
-        assertThat(scheduler.getSchedule()).isEqualTo(expected);
+        faculty.scheduleForDate(request1, date);
+        faculty.scheduleForDate(request2, date);
+        assertThat(faculty.getSchedule()).isEqualTo(expected);
     }
 
     //TODO: The tests for canScheduleForDate might need to be improved after the final version is implemented.
@@ -134,6 +134,6 @@ class SchedulerTest {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
-        assertThat(scheduler.canScheduleForDate(request1, date)).isTrue();
+        assertThat(faculty.checkAvailabilityForDate(request1, date)).isTrue();
     }
 }
