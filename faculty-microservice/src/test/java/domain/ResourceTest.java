@@ -1,33 +1,102 @@
 package domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 public class ResourceTest {
 
-    Resource resource = new Resource(4, 2, 8);
-
     @Test
-    public void testResource() {
+    void testResource() {
+        Resource resource;
+        try {
+            resource = new Resource(8, 2, 4);
+        } catch (Exception e) {
+            resource = null;
+        }
+
         // Test if the values are stored correctly
-        assertEquals(4, resource.getCpu());
+        assertEquals(8, resource.getCpu());
         assertEquals(2, resource.getGpu());
-        assertEquals(8, resource.getMemory());
+        assertEquals(4, resource.getMemory());
+    }
+
+    //Tests for business logic cpu >= max(memory, gpu)
+    @Test
+    void cpuLowerThanGpu() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(2, 3, 1);
+        });
+        Exception expectedException = new Exception("The cpu resources should be equal to at least max(memory, gpu)");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
     }
 
     @Test
-    public void testGetCpu() {
-        assertEquals(4, resource.getCpu());
+    void cpuLowerThanMemory() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(2, 1, 3);
+        });
+        Exception expectedException = new Exception("The cpu resources should be equal to at least max(memory, gpu)");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
     }
 
     @Test
-    public void testGetGpu() {
-        assertEquals(2, resource.getGpu());
+    void cpuEqualToGpu() {
+        Resource resource;
+        try {
+            resource = new Resource(2, 2, 1);
+        } catch (Exception e) {
+            resource = null;
+        }
+        assert (resource != null);
     }
 
     @Test
-    public void testGetMemory() {
-        assertEquals(8, resource.getMemory());
+    void cpuEqualToMemory() {
+        Resource resource;
+        try {
+            resource = new Resource(2, 1, 2);
+        } catch (Exception e) {
+            resource = null;
+        }
+        assert (resource != null);
+    }
+
+    //Tests for making sure all resource values are >= 0
+    @Test
+    void cpuIsNegative() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(-1, 0, 0);
+        });
+        Exception expectedException = new Exception("Resource cannot have negative values");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
+    }
+
+    @Test
+    void gpuIsNegative() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(0, -1, 0);
+        });
+        Exception expectedException = new Exception("Resource cannot have negative values");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
+    }
+
+    @Test
+    void memoryIsNegative() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(0, 0, -1);
+        });
+        Exception expectedException = new Exception("Resource cannot have negative values");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
+    }
+
+    @Test
+    void allNegative() {
+        Exception thrownException = assertThrows(Exception.class, () -> {
+            Resource resource = new Resource(-1, -1, -1);
+        });
+        Exception expectedException = new Exception("Resource cannot have negative values");
+        assertEquals(thrownException.getMessage(), expectedException.getMessage());
     }
 }
