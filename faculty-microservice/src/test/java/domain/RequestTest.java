@@ -15,7 +15,7 @@ class RequestTest {
     Resource resource;
 
     @BeforeEach
-    void createRequest() {
+    void createRequest() throws NotValidResourcesException {
         name = "Name";
         netId = "NETID";
         descr = "Description";
