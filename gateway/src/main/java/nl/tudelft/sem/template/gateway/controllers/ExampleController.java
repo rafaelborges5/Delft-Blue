@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.gateway.controllers;
 
 import nl.tudelft.sem.template.gateway.dto.ExampleUser;
+import nl.tudelft.sem.template.gateway.dto.UserCredentials;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,12 @@ public class ExampleController {
     public void sendToTopic(@RequestBody ExampleUser user) {
         System.out.println(user.getNetId());
         templateExampleUser.send("example-topic", user);
+    }
+
+    @PostMapping("user/login")
+    public void authenticateUser(@RequestBody UserCredentials userCredentials) {
+        //TODO: connect to user microservice, authenticate user and return token
+        System.out.println("Tried authenticating user with netId: " + userCredentials.getNetId());
     }
 
 }
