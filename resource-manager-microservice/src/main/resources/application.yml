@@ -10,4 +10,4 @@ server:
 
 kafka:
   #Topic where we want to post
-  topic: example-topic
+  topic: resource-manager-topic
