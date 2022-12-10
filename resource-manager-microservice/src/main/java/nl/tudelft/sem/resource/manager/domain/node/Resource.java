@@ -10,13 +10,13 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class Resource {
     @Column(name = "cpu", nullable = false)
-    private int cpuResources;
+    private transient int cpuResources;
 
     @Column(name = "gpu", nullable = false)
-    private int gpuResources;
+    private transient int gpuResources;
 
     @Column(name = "memory", nullable = false)
-    private int memResources;
+    private transient int memResources;
 
     @SuppressWarnings("unused")
     public Resource() {
