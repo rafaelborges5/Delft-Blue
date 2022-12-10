@@ -20,7 +20,7 @@ public class Resource {
     private int memory;
 
     @SuppressWarnings("unused")
-    Resource() {
+    public Resource() {
     }
 
     /**
