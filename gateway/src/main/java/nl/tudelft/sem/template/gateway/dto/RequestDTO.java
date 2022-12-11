@@ -3,9 +3,12 @@ package nl.tudelft.sem.template.gateway.dto;
 import java.time.LocalDate;
 
 import lombok.Data;
+import nl.tudelft.sem.template.gateway.temporary.Resource;
 
 /**
- * Data storage
+ * DTO for the request class, containing only the attributes and no logic.
+ * The status was also omitted, because the status is only stored
+ * in the database and not needed in between microservices.
  */
 @Data
 public class RequestDTO {
