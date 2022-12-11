@@ -1,15 +1,12 @@
-package nl.tudelft.sem.template.gateway.temporary;
+package nl.tudelft.sem.template.gateway.commons;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-
-/**
- * No logic version of the resource class.
- */
+@Embeddable
 @Getter
 @ToString
 @EqualsAndHashCode

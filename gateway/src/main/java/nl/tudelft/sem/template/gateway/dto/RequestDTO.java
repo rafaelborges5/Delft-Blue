@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.gateway.dto;
 import java.time.LocalDate;
 
 import lombok.Data;
-import nl.tudelft.sem.template.gateway.temporary.Resource;
+import nl.tudelft.sem.template.gateway.commons.Resource;
 
 /**
  * DTO for the request class, containing only the attributes and no logic.

@@ -2,11 +2,9 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import nl.tudelft.sem.template.gateway.dto.RequestDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +20,9 @@ public class Request {
     private String description;
     private LocalDate preferredDate;
     private RequestStatus status;
+    @Embedded
     private Resource resource;
+    private RequestDTO dto;
 
     /**
      * Empty Constructor.

@@ -2,7 +2,7 @@ package nl.tudelft.sem.template.gateway.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import nl.tudelft.sem.template.gateway.temporary.Resource;
+import nl.tudelft.sem.template.gateway.commons.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
