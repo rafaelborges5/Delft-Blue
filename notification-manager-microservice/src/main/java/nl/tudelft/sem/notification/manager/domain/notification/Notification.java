@@ -1,12 +1,10 @@
 package nl.tudelft.sem.notification.manager.domain.notification;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 /**
- * A DDD entity representing user Notification
+ * A DDD entity representing user Notification.
  */
 @Entity
 @Table(name = "notifications")
@@ -14,7 +12,7 @@ import javax.persistence.*;
 public class Notification {
 
     /**
-     * The identifier for the Notification
+     * The identifier for the Notification.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
