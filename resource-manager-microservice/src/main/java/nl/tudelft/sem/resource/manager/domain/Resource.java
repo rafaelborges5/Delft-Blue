@@ -1,4 +1,4 @@
-package nl.tudelft.sem.resource.manager.domain.node;
+package nl.tudelft.sem.resource.manager.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

@@ -1,6 +1,7 @@
 package nl.tudelft.sem.resource.manager.domain.node;
 
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.TokenConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.URLConverter;
