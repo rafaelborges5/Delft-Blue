@@ -48,6 +48,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
+	implementation 'org.springframework.kafka:spring-kafka'
 
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
@@ -59,6 +60,8 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
 	testImplementation('org.assertj:assertj-core:3.23.1')
+
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 test {
@@ -102,6 +105,7 @@ checkstyle {
 pmd {
 	incrementalAnalysis = true
 	sourceSets = [sourceSets.main]
+	ignoreFailures = true
 }
 
 apply plugin: 'info.solidsoft.pitest'

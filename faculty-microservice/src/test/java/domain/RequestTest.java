@@ -21,7 +21,7 @@ class RequestTest {
         descr = "Description";
         date = LocalDate.of(2022, 12, 5);
         resource = new Resource(1, 1, 1);
-        request = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
+        request = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
     }
 
     @Test
@@ -55,6 +55,7 @@ class RequestTest {
                 + "description='Description', "
                 + "preferredDate=2022-12-05, "
                 + "status=PENDING, "
+                + "faculty=EEMCS, "
                 + "resource='Resource(cpu=1, gpu=1, memory=1)'"
                 + "}";
         assertThat(request.toString()).isEqualTo(requestString);
@@ -62,7 +63,7 @@ class RequestTest {
 
     @Test
     void testEquals() {
-        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
+        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
         r1.setRequestId(0);
         assertThat(r1).isEqualTo(request);
         assertThat(request).isEqualTo(request);
@@ -70,13 +71,13 @@ class RequestTest {
 
     @Test
     void testNotEquals() {
-        Request r = new Request("Other", netId, descr, date, RequestStatus.PENDING, resource);
+        Request r = new Request("Other", netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
         assertThat(r).isNotEqualTo(request);
     }
 
     @Test
     public void equalsHashCode() {
-        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING, resource);
+        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
         assertThat(request).isEqualTo(r);
         assertThat(r.hashCode()).isEqualTo(request.hashCode());
     }

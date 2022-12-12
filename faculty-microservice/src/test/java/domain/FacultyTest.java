@@ -36,7 +36,7 @@ class FacultyTest {
     void testScheduleRequestException() throws NotValidResourcesException {
         Request requestError = new Request("Name", "NetID", "Desription",
                 LocalDate.of(2022, Month.DECEMBER, 7),
-                RequestStatus.DROPPED, new Resource(1, 1, 1));
+                RequestStatus.DROPPED, FacultyName.EEMCS, new Resource(1, 1, 1));
         assertThrows(RejectRequestException.class, () -> {
             faculty.scheduleRequest(requestError);
         });
@@ -50,13 +50,13 @@ class FacultyTest {
         when(timeProvider.getCurrentTime()).thenReturn(today);
 
         Request request1 = new Request("Name1", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Request request2 = new Request("Name2", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Request request3 = new Request("Name3", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         assertThrows(NotEnoughResourcesLeftException.class, () -> {
             faculty.scheduleRequest(request1);
@@ -73,13 +73,13 @@ class FacultyTest {
         when(timeProvider.getCurrentTime()).thenReturn(today);
 
         Request request1 = new Request("Name1", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Request request2 = new Request("Name2", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Request request3 = new Request("Name3", "NetID", "Desription",
-                preferredDate, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                preferredDate, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         try {
             faculty.scheduleRequest(request1);
@@ -103,7 +103,7 @@ class FacultyTest {
     void scheduleDate_creates_new_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1));
@@ -116,9 +116,9 @@ class FacultyTest {
     void scheduleDate_add_to_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         Request request2 = new Request("Name2", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1, request2));
@@ -133,7 +133,7 @@ class FacultyTest {
     void canScheduleForDate() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
+                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         assertThat(faculty.checkAvailabilityForDate(request1, date)).isTrue();
     }
 }

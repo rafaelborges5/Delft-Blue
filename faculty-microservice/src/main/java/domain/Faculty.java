@@ -94,4 +94,27 @@ public class Faculty {
         schedule.put(scheduledDate, list);
     }
 
+    /**
+     * Choose how to handle Incoming Requests.
+     * @param request - incoming Request.
+     */
+    public void handleIncomingRequest(Request request) {
+        LocalDate currentDate = timeProvider.getCurrentTime();
+        if (request.getPreferredDate().isBefore(currentDate) || !canScheduleRequest(request)) {
+            request.setStatus(RequestStatus.DENIED);
+            return;
+        }
+
+        request.setStatus(RequestStatus.PENDING);
+        pendingRequests.add(request);
+    }
+
+    /**
+     * TODO: Implement method with connection to resource manager.
+     * @param request - incoming Request.
+     * @return true if there are enough resources in any day until the preferred date.
+     */
+    private boolean canScheduleRequest(Request request) {
+        return true;
+    }
 }
