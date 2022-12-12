@@ -1,4 +1,4 @@
-package provider;
+package sem.faculty.provider;
 
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;

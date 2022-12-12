@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import lombok.Getter;
-import provider.TimeProvider;
+import sem.faculty.provider.TimeProvider;
 
 @Getter
 public class Faculty {

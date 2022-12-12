@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 public enum FacultyName {
     ARCH,

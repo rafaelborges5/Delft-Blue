@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;

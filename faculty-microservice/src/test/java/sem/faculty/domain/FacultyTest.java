@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,8 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import provider.CurrentTimeProvider;
-import provider.TimeProvider;
+import sem.faculty.provider.CurrentTimeProvider;
+import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
 import java.time.Month;

@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 /**
  * Exception to indicate the that a resource is invalid.

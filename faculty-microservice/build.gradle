@@ -37,6 +37,7 @@ repositories {
 
 dependencies {
 
+	implementation project(':gateway')
 	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
@@ -47,6 +48,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	implementation 'org.springframework.kafka:spring-kafka'
 
 
 	// Local test database (in-memory)
@@ -59,13 +62,14 @@ dependencies {
 	testImplementation('org.junit.jupiter:junit-jupiter:5.8.2')
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
 	testImplementation('org.assertj:assertj-core:3.23.1')
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 }
 
 test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['domain.*']
+		includes = ['sem.faculty.*']
 		excludes = []
 	}
 }
@@ -80,7 +84,7 @@ jacocoTestCoverageVerification() {
 		rule {
 			enabled = true
 			element = 'CLASS'
-			includes = ['domain.*']
+			includes = ['sem.faculty.*']
 
 			limit {
 				counter = 'BRANCH'
@@ -109,7 +113,7 @@ pitest {
 	//adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
 	junit5PluginVersion = '0.12'
 
-	targetClasses = ['domain.*']  //by default "${project.group}.*"
+	targetClasses = ['sem.faculty.*']  //by default "${project.group}.*"
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']

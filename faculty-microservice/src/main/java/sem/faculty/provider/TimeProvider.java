@@ -1,4 +1,4 @@
-package provider;
+package sem.faculty.provider;
 
 import java.time.LocalDate;
 

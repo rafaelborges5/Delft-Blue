@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

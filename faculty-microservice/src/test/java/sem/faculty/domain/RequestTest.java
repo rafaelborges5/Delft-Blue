@@ -1,4 +1,4 @@
-package domain;
+package sem.faculty.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
