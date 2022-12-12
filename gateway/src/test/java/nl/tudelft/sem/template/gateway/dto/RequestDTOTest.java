@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.gateway.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import nl.tudelft.sem.template.gateway.commons.NotValidResourcesException;
 import nl.tudelft.sem.template.gateway.commons.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class RequestDTOTest {
     Resource resource;
 
     @BeforeEach
-    void createRequestDTO() {
+    void createRequestDTO() throws NotValidResourcesException {
         name = "Name";
         netId = "NETID";
         descr = "Description";

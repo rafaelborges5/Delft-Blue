@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.*;
 import nl.tudelft.sem.template.gateway.dto.RequestDTO;
+import
 
 import lombok.Getter;
 import lombok.Setter;
