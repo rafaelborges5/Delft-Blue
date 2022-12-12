@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 
 class RequestDTOTest {
+    long id;
     RequestDTO requestDTO;
     String name;
     String netId;
@@ -20,12 +21,13 @@ class RequestDTOTest {
 
     @BeforeEach
     void createRequestDTO() throws NotValidResourcesException {
+        id = 0L;
         name = "Name";
         netId = "NETID";
         descr = "Description";
         date = LocalDate.of(2022, 12, 5);
         resource = new Resource(1, 1, 1);
-        requestDTO = new RequestDTO(name, netId, descr, date, resource);
+        requestDTO = new RequestDTO(id, name, netId, descr, date, resource);
     }
 
     @Test

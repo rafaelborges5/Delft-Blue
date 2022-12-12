@@ -15,8 +15,8 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long requestId;
-    private String netId;
     private String name;
+    private String netId;
     private String description;
     private LocalDate preferredDate;
     private RequestStatus status;
