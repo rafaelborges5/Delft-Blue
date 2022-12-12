@@ -33,7 +33,7 @@ class FacultyTest {
     }
 
     @Test
-    void testScheduleRequestException() {
+    void testScheduleRequestException() throws NotValidResourcesException {
         Request requestError = new Request("Name", "NetID", "Desription",
                 LocalDate.of(2022, Month.DECEMBER, 7),
                 RequestStatus.DROPPED, new Resource(1, 1, 1));
@@ -43,7 +43,7 @@ class FacultyTest {
     }
 
     @Test
-    void testScheduleNotEnoughResourcesLeftException() {
+    void testScheduleNotEnoughResourcesLeftException() throws NotValidResourcesException {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 5);
         LocalDate preferredDate = LocalDate.of(2022, Month.DECEMBER, 5);
 
@@ -66,7 +66,7 @@ class FacultyTest {
     }
 
     @Test
-    void testScheduleRequest() {
+    void testScheduleRequest() throws NotValidResourcesException {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 5);
         LocalDate preferredDate = LocalDate.of(2022, Month.DECEMBER, 7);
 
@@ -100,7 +100,7 @@ class FacultyTest {
     }
 
     @Test
-    void scheduleDate_creates_new_list() {
+    void scheduleDate_creates_new_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
@@ -113,7 +113,7 @@ class FacultyTest {
     }
 
     @Test
-    void scheduleDate_add_to_list() {
+    void scheduleDate_add_to_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
@@ -130,7 +130,7 @@ class FacultyTest {
 
     //TODO: The tests for canScheduleForDate might need to be improved after the final version is implemented.
     @Test
-    void canScheduleForDate() {
+    void canScheduleForDate() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, new Resource(1, 1, 1));
