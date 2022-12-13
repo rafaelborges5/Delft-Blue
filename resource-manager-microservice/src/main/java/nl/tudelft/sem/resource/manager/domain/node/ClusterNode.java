@@ -1,5 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.node;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
@@ -14,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.GenerationType;
+import java.util.Objects;
 
 
 /**
@@ -23,6 +25,7 @@ import javax.persistence.GenerationType;
 @Entity
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
+@Getter
 public class ClusterNode {
     /**
      * Identifier for the node.
@@ -46,4 +49,21 @@ public class ClusterNode {
 
     @Embedded
     private Resource resources;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ClusterNode clusterNode = (ClusterNode) o;
+        return id == (clusterNode.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
