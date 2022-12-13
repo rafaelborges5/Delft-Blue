@@ -1,6 +1,9 @@
 package nl.tudelft.sem.notification.manager.domain.notification;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 /**
@@ -9,6 +12,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "notifications")
 @NoArgsConstructor
+@Setter
+@Getter
 public class Notification {
 
     /**
@@ -30,4 +35,10 @@ public class Notification {
     @Column(name = "seen", nullable = false, updatable = false)
     @Convert(converter = Boolean.class)
     private boolean seen;
+
+    public Notification(String ownerNetId, String description) {
+        this.ownerNetId = ownerNetId;
+        this.description = description;
+        this.seen = false;
+    }
 }
