@@ -49,7 +49,7 @@ public class ConsumerConfiguration {
      * @return the consumer factory
      */
     @Bean
-    public ConsumerFactory<String, PendingRequestsDTO> consumerFactoryFacultyName() {
+    public ConsumerFactory<String, PendingRequestsDTO> consumerFactoryPendingRequests() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(PendingRequestsDTO.class));
     }

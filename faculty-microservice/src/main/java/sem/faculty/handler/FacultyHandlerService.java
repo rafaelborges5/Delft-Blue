@@ -1,8 +1,10 @@
-package sem.faculty.domain;
+package sem.faculty.handler;
 
 import org.springframework.stereotype.Service;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.RequestDTO;
+import sem.faculty.domain.FacultyName;
+import sem.faculty.handler.FacultyHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +14,20 @@ import java.util.stream.Collectors;
  * The type Faculty manager service.
  */
 @Service
-public class FacultyManagerService {
+public class FacultyHandlerService {
 
 
-    private transient FacultyManager facultyManager;
+    private transient FacultyHandler facultyHandler;
 
     private transient List<String> facultyNames;
 
     /**
      * Instantiates a new Faculty manager service.
      *
-     * @param facultyManager the faculty manager
+     * @param facultyHandler the faculty manager
      */
-    public FacultyManagerService(FacultyManager facultyManager) {
-        this.facultyManager = facultyManager;
+    public FacultyHandlerService(FacultyHandler facultyHandler) {
+        this.facultyHandler = facultyHandler;
         this.facultyNames = new ArrayList<>(List.of(new String[]{"ARCH", "MMME", "EEMCS", "IDE", "CEG", "TPM", "AE", "AS"}));
     }
 
@@ -40,7 +42,7 @@ public class FacultyManagerService {
             return new PendingRequestsDTO("Wrong faculty name", new ArrayList<>());
         } else {
             return new PendingRequestsDTO("OK",
-                    facultyManager.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
+                    facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
                             .map(x -> new RequestDTO(x.getNetId(), x.getName(), x.getDescription(),
                                     x.getPreferredDate(), x.getResource().getCpu(), x.getResource().getGpu(),
                                     x.getResource().getMemory())).collect(Collectors.toList()));

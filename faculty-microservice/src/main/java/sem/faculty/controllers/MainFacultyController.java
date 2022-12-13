@@ -6,16 +6,16 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 import sem.commons.FacultyNameDTO;
 import sem.commons.PendingRequestsDTO;
-import sem.faculty.domain.FacultyManagerService;
+import sem.faculty.handler.FacultyHandlerService;
 
 @RestController
 public class MainFacultyController {
 
-    private transient FacultyManagerService facultyManagerService;
+    private transient FacultyHandlerService facultyHandlerService;
 
     @Autowired
-    public MainFacultyController(FacultyManagerService facultyManagerService) {
-        this.facultyManagerService = facultyManagerService;
+    public MainFacultyController(FacultyHandlerService facultyHandlerService) {
+        this.facultyHandlerService = facultyHandlerService;
     }
 
     @KafkaListener(
@@ -26,6 +26,6 @@ public class MainFacultyController {
     @SendTo
     public PendingRequestsDTO getPendingRequests(FacultyNameDTO facultyNameDTO) {
         System.out.println("got a faculty name " + facultyNameDTO.getFacultyName());
-        return facultyManagerService.getPendingRequests(facultyNameDTO.getFacultyName());
+        return facultyHandlerService.getPendingRequests(facultyNameDTO.getFacultyName());
     }
 }
