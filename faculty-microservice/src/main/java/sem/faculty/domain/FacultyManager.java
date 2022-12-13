@@ -9,11 +9,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Faculty manager.
+ */
 @Component
 public class FacultyManager {
 
-    private Map<FacultyName, Faculty> faculties;
+    private transient Map<FacultyName, Faculty> faculties;
 
+    /**
+     * Instantiates a new Faculty manager.
+     */
     public FacultyManager() {
         faculties = new HashMap<>();
         faculties.put(FacultyName.EEMCS, new Faculty(FacultyName.EEMCS, new CurrentTimeProvider()));
@@ -26,11 +32,22 @@ public class FacultyManager {
         faculties.put(FacultyName.TPM, new Faculty(FacultyName.TPM, new CurrentTimeProvider()));
     }
 
+    /**
+     * New faculty manager faculty manager.
+     *
+     * @return the faculty manager
+     */
     @Bean
     public FacultyManager newFacultyManager() {
         return new FacultyManager();
     }
 
+    /**
+     * Gets pending requests.
+     *
+     * @param facultyName the faculty name
+     * @return the pending requests
+     */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
         //TODO: get requests from given faculty

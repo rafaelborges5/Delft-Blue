@@ -1,13 +1,13 @@
 package nl.tudelft.sem.template.gateway.controllers;
 
-import nl.tudelft.sem.template.gateway.dto.ExampleUser;
-import nl.tudelft.sem.template.gateway.dto.UserCredentials;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import sem.commons.ExampleUser;
+import sem.commons.UserCredentials;
 
 /**
  * Hello World example controller.
