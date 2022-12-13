@@ -35,7 +35,6 @@ public class FacultyHandler {
      */
     @KafkaListener(
             topics = "incoming-request",
-            groupId = "requests",
             containerFactory = "kafkaListenerContainerFactory2"
     )
     void listener(Request request) {
