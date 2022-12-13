@@ -36,6 +36,11 @@ public class Notification {
     @Convert(converter = Boolean.class)
     private boolean seen;
 
+    /**
+     * Constructor for the Notification object.
+     * @param ownerNetId the netId of the respective owner
+     * @param description the description of the notification
+     */
     public Notification(String ownerNetId, String description) {
         this.ownerNetId = ownerNetId;
         this.description = description;
