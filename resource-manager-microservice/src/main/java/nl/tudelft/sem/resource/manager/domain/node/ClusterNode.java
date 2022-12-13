@@ -26,7 +26,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class ClusterNode {
     /**
@@ -51,6 +50,21 @@ public class ClusterNode {
 
     @Embedded
     private Resource resources;
+
+    /**
+     * Basic constructor.
+     *
+     * @param ownerName the name of the node owner
+     * @param url the url of the node
+     * @param token the token needed to access the node
+     * @param resources the amount of resources provided by the node
+     */
+    public ClusterNode(OwnerName ownerName, URL url, Token token, Resource resources) {
+        this.ownerName = ownerName;
+        this.url = url;
+        this.token = token;
+        this.resources = resources;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.resource;
 
-public enum Assignee {
+public enum Reserver {
     ARCH,
     MMME,
     EEMCS,

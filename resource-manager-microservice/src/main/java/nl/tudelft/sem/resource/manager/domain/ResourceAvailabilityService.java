@@ -4,9 +4,9 @@ import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.node.OwnerName;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
-import nl.tudelft.sem.resource.manager.domain.resource.AssignedResources;
-import nl.tudelft.sem.resource.manager.domain.resource.AssignedResourcesRepository;
-import nl.tudelft.sem.resource.manager.domain.resource.Assignee;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
+import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,20 +14,20 @@ import java.time.LocalDate;
 @Service
 public class ResourceAvailabilityService {
     private final transient NodeRepository nodeRepository;
-    private final transient AssignedResourcesRepository resourcesRepository;
+    private final transient ReservedResourcesRepository resourcesRepository;
     private final transient DateProvider timeProvider;
 
     /**
      * Instantiates a new {@link ResourceAvailabilityService}.
      *
      * @param nodeRepository the repository of all
-     * {@link nl.tudelft.sem.resource.manager.domain.node.ClusterNode ClusterNode} in the cluster
+     * {@link ClusterNode ClusterNodes} in the cluster
      * @param resourcesRepository the repository of resources assigned to
-     * {@link nl.tudelft.sem.resource.manager.domain.resource.Assignee Assignee} - {@link java.util.Date Date} pairs
+     * {@link Reserver Reserver} - {@link java.util.Date Date} pairs
      * @param timeProvider an interface for the time provider
      */
     public ResourceAvailabilityService(NodeRepository nodeRepository,
-                                       AssignedResourcesRepository resourcesRepository,
+                                       ReservedResourcesRepository resourcesRepository,
                                        DateProvider timeProvider) {
         this.nodeRepository = nodeRepository;
         this.resourcesRepository = resourcesRepository;
@@ -42,11 +42,11 @@ public class ResourceAvailabilityService {
      * @return the amount of free resources
      * @throws IllegalStateException if there are a negative amount of free resources
      */
-    public Resource seeFreeResourcesTomorrow(Assignee faculty) throws IllegalStateException {
+    public Resource seeFreeResourcesTomorrow(Reserver faculty) throws IllegalStateException {
         LocalDate date = timeProvider.getCurrentDate().plusDays(1);
 
         OwnerName facultyName = new OwnerName(faculty.name());
-        OwnerName freepoolName = new OwnerName(Assignee.FREEPOOL.name());
+        OwnerName freepoolName = new OwnerName(Reserver.FREEPOOL.name());
 
         Resource availableRes = nodeRepository
                 .findAllByOwnerNameOrOwnerName(facultyName, freepoolName)
@@ -60,12 +60,12 @@ public class ResourceAvailabilityService {
                 });
 
         Resource facRes = resourcesRepository
-                .findByAssigneeAndDate(faculty, date)
-                .map(AssignedResources::getResources)
+                .findByReserverAndDate(faculty, date)
+                .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
         Resource poolRes = resourcesRepository
-                .findByAssigneeAndDate(Assignee.FREEPOOL, date)
-                .map(AssignedResources::getResources)
+                .findByReserverAndDate(Reserver.FREEPOOL, date)
+                .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 
         Resource freeResources = new Resource(
