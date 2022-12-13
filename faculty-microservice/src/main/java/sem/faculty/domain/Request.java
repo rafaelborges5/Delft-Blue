@@ -2,11 +2,8 @@ package sem.faculty.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,11 +15,12 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long requestId;
-    private String netId;
     private String name;
+    private String netId;
     private String description;
     private LocalDate preferredDate;
     private RequestStatus status;
+    private FacultyName facultyName;
     @Embedded
     private Resource resource;
 
@@ -36,12 +34,13 @@ public class Request {
      * Constructor method.
      */
     public Request(String name, String netId, String description,
-                   LocalDate preferredDate, RequestStatus status, Resource resource) {
+                   LocalDate preferredDate, RequestStatus status, FacultyName facultyName, Resource resource) {
         this.name = name;
         this.netId = netId;
         this.description = description;
         this.preferredDate = preferredDate;
         this.status = status;
+        this.facultyName = facultyName;
         this.resource = resource;
     }
 
@@ -57,6 +56,7 @@ public class Request {
                 + ", description='" + description + '\''
                 + ", preferredDate=" + preferredDate
                 + ", status=" + status
+                + ", faculty=" + facultyName
                 + ", resource='" + resource.toString() + '\''
                 + '}';
     }
@@ -77,11 +77,12 @@ public class Request {
                 && Objects.equals(description, request.description)
                 && Objects.equals(preferredDate, request.preferredDate)
                 && status == request.status
+                && facultyName == request.facultyName
                 && Objects.equals(resource, request.resource);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, netId, name, description, preferredDate, status, resource);
+        return Objects.hash(requestId, netId, name, description, preferredDate, status, facultyName, resource);
     }
 }
