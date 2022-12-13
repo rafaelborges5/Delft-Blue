@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
+import org.example.NetId;
+
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
