@@ -1,5 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.node;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.resource.manager.domain.Resource;
@@ -25,6 +26,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class ClusterNode {
     /**

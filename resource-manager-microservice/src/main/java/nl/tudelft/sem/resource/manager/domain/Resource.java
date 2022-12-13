@@ -1,6 +1,8 @@
 package nl.tudelft.sem.resource.manager.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -13,6 +15,8 @@ import javax.persistence.Embeddable;
 @Embeddable
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Resource {
     @Column(name = "cpu", nullable = false)
     private transient int cpuResources;
@@ -22,20 +26,4 @@ public class Resource {
 
     @Column(name = "memory", nullable = false)
     private transient int memResources;
-
-    @SuppressWarnings("unused")
-    public Resource() {
-    }
-
-    /**
-     * Basic constructor.
-     * @param cpuResources CPU resources provided by Node
-     * @param gpuResources GPU resources provided by Node
-     * @param memResources Memory resources provided by Node
-     */
-    public Resource(int cpuResources, int gpuResources, int memResources) {
-        this.cpuResources = cpuResources;
-        this.gpuResources = gpuResources;
-        this.memResources = memResources;
-    }
 }
