@@ -2,11 +2,8 @@ package domain;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +15,8 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long requestId;
-    private String netId;
     private String name;
+    private String netId;
     private String description;
     private LocalDate preferredDate;
     private RequestStatus status;
