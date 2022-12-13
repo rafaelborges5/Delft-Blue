@@ -128,6 +128,33 @@ class FacultyTest {
         assertThat(faculty.getSchedule()).isEqualTo(expected);
     }
 
+    @Test
+    void testDeniedHandleIncomingRequest() throws NotValidResourcesException {
+        LocalDate today = LocalDate.of(2022, Month.DECEMBER, 8);
+        when(timeProvider.getCurrentTime()).thenReturn(today);
+
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
+        Request request1 = new Request("Name1", "NetID", "Desription",
+                date, RequestStatus.DROPPED, FacultyName.EEMCS, new Resource(1, 1, 1));
+
+        faculty.handleIncomingRequest(request1);
+        assertThat(request1.getStatus()).isEqualTo(RequestStatus.DENIED);
+    }
+
+    @Test
+    void testPendingHandleIncomingRequest() throws NotValidResourcesException {
+        LocalDate today = LocalDate.of(2022, Month.DECEMBER, 6);
+        when(timeProvider.getCurrentTime()).thenReturn(today);
+
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
+        Request request1 = new Request("Name1", "NetID", "Desription",
+                date, RequestStatus.DROPPED, FacultyName.EEMCS, new Resource(1, 1, 1));
+
+        faculty.handleIncomingRequest(request1);
+        assertThat(request1.getStatus()).isEqualTo(RequestStatus.PENDING);
+        assertThat(faculty.getPendingRequests().contains(request1));
+    }
+
     //TODO: The tests for canScheduleForDate might need to be improved after the final version is implemented.
     @Test
     void canScheduleForDate() throws NotValidResourcesException {
