@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.gateway.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import nl.tudelft.sem.template.gateway.commons.FacultyName;
 import nl.tudelft.sem.template.gateway.commons.NotValidResourcesException;
 import nl.tudelft.sem.template.gateway.commons.Resource;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 class RequestDTOTest {
     long id;
     RequestDTO requestDTO;
+    FacultyName faculty;
     String name;
     String netId;
     String descr;
@@ -24,10 +26,11 @@ class RequestDTOTest {
         id = 0L;
         name = "Name";
         netId = "NETID";
+        faculty = FacultyName.EEMCS;
         descr = "Description";
         date = LocalDate.of(2022, 12, 5);
         resource = new Resource(1, 1, 1);
-        requestDTO = new RequestDTO(id, name, netId, descr, date, resource);
+        requestDTO = new RequestDTO(id, name, netId, faculty, descr, date, resource);
     }
 
     @Test
@@ -36,6 +39,7 @@ class RequestDTOTest {
         assertThat(empty.getRequestId()).isEqualTo(0L);
         assertThat(empty.getNetId()).isNull();
         assertThat(empty.getName()).isNull();
+        assertThat(empty.getFaculty()).isNull();
         assertThat(empty.getDescription()).isNull();
         assertThat(empty.getPreferredDate()).isNull();
         assertThat(empty.getResource()).isNull();
@@ -44,8 +48,9 @@ class RequestDTOTest {
     @Test
     void testConstructor() {
         assertThat(requestDTO.getRequestId()).isEqualTo(0L);
-        assertThat(requestDTO.getNetId()).isEqualTo(netId);
         assertThat(requestDTO.getName()).isEqualTo(name);
+        assertThat(requestDTO.getNetId()).isEqualTo(netId);
+        assertThat(requestDTO.getFaculty()).isEqualTo(faculty);
         assertThat(requestDTO.getDescription()).isEqualTo(descr);
         assertThat(requestDTO.getPreferredDate()).isEqualTo(date);
         assertThat(requestDTO.getResource()).isEqualTo(resource);
@@ -64,6 +69,11 @@ class RequestDTOTest {
     @Test
     void getName() {
         assertThat(requestDTO.getName()).isEqualTo(name);
+    }
+
+    @Test
+    void getFaculty() {
+        assertThat(requestDTO.getFaculty()).isEqualTo(faculty);
     }
 
     @Test

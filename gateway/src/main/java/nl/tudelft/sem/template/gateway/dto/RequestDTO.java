@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.gateway.commons.FacultyName;
 import nl.tudelft.sem.template.gateway.commons.Resource;
 
 import javax.persistence.Embedded;
@@ -22,6 +23,7 @@ public class RequestDTO {
     private long requestId;
     private String name;
     private String netId;
+    private FacultyName faculty;
     private String description;
     private LocalDate preferredDate;
     @Embedded
