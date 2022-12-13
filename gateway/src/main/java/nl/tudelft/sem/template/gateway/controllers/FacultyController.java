@@ -16,6 +16,8 @@ import sem.commons.FacultyNameDTO;
 import sem.commons.PendingRequestsDTO;
 
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * The type Faculty controller.
@@ -47,29 +49,30 @@ public class FacultyController {
      */
     @PostMapping("/faculty/pending")
     public ResponseEntity<String> getPendingRequests(
-            @RequestBody FacultyNameDTO facultyNameDTO) throws ExecutionException, InterruptedException {
+            @RequestBody FacultyNameDTO facultyNameDTO) throws ExecutionException, InterruptedException, TimeoutException {
         // create producer record
         ProducerRecord<String, FacultyNameDTO> record =
                 new ProducerRecord<String, FacultyNameDTO>("pendingRequestsTopic", facultyNameDTO);
         // set reply topic in header
-        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "pendingRequestsTopic".getBytes()));
+        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "pendingRequestsTopicReply".getBytes()));
         // post in kafka topic
         RequestReplyFuture<String, FacultyNameDTO, PendingRequestsDTO> sendAndReceive =
                 replyingKafkaTemplatePendingRequests.sendAndReceive(record);
 
         //confirm if producer produced successfully
-        SendResult<String, FacultyNameDTO> sendResult = sendAndReceive.getSendFuture().get();
+        SendResult<String, FacultyNameDTO> sendResult = sendAndReceive.getSendFuture().get(10, TimeUnit.SECONDS);
 
         //print all headers
-        sendResult.getProducerRecord().headers()
-         .forEach(header -> System.out.println(header.key() + ":" + header.value().toString()));
+        //sendResult.getProducerRecord().headers()
+        // .forEach(header -> System.out.println(header.key() + ":" + header.value().toString()));
 
         // get consumer record
-        ConsumerRecord<String, PendingRequestsDTO> consumerRecord = sendAndReceive.get();
+        ConsumerRecord<String, PendingRequestsDTO> consumerRecord = sendAndReceive.get(10, TimeUnit.SECONDS);
         // return consumer value
 
-        //System.out.println("got a list from a faculty" + facultyNameDTO.getFacultyName() +
-        //        " with status" + consumerRecord.value().getStatus());
-        return ResponseEntity.ok("finished");
+        System.out.println("got a list from a faculty " + facultyNameDTO.getFacultyName() +
+                " with status " + consumerRecord.value().getStatus() + ". The list is " +
+                consumerRecord.value().getRequests().toString());
+        return ResponseEntity.ok("finished and printed to console");
     }
 }

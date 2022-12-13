@@ -25,6 +25,7 @@ public class MainFacultyController {
     )
     @SendTo
     public PendingRequestsDTO getPendingRequests(FacultyNameDTO facultyNameDTO) {
+        System.out.println("got a faculty name " + facultyNameDTO.getFacultyName());
         return facultyManagerService.getPendingRequests(facultyNameDTO.getFacultyName());
     }
 }

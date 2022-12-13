@@ -24,7 +24,7 @@ public class ReplyingTemplateConfiguration {
     @Bean
     public KafkaMessageListenerContainer<String, PendingRequestsDTO> replyContainer(
             ConsumerFactory<String, PendingRequestsDTO> cf) {
-        ContainerProperties containerProperties = new ContainerProperties("pendingRequestsTopic");
+        ContainerProperties containerProperties = new ContainerProperties("pendingRequestsTopicReply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 }
