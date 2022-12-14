@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.authentication.toBeImportedFromOtherModule;
+package nl.tudelft.sem.template.authentication.tobeimportedfromothermodules;
 
 public enum FacultyName {
     ARCH,
