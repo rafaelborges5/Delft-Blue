@@ -59,6 +59,15 @@ public class AppUser extends HasEvents {
         this.recordThat(new PasswordWasChangedEvent(this));
     }
 
+    @Override
+    public String toString() {
+        return "AppUser{" +
+                "NetId = " + netId.toString() +
+                ", password = " + password.toString() +
+                ", role = " + role.name() +
+                '}';
+    }
+
     /**
      * Equality is only based on the identifier.
      */
