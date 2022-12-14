@@ -10,12 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
-import nl.tudelft.sem.template.authentication.domain.user.AppUser;
-import nl.tudelft.sem.template.authentication.domain.user.HashedPassword;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.Password;
-import nl.tudelft.sem.template.authentication.domain.user.PasswordHashingService;
-import nl.tudelft.sem.template.authentication.domain.user.UserRepository;
+import nl.tudelft.sem.template.authentication.domain.user.*;
 import nl.tudelft.sem.template.authentication.framework.integration.utils.JsonUtil;
 import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
@@ -71,10 +66,12 @@ public class UsersTests {
         final Password testPassword = new Password("password123");
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
+        final Role testRole = Role.EMPLOYEE;
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(testPassword.toString());
+        model.setRole(testRole.name());
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/register")
@@ -88,6 +85,7 @@ public class UsersTests {
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
+        assertThat(savedUser.getRole()).isEqualTo(testRole);
     }
 
     @Test
@@ -96,13 +94,15 @@ public class UsersTests {
         final NetId testUser = new NetId("SomeUser");
         final Password newTestPassword = new Password("password456");
         final HashedPassword existingTestPassword = new HashedPassword("password123");
+        final Role testRole = Role.EMPLOYEE;
 
-        AppUser existingAppUser = new AppUser(testUser, existingTestPassword);
+        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole);
         userRepository.save(existingAppUser);
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(newTestPassword.toString());
+        model.setRole(testRole.name());
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/register")
@@ -116,6 +116,7 @@ public class UsersTests {
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
+        assertThat(savedUser.getRole()).isEqualTo(testRole);
     }
 
     @Test
@@ -125,6 +126,7 @@ public class UsersTests {
         final Password testPassword = new Password("password123");
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
+        final Role testRole = Role.EMPLOYEE;
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 !testUser.toString().equals(authentication.getPrincipal())
@@ -136,12 +138,13 @@ public class UsersTests {
             argThat(userDetails -> userDetails.getUsername().equals(testUser.toString())))
         ).thenReturn(testToken);
 
-        AppUser appUser = new AppUser(testUser, testHashedPassword);
+        AppUser appUser = new AppUser(testUser, testHashedPassword, testRole);
         userRepository.save(appUser);
 
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser.toString());
         model.setPassword(testPassword.toString());
+        model.setRole(testRole.name());
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")
@@ -169,6 +172,7 @@ public class UsersTests {
         // Arrange
         final String testUser = "SomeUser";
         final String testPassword = "password123";
+        final String testRole = "EMPLOYEE";
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal())
@@ -178,6 +182,7 @@ public class UsersTests {
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser);
         model.setPassword(testPassword);
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")
@@ -202,18 +207,20 @@ public class UsersTests {
         final String testPassword = "password123";
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(new Password(testPassword))).thenReturn(testHashedPassword);
+        final String testRole = "EMPLOYEE";
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal())
                     && wrongPassword.equals(authentication.getCredentials())
         ))).thenThrow(new BadCredentialsException("Invalid password"));
 
-        AppUser appUser = new AppUser(new NetId(testUser), testHashedPassword);
+        AppUser appUser = new AppUser(new NetId(testUser), testHashedPassword, Role.valueOf(testRole));
         userRepository.save(appUser);
 
         AuthenticationRequestModel model = new AuthenticationRequestModel();
         model.setNetId(testUser);
         model.setPassword(wrongPassword);
+        model.setRole(testRole);
 
         // Act
         ResultActions resultActions = mockMvc.perform(post("/authenticate")

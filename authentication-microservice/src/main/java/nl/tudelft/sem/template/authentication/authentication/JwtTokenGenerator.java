@@ -37,12 +37,14 @@ public class JwtTokenGenerator {
     /**
      * Generate a JWT token for the provided user.
      *
-     * @param userDetails The user details
+     * @param userCredentials The user details
      * @return the JWT token
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userCredentials) {
         Map<String, Object> claims = new HashMap<>();
-        return Jwts.builder().setClaims(claims).setSubject(userDetails.getUsername())
+        claims.put("userCredentials", userCredentials);
+
+        return Jwts.builder().setClaims(claims).setSubject(userCredentials.getUsername())
                 .setIssuedAt(new Date(timeProvider.getCurrentTime().toEpochMilli()))
                 .setExpiration(new Date(timeProvider.getCurrentTime().toEpochMilli() + JWT_TOKEN_VALIDITY))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret).compact();
