@@ -38,8 +38,4 @@ public class UserRequestController {
         kafkaTemplate.send("example", jsonRequestDTO);
         //change to: kafkaTemplate.send("incoming-request", jsonRequestDTO);
     }
-
-    public void requestDTOToRequest() {
-
-    }
 }
