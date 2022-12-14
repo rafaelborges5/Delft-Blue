@@ -16,7 +16,7 @@ class AppUserTest {
     Role testRole;
 
     @BeforeEach
-    void createUser(){
+    void createUser() {
         testNetID = new NetId("SomeUser");
         testPassword = new HashedPassword("password123");
         testRole = Role.EMPLOYEE;
@@ -86,7 +86,7 @@ class AppUserTest {
     }
 
     @Test
-    void testToString(){
+    void testToString() {
         String userDetails = "AppUser{" +
                 "NetId = SomeUser" +
                 ", password = password123" +
