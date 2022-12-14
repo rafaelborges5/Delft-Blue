@@ -1,5 +1,6 @@
 package nl.tudelft.sem.notification.manager.domain.notification;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Setter
 @Getter
+@EqualsAndHashCode
 public class Notification {
 
     /**
