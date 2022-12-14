@@ -5,4 +5,5 @@ include:
   - faculty-microservice/.gitlab-ci.yml
   - gateway/.gitlab-ci.yml
   - resource-manager-microservice/.gitlab-ci.yml
+  - commons/.gitlab-ci.yml
   - notification-manager-microservice/.gitlab-ci.yml

@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.gateway.config;
 
-import nl.tudelft.sem.template.gateway.dto.ExampleUser;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -10,6 +9,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import sem.commons.ExampleUser;
+import sem.commons.FacultyNameDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +43,12 @@ public class ProducerConfiguration {
      * @return the producer factory
      */
     @Bean
-    public ProducerFactory<String, ExampleUser> producerFactory() {
+    public ProducerFactory<String, ExampleUser> producerFactoryExampleUser() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, FacultyNameDTO> producerFactoryFacultyNameDTO() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -53,6 +59,6 @@ public class ProducerConfiguration {
      */
     @Bean
     public KafkaTemplate<String, ExampleUser> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
+        return new KafkaTemplate<>(producerFactoryExampleUser());
     }
 }

@@ -21,7 +21,7 @@ checkStyle-gateway:
   allow_failure: true
 
 
-PMD-egateway:
+PMD-gateway:
   stage: staticAnalysis
   script:
     gradle gateway:pmdMain
