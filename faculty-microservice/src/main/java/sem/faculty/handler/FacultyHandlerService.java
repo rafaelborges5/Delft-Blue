@@ -19,7 +19,6 @@ public class FacultyHandlerService {
 
     private transient FacultyHandler facultyHandler;
 
-    private transient List<String> facultyNames;
 
     /**
      * Instantiates a new Faculty manager service.
@@ -28,7 +27,6 @@ public class FacultyHandlerService {
      */
     public FacultyHandlerService(FacultyHandler facultyHandler) {
         this.facultyHandler = facultyHandler;
-        this.facultyNames = new ArrayList<>(List.of(new String[]{"ARCH", "MMME", "EEMCS", "IDE", "CEG", "TPM", "AE", "AS"}));
     }
 
     /**
@@ -38,14 +36,17 @@ public class FacultyHandlerService {
      * @return the pending requests
      */
     public PendingRequestsDTO getPendingRequests(String facultyName) {
-        if (!facultyNames.contains(facultyName)) {
+
+        try {
+            FacultyName.valueOf(facultyName);
+        } catch (IllegalArgumentException e) {
             return new PendingRequestsDTO("Wrong faculty name", new ArrayList<>());
-        } else {
-            return new PendingRequestsDTO("OK",
-                    facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
-                            .map(x -> new RequestDTO(x.getNetId(), x.getName(), x.getDescription(),
-                                    x.getPreferredDate(), x.getResource().getCpu(), x.getResource().getGpu(),
-                                    x.getResource().getMemory())).collect(Collectors.toList()));
         }
+        return new PendingRequestsDTO("OK",
+                facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
+                        .map(x -> new RequestDTO(x.getNetId(), x.getName(), x.getDescription(),
+                                x.getPreferredDate(), x.getResource().getCpu(), x.getResource().getGpu(),
+                                x.getResource().getMemory())).collect(Collectors.toList()));
+
     }
 }
