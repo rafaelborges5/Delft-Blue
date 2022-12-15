@@ -7,10 +7,9 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.FacultyNameDTO;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
+import sem.commons.*;
+
+import java.util.List;
 
 @Configuration
 public class ReplyingTemplateConfiguration {
@@ -27,6 +26,21 @@ public class ReplyingTemplateConfiguration {
     public KafkaMessageListenerContainer<String, PendingRequestsDTO> replyContainerPendingRequests(
             ConsumerFactory<String, PendingRequestsDTO> cf) {
         ContainerProperties containerProperties = new ContainerProperties("pendingRequestsTopicReply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+    @Bean
+    public ReplyingKafkaTemplate<String, NetIdDTO, List<NotificationDTO>> replyKafkaTemplatePendingNotifications(
+            ProducerFactory<String, NetIdDTO> pf,
+            KafkaMessageListenerContainer<String, List<NotificationDTO>> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, List<NotificationDTO>> replyContainerPendingNotifications(
+            ConsumerFactory<String, List<NotificationDTO>> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("pending-notifications");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 

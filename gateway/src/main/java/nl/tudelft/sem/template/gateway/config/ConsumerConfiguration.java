@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.gateway.config;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -8,10 +10,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import sem.commons.NotificationDTO;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.StatusDTO;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,5 +63,13 @@ public class ConsumerConfiguration {
     public ConsumerFactory<String, StatusDTO> consumerFactoryStatus() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(StatusDTO.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, List<NotificationDTO>> consumerFactoryListNotifications() {
+        ObjectMapper om = new ObjectMapper();
+        JavaType type = om.getTypeFactory().constructParametricType(List.class, NotificationDTO.class);
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(type, om, false));
     }
 }
