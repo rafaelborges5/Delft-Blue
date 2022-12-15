@@ -11,6 +11,7 @@ import sem.faculty.domain.Request;
 import sem.faculty.domain.scheduler.DenyScheduler;
 import sem.faculty.domain.scheduler.Scheduler;
 import sem.faculty.domain.scheduler.PendingScheduler;
+import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
@@ -27,20 +28,21 @@ public class FacultyHandler {
     @Autowired
     TimeProvider timeProvider;
 
-    public FacultyHandler() {
+    public FacultyHandler(TimeProvider timeProvider) {
+        this.timeProvider = timeProvider;
         faculties = new HashMap<>();
         populateFaculties();
     }
 
     @Bean
     public FacultyHandler newFacultyHandler() {
-        return new FacultyHandler();
+        return new FacultyHandler(new CurrentTimeProvider());
     }
 
     /**
      * Create Faculty instances for each FacultyName.
      */
-    private void populateFaculties() {
+    void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
             faculties.put(fn, new Faculty(fn, timeProvider));
@@ -64,7 +66,7 @@ public class FacultyHandler {
      * Choose how to handle an incoming Request and schedule it accordingly.
      * @param request - Request to be scheduled.
      */
-    private void handleIncomingRequests(Request request) {
+    void handleIncomingRequests(Request request) {
         LocalDate currentDate = timeProvider.getCurrentTime();
         LocalDate preferredDate = request.getPreferredDate();
         if (preferredDate.isBefore(currentDate)) {

@@ -15,6 +15,7 @@ import java.time.Month;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -162,5 +163,17 @@ class FacultyTest {
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         assertThat(faculty.checkAvailabilityForDate(request1, date)).isTrue();
+    }
+    @Test
+    void addPendingRequest() throws NotValidResourcesException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
+        Request request1 = new Request("Name1", "NetID", "Desription",
+                date, RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+
+        assertThat(faculty.getPendingRequests()).isEmpty();
+        faculty.addPendingRequest(request1);
+        Queue<Request> queue = faculty.getPendingRequests();
+        assertThat(queue.size()).isEqualTo(1);
+        assertThat(queue.poll()).isEqualTo(request1);
     }
 }
