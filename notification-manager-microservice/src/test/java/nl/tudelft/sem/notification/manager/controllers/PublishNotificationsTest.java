@@ -1,7 +1,9 @@
 package nl.tudelft.sem.notification.manager.controllers;
 
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
+import nl.tudelft.sem.notification.manager.domain.notification.NotificationRepository;
 import nl.tudelft.sem.notification.manager.producers.BasicProducer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +22,16 @@ public class PublishNotificationsTest {
 
     @Autowired
     private PublishNotificationController consumer;
-
-    @Autowired
-    private BasicProducer basicProducer;
-
+    private NotificationRepository notificationRepository;
     private String topic = "publish-notification";
 
 
     @Test
     public void testReceivingMessage() {
-        PublishNotificationController spiedConsumer = Mockito.spy(consumer);
         Notification testNotification = new Notification("testId", "testDesc");
-        basicProducer.send("publish-notification", testNotification);
-        verify(consumer).saveNotification(any(), Mockito.eq(testNotification));
+        notificationRepository = Mockito.mock(NotificationRepository.class);
+        consumer = new PublishNotificationController(notificationRepository);
+        consumer.saveNotification(new ConsumerRecord<>(topic, 1, 0, "sd", testNotification), testNotification);
+        verify(notificationRepository).saveAndFlush(testNotification);
     }
 }
