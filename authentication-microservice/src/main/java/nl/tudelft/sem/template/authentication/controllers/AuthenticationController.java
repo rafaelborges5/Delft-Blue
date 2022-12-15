@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.authentication.authentication.JwtUserDetailsServi
 import nl.tudelft.sem.template.authentication.domain.user.NetId;
 import nl.tudelft.sem.template.authentication.domain.user.Password;
 import nl.tudelft.sem.template.authentication.domain.user.RegistrationService;
+import nl.tudelft.sem.template.authentication.domain.user.Role;
 import nl.tudelft.sem.template.authentication.kafkaconfiguration.ProducerController;
 import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
@@ -96,7 +97,8 @@ public class AuthenticationController {
         try {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
-            registrationService.registerUser(netId, password);
+            Role role = Role.valueOf(request.getRole());
+            registrationService.registerUser(netId, password, role);
             producerController.produce(netId.toString());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

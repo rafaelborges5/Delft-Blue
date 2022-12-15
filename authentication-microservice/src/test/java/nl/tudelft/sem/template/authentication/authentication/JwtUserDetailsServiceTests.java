@@ -3,10 +3,7 @@ package nl.tudelft.sem.template.authentication.authentication;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import nl.tudelft.sem.template.authentication.domain.user.AppUser;
-import nl.tudelft.sem.template.authentication.domain.user.HashedPassword;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.UserRepository;
+import nl.tudelft.sem.template.authentication.domain.user.*;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
@@ -41,8 +38,9 @@ public class JwtUserDetailsServiceTests {
         // Arrange
         final NetId testUser = new NetId("SomeUser");
         final HashedPassword testHashedPassword = new HashedPassword("password123Hash");
+        final Role testRole = Role.EMPLOYEE;
 
-        AppUser appUser = new AppUser(testUser, testHashedPassword);
+        AppUser appUser = new AppUser(testUser, testHashedPassword, testRole);
         userRepository.save(appUser);
 
         // Act
@@ -51,6 +49,7 @@ public class JwtUserDetailsServiceTests {
         // Assert
         assertThat(actual.getUsername()).isEqualTo(testUser.toString());
         assertThat(actual.getPassword()).isEqualTo(testHashedPassword.toString());
+        //Role test not needed because its for authentication
     }
 
     @Test
@@ -60,8 +59,9 @@ public class JwtUserDetailsServiceTests {
 
         final NetId testUser = new NetId("AnotherUser");
         final String testPasswordHash = "password123Hash";
+        final Role testRole = Role.EMPLOYEE;
 
-        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash));
+        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash), testRole);
         userRepository.save(appUser);
 
         // Act
