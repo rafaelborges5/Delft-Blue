@@ -1,4 +1,4 @@
-package sem.faculty.kafka.config;
+package sem.faculty.config.kafka;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +15,10 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import sem.commons.AcceptRequestsDTO;
 import sem.commons.FacultyNameDTO;
 import sem.commons.PendingRequestsDTO;
+import sem.commons.StatusDTO;
 
 
 /**
@@ -98,7 +100,7 @@ public class KafkaConfig {
      */
     @Bean
     public KafkaTemplate<String, PendingRequestsDTO> kafkaTemplatePendingRequests() {
-        return new KafkaTemplate<>(producerFactory());
+        return new KafkaTemplate<>(producerFactoryPendingRequests());
     }
 
     /**
@@ -107,7 +109,56 @@ public class KafkaConfig {
      * @return the producer factory
      */
     @Bean
-    public ProducerFactory<String, PendingRequestsDTO> producerFactory() {
+    public ProducerFactory<String, PendingRequestsDTO> producerFactoryPendingRequests() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+
+    /**
+     * Consumer factory accept requests consumer factory.
+     *
+     * @return the consumer factory
+     */
+    @Bean
+    public ConsumerFactory<String, AcceptRequestsDTO> consumerFactoryAcceptRequests() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(AcceptRequestsDTO.class));
+    }
+
+    /**
+     * Kafka listener container factory accept requests concurrent kafka listener container factory.
+     *
+     * @return the concurrent kafka listener container factory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, AcceptRequestsDTO> kafkaListenerContainerFactoryAcceptRequests() {
+        ConcurrentKafkaListenerContainerFactory<String, AcceptRequestsDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryAcceptRequests());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateStatus());
+
+        return factory;
+    }
+
+    /**
+     * Kafka template status kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, StatusDTO> kafkaTemplateStatus() {
+        return new KafkaTemplate<>(producerFactoryStatus());
+    }
+
+    /**
+     * Producer factory status producer factory.
+     *
+     * @return the producer factory
+     */
+    @Bean
+    public ProducerFactory<String, StatusDTO> producerFactoryStatus() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 }

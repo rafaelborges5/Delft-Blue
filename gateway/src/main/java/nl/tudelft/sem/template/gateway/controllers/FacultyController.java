@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.gateway.controllers;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
@@ -12,8 +13,10 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import sem.commons.AcceptRequestsDTO;
 import sem.commons.FacultyNameDTO;
 import sem.commons.PendingRequestsDTO;
+import sem.commons.StatusDTO;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -27,15 +30,20 @@ public class FacultyController {
 
     private transient ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequests;
 
+    private transient ReplyingKafkaTemplate<String, AcceptRequestsDTO, StatusDTO> replyingKafkaTemplateAcceptRequests;
+
     /**
      * Instantiates a new Faculty controller.
      *
      * @param replyingKafkaTemplatePendingRequests the replying kafka template pending requests
+     * @param replyingKafkaTemplateAcceptRequests  the replying kafka template accept requests
      */
     @Autowired
     public FacultyController(
-            ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequests) {
+            ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequests,
+            ReplyingKafkaTemplate<String, AcceptRequestsDTO, StatusDTO> replyingKafkaTemplateAcceptRequests) {
         this.replyingKafkaTemplatePendingRequests = replyingKafkaTemplatePendingRequests;
+        this.replyingKafkaTemplateAcceptRequests = replyingKafkaTemplateAcceptRequests;
     }
 
 
@@ -46,6 +54,7 @@ public class FacultyController {
      * @return the pending requests
      * @throws ExecutionException   the execution exception
      * @throws InterruptedException the interrupted exception
+     * @throws TimeoutException     the timeout exception
      */
     @PostMapping("/faculty/pending")
     public ResponseEntity<String> getPendingRequests(
@@ -74,5 +83,32 @@ public class FacultyController {
                 " with status " + consumerRecord.value().getStatus() + ". The list is " +
                 consumerRecord.value().getRequests().toString());
         return ResponseEntity.ok("finished and printed to console");
+    }
+
+    /**
+     * Accept requests response entity.
+     *
+     * @param acceptRequestsDTO the accept requests dto
+     * @return the response entity
+     * @throws ExecutionException   the execution exception
+     * @throws InterruptedException the interrupted exception
+     */
+    @PostMapping("/faculty/accept")
+    public ResponseEntity<String> acceptRequests(
+            @RequestBody AcceptRequestsDTO acceptRequestsDTO
+    ) throws ExecutionException, InterruptedException {
+        ProducerRecord<String, AcceptRequestsDTO> record =
+                new ProducerRecord<>("acceptRequestsTopic", acceptRequestsDTO);
+
+        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "acceptRequestsTopicReply".getBytes()));
+
+        RequestReplyFuture<String, AcceptRequestsDTO, StatusDTO> sendAndReceive =
+                replyingKafkaTemplateAcceptRequests.sendAndReceive(record);
+
+        ConsumerRecord<String, StatusDTO> consumerRecord = sendAndReceive.get();
+
+        System.out.println("got a response with status " + consumerRecord.value().getStatus());
+
+        return ResponseEntity.ok("ok");
     }
 }
