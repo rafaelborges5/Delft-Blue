@@ -1,9 +1,6 @@
 package nl.tudelft.sem.notification.manager.domain.notification;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -16,6 +13,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @EqualsAndHashCode
+@ToString
 public class Notification {
 
     /**
@@ -27,15 +25,15 @@ public class Notification {
     private long id;
 
     @Column(name = "ownerNetId", nullable = false, unique = false)
-    @Convert(converter = String.class)
+    @Convert(converter = StringAttributeConverter.class)
     private String ownerNetId;
 
     @Column(name = "description", nullable = false, unique = false)
-    @Convert(converter = String.class)
+    @Convert(converter = StringAttributeConverter.class)
     private String description;
 
     @Column(name = "seen", nullable = false, updatable = false)
-    @Convert(converter = Boolean.class)
+    @Convert(converter = BooleanConverter.class)
     private boolean seen;
 
     /**
