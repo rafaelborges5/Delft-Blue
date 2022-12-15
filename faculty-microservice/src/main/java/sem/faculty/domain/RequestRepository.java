@@ -10,9 +10,4 @@ import java.util.Optional;
  */
 @Repository
 public interface RequestRepository extends JpaRepository<Request, String> {
-    /**
-     * Find request by id.
-     */
-    Optional<Request> findByRequestId(long requestId);
-
 }
