@@ -7,6 +7,8 @@ import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
+import sem.commons.FacultyName;
+import sem.commons.Resource;
 
 @Entity
 @Getter

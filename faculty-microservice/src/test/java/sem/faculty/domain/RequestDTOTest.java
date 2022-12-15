@@ -1,14 +1,15 @@
-package nl.tudelft.sem.template.gateway.dto;
+package sem.faculty.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import nl.tudelft.sem.template.gateway.commons.FacultyName;
-import nl.tudelft.sem.template.gateway.commons.NotValidResourcesException;
-import nl.tudelft.sem.template.gateway.commons.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sem.commons.FacultyName;
+import sem.commons.NotValidResourcesException;
+import sem.commons.RequestDTO;
+import sem.commons.Resource;
 
 import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 class RequestDTOTest {

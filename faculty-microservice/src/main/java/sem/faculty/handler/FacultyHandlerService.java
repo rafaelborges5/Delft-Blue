@@ -3,11 +3,9 @@ package sem.faculty.handler;
 import org.springframework.stereotype.Service;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.RequestDTO;
-import sem.faculty.domain.FacultyName;
-import sem.faculty.handler.FacultyHandler;
+import sem.commons.FacultyName;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -44,9 +42,15 @@ public class FacultyHandlerService {
         }
         return new PendingRequestsDTO("OK",
                 facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
-                        .map(x -> new RequestDTO(x.getNetId(), x.getName(), x.getDescription(),
-                                x.getPreferredDate(), x.getResource().getCpu(), x.getResource().getGpu(),
-                                x.getResource().getMemory())).collect(Collectors.toList()));
+                        .map(x -> new RequestDTO(
+                                x.getRequestId(),
+                                x.getName(),
+                                x.getNetId(),
+                                x.getFacultyName(),
+                                x.getDescription(),
+                                x.getPreferredDate(),
+                                x.getResource()))
+                        .collect(Collectors.toList()));
 
     }
 }

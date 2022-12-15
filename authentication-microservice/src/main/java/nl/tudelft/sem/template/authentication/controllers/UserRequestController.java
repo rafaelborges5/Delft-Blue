@@ -29,12 +29,11 @@ public class UserRequestController {
      */
     @PostMapping(value = "/sendUserRequest")
     public void sendUserRequest(@RequestBody Object requestDTO) throws JsonProcessingException {
-        System.out.println("got a request");
-
+        System.out.println("about to send a request in DTO form");
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonRequestDTO = objectMapper.writeValueAsString(requestDTO);
 
-        kafkaTemplate.send("example", jsonRequestDTO);
-        //change to: kafkaTemplate.send("incoming-request", jsonRequestDTO);
+        System.out.println(jsonRequestDTO);
+        kafkaTemplate.send("incoming-request", jsonRequestDTO);
     }
 }
