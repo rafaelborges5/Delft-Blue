@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserWasCreatedListener {
     /**
-     * The name of the function indicated which event is listened to.
+     * The name of the function indicated whic
+     * h event is listened to.
      * The format is onEVENTNAME.
      *
      * @param event The event to react to
