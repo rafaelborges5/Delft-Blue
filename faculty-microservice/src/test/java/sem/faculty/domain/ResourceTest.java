@@ -1,11 +1,20 @@
 package sem.faculty.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 public class ResourceTest {
+
+    @Test
+    void testEmptyConstructor() {
+        Resource resource = new Resource();
+        assertThat(resource.getCpu()).isEqualTo(0);
+        assertThat(resource.getGpu()).isEqualTo(0);
+        assertThat(resource.getMemory()).isEqualTo(0);
+    }
 
     @Test
     void testResource() {

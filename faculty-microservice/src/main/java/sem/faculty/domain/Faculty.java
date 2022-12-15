@@ -45,19 +45,40 @@ public class Faculty {
             throw new RejectRequestException(request.getRequestId());
         }
 
-        LocalDate currentDate = timeProvider.getCurrentTime();
-        LocalDate scheduledDate = request.getPreferredDate();
-        while (!scheduledDate.isBefore(currentDate)) {
-            if (checkAvailabilityForDate(request, scheduledDate)) {
-                scheduleForDate(request, scheduledDate);
-                return;
-            }
-            scheduledDate = scheduledDate.minusDays(1);
+        LocalDate scheduledDate = getScheduledDateFromResourceManager(request);
+
+        //scheduledDate null means that there is no available day for scheduling
+        if (scheduledDate == null) {
+            throw new NotEnoughResourcesLeftException(request.getRequestId());
         }
-        throw new NotEnoughResourcesLeftException(request.getRequestId());
+
+        scheduleForDate(request, scheduledDate);
     }
 
     /**
+     * Send the Request to Resource Manager and get back the date on which it can be scheduled.
+     * @param request - Request to be sent to Resource Manager
+     * @return the scheduled date on which the request can be run or null if there is no such date available.
+     */
+    private LocalDate getScheduledDateFromResourceManager(Request request) {
+        LocalDate scheduledDate = request.getPreferredDate();
+        Resource requiredResources = request.getResource();
+
+        //TODO: send request to Resource Manager scheduled date
+        // For now this is implemented manually
+        LocalDate currentDate = timeProvider.getCurrentTime();
+        while (!scheduledDate.isBefore(currentDate)) {
+            if (checkAvailabilityForDate(request, scheduledDate)) {
+                return scheduledDate;
+            }
+            scheduledDate = scheduledDate.minusDays(1);
+        }
+
+        return null;
+    }
+
+    /**
+     * TODO: Remove this method when connection with Resource Manager is established
      * Check if a request can be scheduled on a given day.
      *
      * @param request       - Request that will be scheduled.
@@ -66,13 +87,6 @@ public class Faculty {
      */
     protected boolean checkAvailabilityForDate(Request request, LocalDate scheduledDate) {
         List<Request> list = schedule.get(scheduledDate);
-
-        /*
-          TODO: Replace this after Resource class is implemented
-          For now, the number of request is used as a metric.
-          TODO: Replace ALLOCATED_RESOURCES with an actual bound after resource_manager is implemented.
-          For now, this is checked against a hardcoded value.
-         */
         long resources = (list == null) ? 0 : list.size();
         return resources + 1 <= ALLOCATED_RESOURCES;
     }
@@ -100,21 +114,12 @@ public class Faculty {
      */
     public void handleIncomingRequest(Request request) {
         LocalDate currentDate = timeProvider.getCurrentTime();
-        if (request.getPreferredDate().isBefore(currentDate) || !canScheduleRequest(request)) {
+        if (request.getPreferredDate().isBefore(currentDate) || getScheduledDateFromResourceManager(request) == null) {
             request.setStatus(RequestStatus.DENIED);
             return;
         }
 
         request.setStatus(RequestStatus.PENDING);
         pendingRequests.add(request);
-    }
-
-    /**
-     * TODO: Implement method with connection to resource manager.
-     * @param request - incoming Request.
-     * @return true if there are enough resources in any day until the preferred date.
-     */
-    private boolean canScheduleRequest(Request request) {
-        return true;
     }
 }
