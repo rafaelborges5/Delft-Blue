@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.authentication.config;
+package sem.faculty.config;
 
 import javax.sql.DataSource;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * The H2 config.
  */
 @Configuration
-@EnableJpaRepositories("nl.tudelft.sem.template.authentication.domain")
+@EnableJpaRepositories("sem.faculty.config")
 @PropertySource("classpath:application-dev.properties")
 @EnableTransactionManagement
 public class H2Config {

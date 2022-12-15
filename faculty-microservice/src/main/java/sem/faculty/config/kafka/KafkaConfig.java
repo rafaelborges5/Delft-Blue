@@ -1,4 +1,4 @@
-package sem.faculty.kafka.config;
+package sem.faculty.config.kafka;
 
 import java.util.HashMap;
 import java.util.Map;
