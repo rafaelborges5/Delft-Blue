@@ -1,14 +1,19 @@
 package sem.faculty.handler;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.FacultyName;
 import sem.faculty.domain.Request;
-import sem.faculty.provider.CurrentTimeProvider;
+import sem.faculty.domain.scheduler.DenyScheduler;
+import sem.faculty.domain.scheduler.Scheduler;
+import sem.faculty.domain.scheduler.PendingScheduler;
+import sem.faculty.provider.TimeProvider;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +23,9 @@ import java.util.Map;
 @Component
 public class FacultyHandler {
     Map<FacultyName, Faculty> faculties;
+    Scheduler scheduler;
+    @Autowired
+    TimeProvider timeProvider;
 
     public FacultyHandler() {
         faculties = new HashMap<>();
@@ -35,7 +43,7 @@ public class FacultyHandler {
     private void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
-            faculties.put(fn, new Faculty(fn, new CurrentTimeProvider()));
+            faculties.put(fn, new Faculty(fn, timeProvider));
         }
     }
 
@@ -49,7 +57,22 @@ public class FacultyHandler {
             containerFactory = "kafkaListenerContainerFactory2"
     )
     void listener(Request request) {
-        faculties.get(request.getFacultyName()).handleIncomingRequest(request);
+        handleIncomingRequests(request);
+    }
+
+    /**
+     * Choose how to handle an incoming Request and schedule it accordingly.
+     * @param request - Request to be scheduled.
+     */
+    private void handleIncomingRequests(Request request) {
+        LocalDate currentDate = timeProvider.getCurrentTime();
+        LocalDate preferredDate = request.getPreferredDate();
+        if (preferredDate.isBefore(currentDate)) {
+            scheduler = new DenyScheduler();
+        } else {
+            scheduler = new PendingScheduler();
+        }
+        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
 
