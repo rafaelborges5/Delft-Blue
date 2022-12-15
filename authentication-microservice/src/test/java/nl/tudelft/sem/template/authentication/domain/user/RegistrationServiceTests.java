@@ -17,6 +17,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 // activate profiles to have spring use mocks during auto-injection of certain beans.
@@ -42,9 +45,11 @@ public class RegistrationServiceTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
         final Role testRole = Role.EMPLOYEE;
+        final List<Faculty> testFaculty = new ArrayList<>();
+        testFaculty.add(Faculty.EEMCS);
 
         // Act
-        registrationService.registerUser(testUser, testPassword, testRole);
+        registrationService.registerUser(testUser, testPassword, testRole, testFaculty);
 
         // Assert
         AppUser savedUser = userRepository.findByNetId(testUser).orElseThrow();
@@ -52,6 +57,7 @@ public class RegistrationServiceTests {
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
         assertThat(savedUser.getRole()).isEqualTo(testRole);
+        assertThat(savedUser.getFaculty()).isEqualTo(testFaculty);
     }
 
     @Test
@@ -61,12 +67,14 @@ public class RegistrationServiceTests {
         final HashedPassword existingTestPassword = new HashedPassword("password123");
         final Password newTestPassword = new Password("password456");
         final Role testRole = Role.EMPLOYEE;
+        final List<Faculty> testFaculty = new ArrayList<>();
+        testFaculty.add(Faculty.EEMCS);
 
-        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole);
+        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole, testFaculty);
         userRepository.save(existingAppUser);
 
         // Act
-        ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword, testRole);
+        ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword, testRole, testFaculty);
 
         // Assert
         assertThatExceptionOfType(Exception.class)
@@ -77,6 +85,7 @@ public class RegistrationServiceTests {
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
         assertThat(savedUser.getRole()).isEqualTo(testRole);
+        assertThat(savedUser.getFaculty()).isEqualTo(testFaculty);
     }
 
     @AfterAll
