@@ -2,6 +2,7 @@ package sem.commons;
 
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
  * The status was also omitted, because the status is only stored
  * in the database and not needed in between microservices.
  */
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestDTO {
