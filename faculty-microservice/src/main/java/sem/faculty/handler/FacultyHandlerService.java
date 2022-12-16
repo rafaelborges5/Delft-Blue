@@ -1,12 +1,10 @@
 package sem.faculty.handler;
 
 import org.springframework.stereotype.Service;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.RequestDTO;
-import sem.commons.FacultyName;
+import sem.commons.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
