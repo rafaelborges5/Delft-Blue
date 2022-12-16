@@ -1,9 +1,8 @@
 package sem.commons;
 
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 
 /**
  * DTO for the request class, containing only the attributes and no logic.
@@ -11,6 +10,8 @@ import lombok.NoArgsConstructor;
  * in the database and not needed in between microservices.
  */
 @Getter
+@Setter
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestDTO {
