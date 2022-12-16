@@ -2,9 +2,7 @@ package nl.tudelft.sem.template.authentication.controllers;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.authentication.JwtUserDetailsService;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.Password;
-import nl.tudelft.sem.template.authentication.domain.user.RegistrationService;
+import nl.tudelft.sem.template.authentication.domain.user.*;
 import nl.tudelft.sem.template.authentication.kafkaconfiguration.ProducerController;
 import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
@@ -21,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 public class AuthenticationController {
@@ -96,7 +96,10 @@ public class AuthenticationController {
         try {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
-            registrationService.registerUser(netId, password);
+            Role role = Role.valueOf(request.getRole());
+            List<Faculty> faculty = request.getFaculty();
+
+            registrationService.registerUser(netId, password, role, faculty);
             producerController.produce(netId.toString());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

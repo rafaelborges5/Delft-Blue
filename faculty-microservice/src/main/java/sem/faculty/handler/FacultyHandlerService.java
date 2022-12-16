@@ -1,6 +1,7 @@
 package sem.faculty.handler;
 
 import org.springframework.stereotype.Service;
+import sem.commons.AcceptRequestsDTO;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.RequestDTO;
 import sem.commons.FacultyName;
@@ -52,5 +53,25 @@ public class FacultyHandlerService {
                                 x.getResource()))
                         .collect(Collectors.toList()));
 
+    }
+
+    /**
+     * Accept requests status dto.
+     *
+     * @param facultyName      the faculty name
+     * @param acceptedRequests the accepted requests
+     * @return the status dto
+     */
+    public StatusDTO acceptRequests(String facultyName, List<RequestDTO> acceptedRequests) {
+
+        try {
+            FacultyName.valueOf(facultyName);
+        } catch (IllegalArgumentException e) {
+            return new StatusDTO("Wrong faculty name");
+        }
+
+        //TODO: accept the requests in given faculty (also check if there requests even exist)
+
+        return new StatusDTO("OK");
     }
 }

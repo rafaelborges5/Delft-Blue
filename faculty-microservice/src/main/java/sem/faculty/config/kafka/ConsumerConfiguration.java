@@ -1,4 +1,4 @@
-package sem.faculty.kafka.config;
+package sem.faculty.config.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;

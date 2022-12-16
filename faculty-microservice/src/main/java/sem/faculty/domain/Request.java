@@ -6,31 +6,40 @@ import javax.persistence.*;
 
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sem.commons.FacultyName;
 import sem.commons.Resource;
 
+/**
+ * A DDD entity representing an request in our domain.
+ */
 @Entity
+@Table(name = "requests")
+@NoArgsConstructor
 @Getter
 @Setter
 public class Request {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "requestId", nullable = false)
     private long requestId;
+    @Column(name = "name", nullable = false)
     private String name;
+    @Column(name = "netId", nullable = false)
     private String netId;
+    @Column(name = "description", nullable = false)
     private String description;
+    @Column(name = "preferredDate", nullable = false)
     private LocalDate preferredDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private RequestStatus status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "facultyName", nullable = false)
     private FacultyName facultyName;
     @Embedded
     private Resource resource;
-
-    /**
-     * Empty Constructor.
-     */
-    public Request() {
-    }
 
     /**
      * Constructor method.

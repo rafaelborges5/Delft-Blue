@@ -1,7 +1,8 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
-
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * A DDD service for registering a new user.
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
     private final transient UserRepository userRepository;
     private final transient PasswordHashingService passwordHashingService;
-
 
     /**
      * Instantiates a new UserService.
@@ -29,16 +29,18 @@ public class RegistrationService {
      *
      * @param netId    The NetID of the user
      * @param password The password of the user
+     * @param role     The role of the user
+     * @param faculty  The faculty of the user
      * @throws Exception if the user already exists
      */
-    public AppUser registerUser(NetId netId, Password password) throws Exception {
+    public AppUser registerUser(NetId netId, Password password, Role role, List<Faculty> faculty) throws Exception {
 
         if (checkNetIdIsUnique(netId)) {
             // Hash password
             HashedPassword hashedPassword = passwordHashingService.hash(password);
 
             // Create new account
-            AppUser user = new AppUser(netId, hashedPassword);
+            AppUser user = new AppUser(netId, hashedPassword, role, faculty);
             userRepository.save(user);
 
             return user;
