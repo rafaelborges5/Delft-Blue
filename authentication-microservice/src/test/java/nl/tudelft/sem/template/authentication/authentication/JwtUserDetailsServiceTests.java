@@ -19,6 +19,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 // activate profiles to have spring use mocks during auto-injection of certain beans.
@@ -39,8 +42,11 @@ public class JwtUserDetailsServiceTests {
         final NetId testUser = new NetId("SomeUser");
         final HashedPassword testHashedPassword = new HashedPassword("password123Hash");
         final Role testRole = Role.EMPLOYEE;
+        final List<Faculty> testFaculty = new ArrayList<>();
+        testFaculty.add(Faculty.EEMCS);
+        testFaculty.add(Faculty.AE);
 
-        AppUser appUser = new AppUser(testUser, testHashedPassword, testRole);
+        AppUser appUser = new AppUser(testUser, testHashedPassword, testRole, testFaculty);
         userRepository.save(appUser);
 
         // Act
@@ -49,7 +55,8 @@ public class JwtUserDetailsServiceTests {
         // Assert
         assertThat(actual.getUsername()).isEqualTo(testUser.toString());
         assertThat(actual.getPassword()).isEqualTo(testHashedPassword.toString());
-        //Role test not needed because its for authentication
+        // Role test not needed because it's for authentication
+        // Faculty test not needed because it's for authentication
     }
 
     @Test
@@ -60,8 +67,10 @@ public class JwtUserDetailsServiceTests {
         final NetId testUser = new NetId("AnotherUser");
         final String testPasswordHash = "password123Hash";
         final Role testRole = Role.EMPLOYEE;
+        final List<Faculty> testFaculty = new ArrayList<>();
+        testFaculty.add(Faculty.EEMCS);
 
-        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash), testRole);
+        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash), testRole, testFaculty);
         userRepository.save(appUser);
 
         // Act
