@@ -9,7 +9,6 @@ import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
 import sem.faculty.provider.CurrentTimeProvider;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +60,6 @@ public class FacultyHandler {
      */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        //TODO: get requests from given faculty
-        return new ArrayList<>();
+        return faculty.getPendingRequests();
     }
 }

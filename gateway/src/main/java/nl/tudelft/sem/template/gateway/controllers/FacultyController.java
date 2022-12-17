@@ -57,7 +57,7 @@ public class FacultyController {
      * @throws TimeoutException     the timeout exception
      */
     @PostMapping("/faculty/pending")
-    public ResponseEntity<String> getPendingRequests(
+    public ResponseEntity<PendingRequestsDTO> getPendingRequests(
             @RequestBody FacultyNameDTO facultyNameDTO) throws ExecutionException, InterruptedException, TimeoutException {
         // create producer record
         ProducerRecord<String, FacultyNameDTO> record =
@@ -68,21 +68,17 @@ public class FacultyController {
         RequestReplyFuture<String, FacultyNameDTO, PendingRequestsDTO> sendAndReceive =
                 replyingKafkaTemplatePendingRequests.sendAndReceive(record);
 
-        //confirm if producer produced successfully
-        SendResult<String, FacultyNameDTO> sendResult = sendAndReceive.getSendFuture().get(10, TimeUnit.SECONDS);
-
-        //print all headers
-        //sendResult.getProducerRecord().headers()
-        // .forEach(header -> System.out.println(header.key() + ":" + header.value().toString()));
-
         // get consumer record
         ConsumerRecord<String, PendingRequestsDTO> consumerRecord = sendAndReceive.get(10, TimeUnit.SECONDS);
         // return consumer value
 
-        System.out.println("got a list from a faculty " + facultyNameDTO.getFacultyName() +
-                " with status " + consumerRecord.value().getStatus() + ". The list is " +
-                consumerRecord.value().getRequests().toString());
-        return ResponseEntity.ok("finished and printed to console");
+        PendingRequestsDTO pendingRequestsDTO = consumerRecord.value();
+
+        if (pendingRequestsDTO.getStatus().equals("OK")) {
+            return ResponseEntity.ok(pendingRequestsDTO);
+        } else {
+            return ResponseEntity.status(400).body(pendingRequestsDTO);
+        }
     }
 
     /**
@@ -94,7 +90,7 @@ public class FacultyController {
      * @throws InterruptedException the interrupted exception
      */
     @PostMapping("/faculty/accept")
-    public ResponseEntity<String> acceptRequests(
+    public ResponseEntity<StatusDTO> acceptRequests(
             @RequestBody AcceptRequestsDTO acceptRequestsDTO
     ) throws ExecutionException, InterruptedException {
         ProducerRecord<String, AcceptRequestsDTO> record =
@@ -107,8 +103,12 @@ public class FacultyController {
 
         ConsumerRecord<String, StatusDTO> consumerRecord = sendAndReceive.get();
 
-        System.out.println("got a response with status " + consumerRecord.value().getStatus());
+        StatusDTO statusDTO = consumerRecord.value();
 
-        return ResponseEntity.ok("ok");
+        if (statusDTO.getStatus().equals("OK")) {
+            return ResponseEntity.ok(statusDTO);
+        } else {
+            return ResponseEntity.status(400).body(statusDTO);
+        }
     }
 }

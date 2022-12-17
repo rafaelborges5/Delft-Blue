@@ -47,7 +47,7 @@ class AcceptRequestsDTOTest {
     @Test
     void setAcceptedRequests() throws NotValidResourcesException {
         List<RequestDTO> list2 = List.of(
-               new RequestDTO(0L, "name2", "NETID2", FacultyName.EEMCS, "descr2",
+                new RequestDTO(0L, "name2", "NETID2", FacultyName.EEMCS, "descr2",
                         LocalDate.of(2015, 2, 3), resource)
         );
         acceptRequestsDTO.setAcceptedRequests(list2);
@@ -58,9 +58,24 @@ class AcceptRequestsDTOTest {
     void testEquals() throws NotValidResourcesException {
         List<RequestDTO> list2 = List.of(
                 new RequestDTO(0L, "name", "NETID", FacultyName.EEMCS, "descr",
-                LocalDate.of(2015, 2, 3), resource)
+                        LocalDate.of(2015, 2, 3), resource)
         );
         AcceptRequestsDTO acceptRequestsDTO2 = new AcceptRequestsDTO("EEMCS", list2);
         assertEquals(acceptRequestsDTO2, acceptRequestsDTO);
+    }
+
+    @Test
+    void canEqual() {
+        AcceptRequestsDTO acceptRequestsDTO2 = new AcceptRequestsDTO("EEMCS", list);
+        assertTrue(acceptRequestsDTO.canEqual(acceptRequestsDTO2));
+    }
+
+    @Test
+    void testToString() {
+        System.out.println(acceptRequestsDTO.toString());
+        assertEquals("AcceptRequestsDTO(facultyName=EEMCS, acceptedRequests=[RequestDTO(" +
+                        "requestId=0, name=name, netId=NETID, faculty=EEMCS, description=descr, " +
+                        "preferredDate=2015-02-03, resource=Resource(cpu=3, gpu=2, memory=1))])",
+                acceptRequestsDTO.toString());
     }
 }
