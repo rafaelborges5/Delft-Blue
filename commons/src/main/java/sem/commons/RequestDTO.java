@@ -23,6 +23,25 @@ public class RequestDTO {
     private String description;
     private LocalDate preferredDate;
     private Resource resource;
+
+    /**
+     * secundairy constructor without requestID.
+     * @param name - the request name
+     * @param netId - the user NetId
+     * @param faculty - the faculty to send the request to
+     * @param description - the description
+     * @param preferredDate - the preferred date to schedule the request
+     * @param resource - the resource required for the request.
+     */
+    public RequestDTO(String name, String netId, FacultyName faculty, String description,
+                      LocalDate preferredDate, Resource resource) {
+        this.name = name;
+        this.netId = netId;
+        this.faculty = faculty;
+        this.description = description;
+        this.preferredDate = preferredDate;
+        this.resource = resource;
+    }
 }
 
 
