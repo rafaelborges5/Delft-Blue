@@ -51,7 +51,7 @@ public class NotificationControllerTest {
         List<Notification> listToReturn = List.of(notification1, notification2);
         NotificationPackage notificationPackage = new NotificationPackage(listToReturn.stream().map(x ->
                         new NotificationDTO(x.getOwnerNetId(), x.getDescription())).collect(Collectors.toList()));
-        when(notificationRepository.findByOwnerNetId("testId")).thenReturn(listToReturn);
+        when(notificationRepository.findByOwnerNetIdAndSeen("testId", false)).thenReturn(listToReturn);
         NotificationPackage returned = consumer.getNotifications(
                 new ConsumerRecord<>("test", 1, 1L, "test", new NetIdDTO("testId")), new NetIdDTO("testId"));
         assertThat(returned).isEqualTo(notificationPackage);

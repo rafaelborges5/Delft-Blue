@@ -12,6 +12,7 @@ import sem.commons.NetIdDTO;
 import sem.commons.NotificationDTO;
 import sem.commons.NotificationPackage;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,10 +55,12 @@ public class NotificationController {
             containerFactory = "kafkaListenerContainerFactoryNetId"
     )
     @SendTo
+    @Transactional
     public NotificationPackage getNotifications(ConsumerRecord<String, NetIdDTO> record, @Payload NetIdDTO netId) {
         // notificationRepository.saveAndFlush(new Notification(netId.getNetId(), "test"));
         String ownerNetId = netId.getNetId();
-        List<Notification> notifications = notificationRepository.findByOwnerNetId(ownerNetId);
+        List<Notification> notifications = notificationRepository.findByOwnerNetIdAndSeen(ownerNetId, false);
+        notifications.forEach(x -> notificationRepository.updateNotificationSeenById(x.getId()));
         return new NotificationPackage(notifications.stream().map(x ->
                         new NotificationDTO(x.getOwnerNetId(), x.getDescription())).collect(Collectors.toList()));
     }
