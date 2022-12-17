@@ -13,10 +13,13 @@ class AcceptRequestsDTOTest {
 
     AcceptRequestsDTO acceptRequestsDTO;
     List<RequestDTO> list;
+    Resource resource;
 
     @BeforeEach
-    void setUp() {
-        list = List.of(new RequestDTO("netId", "name", "desc", LocalDate.of(2015, 2, 3), 5, 2, 1));
+    void setUp() throws NotValidResourcesException {
+        resource = new Resource(3, 2, 1);
+        list = List.of(new RequestDTO(0L, "name", "NETID", FacultyName.EEMCS, "descr",
+                LocalDate.of(2015, 2, 3), resource));
         acceptRequestsDTO = new AcceptRequestsDTO("EEMCS", list);
     }
 
@@ -42,20 +45,22 @@ class AcceptRequestsDTOTest {
     }
 
     @Test
-    void setAcceptedRequests() {
+    void setAcceptedRequests() throws NotValidResourcesException {
         List<RequestDTO> list2 = List.of(
-                new RequestDTO("netId2", "name2", "desc2", LocalDate.of(2015, 2, 3), 5, 2, 1)
+               new RequestDTO(0L, "name2", "NETID2", FacultyName.EEMCS, "descr2",
+                        LocalDate.of(2015, 2, 3), resource)
         );
         acceptRequestsDTO.setAcceptedRequests(list2);
         assertEquals(list2, acceptRequestsDTO.getAcceptedRequests());
     }
 
     @Test
-    void testEquals() {
+    void testEquals() throws NotValidResourcesException {
         List<RequestDTO> list2 = List.of(
-                new RequestDTO("netId", "name", "desc", LocalDate.of(2015, 2, 3), 5, 2, 1)
+                new RequestDTO(0L, "name", "NETID", FacultyName.EEMCS, "descr",
+                LocalDate.of(2015, 2, 3), resource)
         );
         AcceptRequestsDTO acceptRequestsDTO2 = new AcceptRequestsDTO("EEMCS", list2);
-        assertEquals(acceptRequestsDTO, acceptRequestsDTO2);
+        assertEquals(acceptRequestsDTO2, acceptRequestsDTO);
     }
 }

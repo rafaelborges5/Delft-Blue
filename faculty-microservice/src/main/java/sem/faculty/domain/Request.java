@@ -8,6 +8,8 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sem.commons.FacultyName;
+import sem.commons.Resource;
 
 /**
  * A DDD entity representing an request in our domain.

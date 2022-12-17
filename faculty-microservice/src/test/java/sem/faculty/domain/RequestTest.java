@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sem.commons.FacultyName;
+import sem.commons.NotValidResourcesException;
+import sem.commons.Resource;
 
 class RequestTest {
     Request request;

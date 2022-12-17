@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import lombok.Getter;
+import sem.commons.FacultyName;
 import sem.faculty.provider.TimeProvider;
 
 @Getter

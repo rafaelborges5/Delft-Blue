@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import sem.commons.FacultyName;
 import sem.faculty.domain.Faculty;
-import sem.faculty.domain.FacultyName;
 import sem.faculty.domain.Request;
 import sem.faculty.provider.CurrentTimeProvider;
 
