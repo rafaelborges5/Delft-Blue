@@ -63,6 +63,8 @@ test {
         includes = ['sem.commons.*']
         excludes = []
     }
+
+    finalizedBy jacocoTestReport
 }
 
 jacocoTestCoverageVerification() {
@@ -80,6 +82,10 @@ jacocoTestCoverageVerification() {
             }
         }
     }
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
 }
 
 pmd {

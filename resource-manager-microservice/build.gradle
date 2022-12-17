@@ -71,7 +71,7 @@ test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['nl.tudelft.sem.template.*']
+		includes = ['nl.tudelft.sem.resource.manager.*']
 		excludes = []
 	}
 
