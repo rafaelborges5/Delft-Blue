@@ -2,10 +2,13 @@ package nl.tudelft.sem.template.gateway.controllers;
 
 import lombok.Getter;
 import nl.tudelft.sem.template.gateway.authentication.AuthManager;
+import org.apache.coyote.Response;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -52,10 +55,10 @@ public class NotificationController {
      * @throws TimeoutException in case of Timeout in the retrieval
      */
     @GetMapping("{netId}")
-    public NotificationPackage getNewNotifications(@PathVariable("netId") String netId) throws ExecutionException,
+    public ResponseEntity<NotificationPackage> getNewNotifications(@PathVariable("netId") String netId) throws ExecutionException,
             InterruptedException, TimeoutException {
         if (!checkIdentity(netId)) {
-            return new NotificationPackage(new ArrayList<>());
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         ProducerRecord<String, NetIdDTO> record =
@@ -67,7 +70,7 @@ public class NotificationController {
 
         ConsumerRecord<String, NotificationPackage> consumerRecord = sendAndReceive.get(10, TimeUnit.SECONDS);
 
-        return consumerRecord.value();
+        return ResponseEntity.ok(consumerRecord.value());
     }
 
     /**

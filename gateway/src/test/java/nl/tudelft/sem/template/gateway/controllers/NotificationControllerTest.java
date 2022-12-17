@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 import sem.commons.NetIdDTO;
@@ -57,16 +59,16 @@ class NotificationControllerTest {
         when(replyingKafkaTemplatePendingNotificationsMock.sendAndReceive(any())).thenReturn(future);
         when(authManagerMock.getNetId()).thenReturn("test");
 
-        NotificationPackage returned = notificationController.getNewNotifications("test");
-        assertThat(returned).isEqualTo(new NotificationPackage(List.of(testNotification)));
+        ResponseEntity<NotificationPackage> returned = notificationController.getNewNotifications("test");
+        assertThat(returned.getBody()).isEqualTo(new NotificationPackage(List.of(testNotification)));
     }
 
     @Test
     void testDeniedWhenIdentityDifferent() throws ExecutionException, InterruptedException, TimeoutException {
         when(authManagerMock.getNetId()).thenReturn("notTheSame");
-        NotificationPackage returnedPackage = notificationController.getNewNotifications("test");
+        ResponseEntity<NotificationPackage> returnedPackage = notificationController.getNewNotifications("test");
         NotificationPackage emptyPackage = new NotificationPackage(new ArrayList<>());
-        assertThat(returnedPackage).isEqualTo(emptyPackage);
+        assertThat(returnedPackage.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 
 
