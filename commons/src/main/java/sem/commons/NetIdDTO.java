@@ -16,9 +16,4 @@ public class NetIdDTO {
         // validate NetID
         this.netId = netId;
     }
-
-    @Override
-    public String toString() {
-        return netId;
-    }
 }

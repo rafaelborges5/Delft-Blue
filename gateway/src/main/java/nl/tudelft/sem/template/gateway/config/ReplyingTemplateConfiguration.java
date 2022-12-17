@@ -9,11 +9,20 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import sem.commons.*;
 
-import java.util.List;
-
+/**
+ * This class has all the configurations that allow for the consuming and replying of messages. There is some
+ * duplication with the ProducerConfiguration and ConsumerConfiguration classes but this way it improves readability
+ * and understanding of what is needed to consume and produce messages
+ */
 @Configuration
 public class ReplyingTemplateConfiguration {
 
+    /**
+     * This method will set up the kafkaTemplate for Consuming and Replying to messages.
+     * @param pf the producerFactory to reply
+     * @param container the listener container
+     * @return the kafkaTemplate
+     */
     @Bean
     public ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyKafkaTemplatePendingRequests(
             ProducerFactory<String, FacultyNameDTO> pf,
@@ -22,6 +31,11 @@ public class ReplyingTemplateConfiguration {
         return new ReplyingKafkaTemplate<>(pf, container);
     }
 
+    /**
+     * This method will return the container used in replyKafkaTemplatePendingRequests.
+     * @param cf the consumer factory
+     * @return the listenerContainer
+     */
     @Bean
     public KafkaMessageListenerContainer<String, PendingRequestsDTO> replyContainerPendingRequests(
             ConsumerFactory<String, PendingRequestsDTO> cf) {
@@ -29,18 +43,29 @@ public class ReplyingTemplateConfiguration {
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+    /**
+     * This method will set up the kafkaTemplate for Consuming and Replying to messages.
+     * @param pf the producerFactory to reply
+     * @param container the listener container
+     * @return the kafkaTemplate
+     */
     @Bean
-    public ReplyingKafkaTemplate<String, NetIdDTO, List<NotificationDTO>> replyKafkaTemplatePendingNotifications(
+    public ReplyingKafkaTemplate<String, NetIdDTO, NotificationPackage> replyKafkaTemplatePendingNotifications(
             ProducerFactory<String, NetIdDTO> pf,
-            KafkaMessageListenerContainer<String, List<NotificationDTO>> container
+            KafkaMessageListenerContainer<String, NotificationPackage> container
     ) {
         return new ReplyingKafkaTemplate<>(pf, container);
     }
 
+    /**
+     * This method will return the container used in replyKafkaTemplatePendingNotifications.
+     * @param cf the consumer factory
+     * @return the listenerContainer
+     */
     @Bean
-    public KafkaMessageListenerContainer<String, List<NotificationDTO>> replyContainerPendingNotifications(
-            ConsumerFactory<String, List<NotificationDTO>> cf) {
-        ContainerProperties containerProperties = new ContainerProperties("pending-notifications");
+    public KafkaMessageListenerContainer<String, NotificationPackage> replyContainerPendingNotifications(
+            ConsumerFactory<String, NotificationPackage> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("poll-notifications-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
