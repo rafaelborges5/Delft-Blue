@@ -2,8 +2,6 @@ package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
-import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
-import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
@@ -14,27 +12,22 @@ import java.time.LocalDate;
 
 @Service
 public class ResourceAvailabilityService {
-    private final transient NodeRepository nodeRepository;
     private final transient ReservedResourcesRepository resourcesRepository;
     private final transient DateProvider timeProvider;
     private final transient FreepoolManager freepoolManager;
     private final transient DefaultResources defaultResources;
 
     /**
-     * Instantiates a new {@link ResourceAvailabilityService}.
-     *
-     * @param nodeRepository the repository of all
-     * {@link ClusterNode ClusterNodes} in the cluster
-     * @param resourcesRepository the repository of resources assigned to
-     * {@link Reserver Reserver} - {@link java.util.Date Date} pairs
-     * @param timeProvider an interface for the time provider
+     * Injects dependencies.
+     * @param resourcesRepository ResourcesRepository
+     * @param timeProvider TimeProvider
+     * @param freepoolManager FreepoolManager
+     * @param defaultResources DefaultResources
      */
-    public ResourceAvailabilityService(NodeRepository nodeRepository,
-                                       ReservedResourcesRepository resourcesRepository,
+    public ResourceAvailabilityService(ReservedResourcesRepository resourcesRepository,
                                        DateProvider timeProvider,
                                        FreepoolManager freepoolManager,
                                        DefaultResources defaultResources) {
-        this.nodeRepository = nodeRepository;
         this.resourcesRepository = resourcesRepository;
         this.timeProvider = timeProvider;
         this.freepoolManager = freepoolManager;

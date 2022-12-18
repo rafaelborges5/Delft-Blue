@@ -21,6 +21,13 @@ public class FreepoolManager {
     private final transient ReservedResourcesRepository resourcesRepository;
     private final transient NodeRepository nodeRepository;
 
+    /**
+     * Injects dependencies.
+     *
+     * @param defaultResources DefaultResources
+     * @param resourcesRepository ResourcesRepository
+     * @param nodeRepository NodeRepository
+     */
     @Autowired
     public FreepoolManager(DefaultResources defaultResources,
                            ReservedResourcesRepository resourcesRepository,

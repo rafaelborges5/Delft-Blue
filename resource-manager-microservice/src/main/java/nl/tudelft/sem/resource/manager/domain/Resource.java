@@ -58,8 +58,12 @@ public class Resource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Resource)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Resource)) {
+            return false;
+        }
         Resource resource = (Resource) o;
         return cpuResources == resource.cpuResources &&
                 gpuResources == resource.gpuResources &&
