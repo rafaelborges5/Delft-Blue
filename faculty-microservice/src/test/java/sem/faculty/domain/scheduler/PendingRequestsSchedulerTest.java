@@ -2,7 +2,6 @@ package sem.faculty.domain.scheduler;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.springframework.security.core.parameters.P;
 import sem.faculty.domain.*;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
@@ -11,16 +10,29 @@ import java.time.LocalDate;
 import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-class PendingSchedulerTest {
+class PendingRequestsSchedulerTest {
 
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
-    PendingScheduler scheduler = new PendingScheduler();
+    SchedulableRequestsScheduler scheduler = new PendingRequestsScheduler();
 
+    @Test
+    void saveRequestInFaculty() throws NotValidResourcesException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
+        Request request = new Request("name", "netId", "description",
+                date, RequestStatus.DROPPED,
+                FacultyName.ARCH, new Resource(5, 1, 1));
+        Faculty faculty = mock(Faculty.class);
+
+        scheduler.saveRequestInFaculty(request, faculty, date);
+        assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
+        verify(faculty, times(1)).addPendingRequest(request);
+        verifyNoMoreInteractions(faculty);
+    }
+
+    // Test abstract parent class
     @Test
     void schedulePendingRequest() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);

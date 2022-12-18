@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.FacultyName;
 import sem.faculty.domain.Request;
-import sem.faculty.domain.scheduler.DenyScheduler;
+import sem.faculty.domain.scheduler.DenyRequestsScheduler;
+import sem.faculty.domain.scheduler.PendingRequestsScheduler;
 import sem.faculty.domain.scheduler.Scheduler;
-import sem.faculty.domain.scheduler.PendingScheduler;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
@@ -30,6 +30,7 @@ public class FacultyHandler {
 
     /**
      * Constructor method.
+     *
      * @param timeProvider - TimeProvider that provides the current time.
      */
     public FacultyHandler(TimeProvider timeProvider) {
@@ -40,6 +41,7 @@ public class FacultyHandler {
 
     /**
      * Create a new Faculty Handler.
+     *
      * @return a new FacultyHandler.
      */
     @Bean
@@ -57,7 +59,6 @@ public class FacultyHandler {
         }
     }
 
-
     /**
      * Listen for incoming Requests.
      */
@@ -72,19 +73,22 @@ public class FacultyHandler {
 
     /**
      * Choose how to handle an incoming Request and schedule it accordingly.
+     *
      * @param request - Request to be scheduled.
      */
     void handleIncomingRequests(Request request) {
         LocalDate currentDate = timeProvider.getCurrentTime();
         LocalDate preferredDate = request.getPreferredDate();
+
+        // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate)) {
-            scheduler = new DenyScheduler();
+            scheduler = new DenyRequestsScheduler();
         } else {
-            scheduler = new PendingScheduler();
+            scheduler = new PendingRequestsScheduler();
         }
+
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
-
 
     /**
      * Gets pending requests.

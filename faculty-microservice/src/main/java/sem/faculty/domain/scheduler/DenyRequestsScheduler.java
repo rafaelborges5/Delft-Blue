@@ -8,18 +8,14 @@ import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
 
+/**
+ * Strategy class that automatically denies requests.
+ */
 @Service
-public class DenyScheduler implements Scheduler {
-
+public class DenyRequestsScheduler implements Scheduler {
     @Override
     public void scheduleRequest(Request request, Faculty faculty) {
         request.setStatus(RequestStatus.DENIED);
         //TODO Could add some notifications here.
-    }
-
-    @Override
-    public LocalDate getAvailableDate(Request request, FacultyName facultyName) {
-        //No connection needed as requests are denied without any additional checks.
-        return null;
     }
 }

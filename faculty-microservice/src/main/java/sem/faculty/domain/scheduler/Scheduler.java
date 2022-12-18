@@ -19,11 +19,4 @@ public interface Scheduler {
      * @param faculty - Faculty in which the request will be scheduled.
      */
     void scheduleRequest(Request request, Faculty faculty);
-
-    /**
-     * Ask Resource Manager for an available date if response is null than there is no available date.
-     * @param request - Request to be scheduled
-     * @param facultyName - FacultyName of the faculty
-     */
-    LocalDate getAvailableDate(Request request, FacultyName facultyName);
 }
