@@ -23,9 +23,10 @@ class FacultyHandlerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     FacultyHandler facultyHandler = new FacultyHandler(timeProvider);
+
     @Test
     void populateFaculties() {
-        for(FacultyName fn: FacultyName.values()) {
+        for (FacultyName fn : FacultyName.values()) {
             assertThat(facultyHandler.faculties.get(fn)).isNotNull();
         }
     }
@@ -40,6 +41,7 @@ class FacultyHandlerTest {
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyScheduler.class);
     }
+
     @Test
     void handleIncomingRequestsPendingScheduler() throws NotValidResourcesException {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 15);

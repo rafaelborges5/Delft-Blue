@@ -20,6 +20,7 @@ class PendingSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     PendingScheduler scheduler = new PendingScheduler();
+
     @Test
     void schedulePendingRequest() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
@@ -31,6 +32,7 @@ class PendingSchedulerTest {
         scheduler.scheduleRequest(request, faculty);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
     }
+
     @Test
     void scheduleDeniedRequest() throws NotValidResourcesException {
         LocalDate date = null;

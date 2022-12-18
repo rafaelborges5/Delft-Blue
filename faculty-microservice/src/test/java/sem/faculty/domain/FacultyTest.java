@@ -164,6 +164,7 @@ class FacultyTest {
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         assertThat(faculty.checkAvailabilityForDate(request1, date)).isTrue();
     }
+
     @Test
     void addPendingRequest() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);

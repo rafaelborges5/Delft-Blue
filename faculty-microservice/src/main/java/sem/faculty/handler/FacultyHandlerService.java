@@ -6,7 +6,6 @@ import sem.commons.PendingRequestsDTO;
 import sem.commons.RequestDTO;
 import sem.commons.StatusDTO;
 import sem.faculty.domain.FacultyName;
-import sem.faculty.handler.FacultyHandler;
 
 import java.util.ArrayList;
 import java.util.List;
