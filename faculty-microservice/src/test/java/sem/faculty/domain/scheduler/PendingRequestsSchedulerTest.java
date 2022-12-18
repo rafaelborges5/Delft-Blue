@@ -2,6 +2,9 @@ package sem.faculty.domain.scheduler;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import sem.commons.FacultyName;
+import sem.commons.Resource;
+import sem.commons.NotValidResourcesException;
 import sem.faculty.domain.*;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;

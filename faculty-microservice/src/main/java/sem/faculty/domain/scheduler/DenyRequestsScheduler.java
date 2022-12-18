@@ -2,7 +2,6 @@ package sem.faculty.domain.scheduler;
 
 import org.springframework.stereotype.Service;
 import sem.faculty.domain.Faculty;
-import sem.faculty.domain.FacultyName;
 import sem.faculty.domain.Request;
 import sem.faculty.domain.RequestStatus;
 
