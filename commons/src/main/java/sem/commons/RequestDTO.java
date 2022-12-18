@@ -1,51 +1,49 @@
 package sem.commons;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.time.LocalDate;
 
+import lombok.*;
+
 /**
- * The type Request dto.
+ * DTO for the request class, containing only the attributes and no logic.
+ * The status was also omitted, because the status is only stored
+ * in the database and not needed in between microservices.
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestDTO {
-    private String netId;
+
+    private long requestId;
     private String name;
+    private String netId;
+    private FacultyName faculty;
     private String description;
     private LocalDate preferredDate;
-    private int cpu;
-    private int gpu;
-    private int memory;
-
+    private Resource resource;
 
     /**
-     * Instantiates a new Request dto.
-     *
-     * @param netId         the net id
-     * @param name          the name
-     * @param description   the description
-     * @param preferredDate the preferred date
-     * @param cpu           the cpu
-     * @param gpu           the gpu
-     * @param memory        the memory
+     * secundairy constructor without requestID.
+     * @param name - the request name
+     * @param netId - the user NetId
+     * @param faculty - the faculty to send the request to
+     * @param description - the description
+     * @param preferredDate - the preferred date to schedule the request
+     * @param resource - the resource required for the request.
      */
-    public RequestDTO(
-            @JsonProperty("netId") String netId,
-            @JsonProperty("name") String name,
-            @JsonProperty("description") String description,
-            @JsonProperty("preferredDate") LocalDate preferredDate,
-            @JsonProperty("cpu") int cpu,
-            @JsonProperty("gpu") int gpu,
-            @JsonProperty("memory") int memory
-    ) {
-        this.netId = netId;
+    public RequestDTO(String name, String netId, FacultyName faculty, String description,
+                      LocalDate preferredDate, Resource resource) {
         this.name = name;
+        this.netId = netId;
+        this.faculty = faculty;
         this.description = description;
         this.preferredDate = preferredDate;
-        this.cpu = cpu;
-        this.gpu = gpu;
-        this.memory = memory;
+        this.resource = resource;
     }
 }
+
+
+
+

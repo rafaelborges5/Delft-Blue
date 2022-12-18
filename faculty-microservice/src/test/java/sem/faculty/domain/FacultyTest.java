@@ -7,6 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import sem.commons.FacultyName;
+import sem.commons.Resource;
+import sem.commons.NotValidResourcesException;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 

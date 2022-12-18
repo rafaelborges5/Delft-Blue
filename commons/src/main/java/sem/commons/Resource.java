@@ -1,22 +1,22 @@
-package sem.faculty.domain;
+package sem.commons;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+//import javax.persistence.Column;
+//import javax.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
-@Embeddable
+//@Embeddable
 @Getter
 @ToString
 @EqualsAndHashCode
 public class Resource {
 
-    @Column(name = "resource_cpu", nullable = false)
+    //@Column(name = "resource_cpu", nullable = false)
     private int cpu;
-    @Column(name = "resource_gpu", nullable = false)
+    //@Column(name = "resource_gpu", nullable = false)
     private int gpu;
-    @Column(name = "resource_memory", nullable = false)
+    //@Column(name = "resource_memory", nullable = false)
     private int memory;
 
     @SuppressWarnings("unused")

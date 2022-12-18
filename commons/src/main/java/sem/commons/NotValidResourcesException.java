@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.gateway.commons;
+package sem.commons;
 
 /**
  * Exception to indicate the that a resource is invalid.
