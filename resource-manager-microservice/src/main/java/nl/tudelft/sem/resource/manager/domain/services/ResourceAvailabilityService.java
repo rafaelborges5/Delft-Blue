@@ -1,8 +1,9 @@
-package nl.tudelft.sem.resource.manager.domain;
+package nl.tudelft.sem.resource.manager.domain.services;
 
+import nl.tudelft.sem.resource.manager.domain.DefaultResources;
+import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
-import nl.tudelft.sem.resource.manager.domain.node.OwnerName;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
@@ -16,6 +17,8 @@ public class ResourceAvailabilityService {
     private final transient NodeRepository nodeRepository;
     private final transient ReservedResourcesRepository resourcesRepository;
     private final transient DateProvider timeProvider;
+    private final transient FreepoolManager freepoolManager;
+    private final transient DefaultResources defaultResources;
 
     /**
      * Instantiates a new {@link ResourceAvailabilityService}.
@@ -28,10 +31,14 @@ public class ResourceAvailabilityService {
      */
     public ResourceAvailabilityService(NodeRepository nodeRepository,
                                        ReservedResourcesRepository resourcesRepository,
-                                       DateProvider timeProvider) {
+                                       DateProvider timeProvider,
+                                       FreepoolManager freepoolManager,
+                                       DefaultResources defaultResources) {
         this.nodeRepository = nodeRepository;
         this.resourcesRepository = resourcesRepository;
         this.timeProvider = timeProvider;
+        this.freepoolManager = freepoolManager;
+        this.defaultResources = defaultResources;
     }
 
     /**
@@ -42,44 +49,16 @@ public class ResourceAvailabilityService {
      * @return the amount of free resources
      * @throws IllegalStateException if there are a negative amount of free resources
      */
-    public Resource seeFreeResourcesTomorrow(Reserver faculty) throws IllegalStateException {
+    public Resource seeFreeResourcesTomorrow(Reserver faculty) {
+        Resource initialResources = defaultResources.getInitialResources();
+
         LocalDate date = timeProvider.getCurrentDate().plusDays(1);
-
-        OwnerName facultyName = new OwnerName(faculty.name());
-        OwnerName freepoolName = new OwnerName(Reserver.FREEPOOL.name());
-
-        Resource availableRes = nodeRepository
-                .findAllByOwnerNameOrOwnerName(facultyName, freepoolName)
-                .stream()
-                .map(ClusterNode::getResources)
-                .reduce(new Resource(), (r1, r2) -> {
-                    r1.setCpuResources(r1.getCpuResources() + r2.getCpuResources());
-                    r1.setGpuResources(r1.getGpuResources() + r2.getGpuResources());
-                    r1.setMemResources(r1.getMemResources() + r2.getMemResources());
-                    return r1;
-                });
-
-        Resource facRes = resourcesRepository
+        Resource availableFreepoolResources = freepoolManager.getAvailableResources(date);
+        Resource usedFacultyResources = resourcesRepository
                 .findByReserverAndDate(faculty, date)
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
-        Resource poolRes = resourcesRepository
-                .findByReserverAndDate(Reserver.FREEPOOL, date)
-                .map(ReservedResources::getResources)
-                .orElse(new Resource(0, 0, 0));
 
-        Resource freeResources = new Resource(
-                availableRes.getCpuResources() - poolRes.getCpuResources() - facRes.getCpuResources(),
-                availableRes.getGpuResources() - poolRes.getGpuResources() - facRes.getCpuResources(),
-                availableRes.getMemResources() - poolRes.getMemResources() - facRes.getMemResources()
-        );
-
-        if (freeResources.getMemResources() < 0
-                || freeResources.getGpuResources() < 0
-                || freeResources.getCpuResources() < 0) {
-            throw new IllegalStateException("Free resources cannot be negative");
-        }
-
-        return freeResources;
+        return Resource.sub(Resource.add(initialResources, availableFreepoolResources), usedFacultyResources);
     }
 }
