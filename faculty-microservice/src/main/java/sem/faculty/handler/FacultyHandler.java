@@ -15,7 +15,6 @@ import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,12 +51,13 @@ public class FacultyHandler {
     /**
      * Create Faculty instances for each FacultyName.
      */
-    final void populateFaculties() {
+    private void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
             faculties.put(fn, new Faculty(fn, timeProvider));
         }
     }
+
 
     /**
      * Listen for incoming Requests.
@@ -98,7 +98,6 @@ public class FacultyHandler {
      */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        //TODO: get requests from given faculty
-        return new ArrayList<>();
+        return faculty.getPendingRequests();
     }
 }

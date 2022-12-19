@@ -25,7 +25,8 @@ public class Faculty {
 
     /**
      * Constructor method.
-     * @param facultyName - FacultyName and represents the key to the faculty.
+     *
+     * @param facultyName  - FacultyName and represents the key to the faculty.
      * @param timeProvider - TimeProvider that provides the current time. It allows for easy mocking.
      */
     public Faculty(FacultyName facultyName, TimeProvider timeProvider) {
@@ -47,6 +48,7 @@ public class Faculty {
             list = new ArrayList<>();
         }
         list.add(request);
+        //TODO: reserveResources(request, scheduledDate); //Reserve the resources for request on the scheduledDate.
         schedule.put(scheduledDate, list);
     }
 
@@ -56,5 +58,18 @@ public class Faculty {
      */
     public void addPendingRequest(Request request) {
         pendingRequests.add(request);
+    }
+
+    /**
+     * Gets pending requests.
+     *
+     * @return the pending requests
+     */
+    public List<Request> getPendingRequests() {
+        List<Request> pendingList = new ArrayList<>();
+        while (!pendingRequests.isEmpty()) {
+            pendingList.add(pendingRequests.remove());
+        }
+        return pendingList;
     }
 }

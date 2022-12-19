@@ -1,6 +1,7 @@
 package sem.faculty.handler;
 
 import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
@@ -12,8 +13,18 @@ import sem.faculty.provider.TimeProvider;
 import sem.commons.FacultyName;
 import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
+
 import java.time.LocalDate;
 import java.time.Month;
+
+import org.junit.jupiter.api.BeforeEach;
+
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,12 +33,21 @@ class FacultyHandlerTest {
 
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
-    FacultyHandler facultyHandler = new FacultyHandler(timeProvider);
+    FacultyHandler facultyHandler;
+
+
+    @BeforeEach
+    void setUp() {
+        facultyHandler = new FacultyHandler(timeProvider);
+    }
 
     @Test
-    void populateFaculties() {
+    void newFacultyHandler() {
+        FacultyHandler facultyHandler1 = facultyHandler.newFacultyHandler();
+        Map<FacultyName, Faculty> faculties = facultyHandler1.faculties;
+
         for (FacultyName fn : FacultyName.values()) {
-            assertThat(facultyHandler.faculties.get(fn)).isNotNull();
+            assertNotNull(faculties.get(fn));
         }
     }
 
@@ -52,4 +72,13 @@ class FacultyHandlerTest {
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
+
+    @Test
+    void getPendingRequests() {
+        Faculty faculty = new Faculty(FacultyName.EEMCS, new CurrentTimeProvider());
+        facultyHandler.faculties.put(FacultyName.EEMCS, faculty);
+
+        assertEquals(facultyHandler.getPendingRequests(FacultyName.EEMCS), new ArrayList<>());
+    }
+
 }

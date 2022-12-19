@@ -3,8 +3,7 @@ package sem.commons;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserCredentialsTest {
 
@@ -40,5 +39,22 @@ class UserCredentialsTest {
     void setPassword() {
         uc.setPassword("newPassword");
         assertEquals("newPassword", uc.getPassword());
+    }
+
+    @Test
+    void testEquals() {
+        UserCredentials uc2 = new UserCredentials("test", "password");
+        assertEquals(uc, uc2);
+    }
+
+    @Test
+    void canEqual() {
+        UserCredentials uc2 = new UserCredentials("test", "password");
+        assertTrue(uc.canEqual(uc2));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("UserCredentials(netId=test, password=password)", uc.toString());
     }
 }
