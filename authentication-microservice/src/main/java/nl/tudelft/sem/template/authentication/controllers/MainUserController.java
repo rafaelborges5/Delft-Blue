@@ -66,7 +66,7 @@ public class MainUserController {
             Role role;
             try {
                 role = Role.valueOf(userDTO.getRole());
-            } catch (Exception e) {
+            } catch (IllegalArgumentException  e) {
                 return new StatusDTO("Provided role does not exist!");
             }
             List<String> facultiesStrings = userDTO.getFaculties();
@@ -76,14 +76,14 @@ public class MainUserController {
             for (String name : facultiesStrings) {
                 try {
                     faculties.add(FacultyName.valueOf(name));
-                } catch (Exception e) {
+                } catch (IllegalArgumentException  e) {
                     return new StatusDTO("Wrong faculty name");
                 }
             }
 
             registrationService.registerUser(netId, password, role, faculties);
-        } catch (Exception e) {
-            return new StatusDTO(e.getMessage());
+        } catch (NetIdAlreadyInUseException e) {
+            return new StatusDTO("User with netID: " + e.getMessage() + " already exists");
         }
 
         return new StatusDTO("OK");
