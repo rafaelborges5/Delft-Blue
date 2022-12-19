@@ -9,6 +9,14 @@ import sem.commons.Resource;
 public class ResourceTest {
 
     @Test
+    void testEmptyConstructor() {
+        Resource resource = new Resource();
+        assertEquals(0, resource.getCpu());
+        assertEquals(0, resource.getGpu());
+        assertEquals(0, resource.getMemory());
+    }
+
+    @Test
     void testResource() {
         Resource resource;
         try {
