@@ -38,7 +38,8 @@ class FacultyHandlerTest {
 
     @BeforeEach
     void setUp() {
-        facultyHandler = new FacultyHandler(timeProvider);
+        facultyHandler = new FacultyHandler();
+        facultyHandler.timeProvider = timeProvider;
     }
 
     @Test

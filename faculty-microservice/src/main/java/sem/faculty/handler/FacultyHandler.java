@@ -27,16 +27,17 @@ public class FacultyHandler {
     @Autowired
     TimeProvider timeProvider;
 
+
     /**
      * Constructor method.
-     *
-     * @param timeProvider - TimeProvider that provides the current time.
      */
-    public FacultyHandler(TimeProvider timeProvider) {
-        this.timeProvider = timeProvider;
+    public FacultyHandler() {
+        this.timeProvider = new CurrentTimeProvider();
         faculties = new HashMap<>();
         populateFaculties();
     }
+
+
 
     /**
      * Create a new Faculty Handler.
@@ -45,7 +46,7 @@ public class FacultyHandler {
      */
     @Bean
     public FacultyHandler newFacultyHandler() {
-        return new FacultyHandler(new CurrentTimeProvider());
+        return new FacultyHandler();
     }
 
     /**
