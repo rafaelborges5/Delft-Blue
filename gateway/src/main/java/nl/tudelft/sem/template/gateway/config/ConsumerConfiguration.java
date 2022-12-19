@@ -76,6 +76,7 @@ public class ConsumerConfiguration {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(TokenDTO.class));
     }
+
     /**
      * The Consumer Factory for NotificationPackages.
      * @return the consumerFactory
