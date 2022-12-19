@@ -1,5 +1,6 @@
 package nl.tudelft.sem.notification.manager.controllers;
 
+import lombok.Getter;
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
 import nl.tudelft.sem.notification.manager.domain.notification.NotificationRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@Getter
 public class NotificationController {
 
     private final NotificationRepository notificationRepository;

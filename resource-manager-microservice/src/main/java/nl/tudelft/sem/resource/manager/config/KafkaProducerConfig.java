@@ -1,5 +1,6 @@
 package nl.tudelft.sem.resource.manager.config;
 
+import lombok.Getter;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ import java.util.Map;
  */
 
 @Configuration
+@Getter
 public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")

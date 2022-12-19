@@ -1,5 +1,6 @@
 package nl.tudelft.sem.notification.manager.config;
 
+import lombok.Getter;
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
+@Getter
 public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")

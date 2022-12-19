@@ -42,6 +42,7 @@ public class ResourceAvailabilityService {
      * @return the amount of free resources
      * @throws IllegalStateException if there are a negative amount of free resources
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public Resource seeFreeResourcesTomorrow(Reserver faculty) throws IllegalStateException {
         LocalDate date = timeProvider.getCurrentDate().plusDays(1);
 
