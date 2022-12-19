@@ -52,6 +52,8 @@ dependencies {
 	implementation 'org.testcontainers:yugabytedb:1.17.6'
 
 
+	implementation project(path: ':commons')
+
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
 	developmentOnly 'org.hibernate:hibernate-entitymanager'

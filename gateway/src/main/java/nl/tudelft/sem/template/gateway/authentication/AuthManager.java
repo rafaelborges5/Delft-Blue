@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.authentication;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
