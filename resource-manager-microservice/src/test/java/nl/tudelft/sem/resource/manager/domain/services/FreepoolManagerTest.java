@@ -8,7 +8,13 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesReposito
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,17 +22,23 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+// activate profiles to have spring use mocks during auto-injection of certain beans.
+//@ActiveProfiles({"test"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FreepoolManagerTest {
+    @Autowired
     private transient FreepoolManager sut;
+    @Autowired
     private transient DefaultResources defaultResources;
+    @Autowired
     private transient ReservedResourcesRepository resourcesRepository;
+    @Autowired
     private transient NodeRepository nodeRepository;
 
     @BeforeEach
-    private void setup() {
-        defaultResources = new DefaultResources();
-        resourcesRepository = Mockito.mock(ReservedResourcesRepository.class);
-        nodeRepository = Mockito.mock(NodeRepository.class);
+    void setUp() {
         sut = new FreepoolManager(defaultResources, resourcesRepository, nodeRepository);
     }
 
@@ -35,8 +47,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        Mockito.when(resourcesRepository.findByReserverAndDate(Reserver.FREEPOOL, date))
-                .thenReturn(Optional.of(new ReservedResources(date, Reserver.FREEPOOL, res1)));
+        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
 
         ClusterNode node1 = new ClusterNode(
                 new OwnerName("name1"),
@@ -50,14 +61,12 @@ class FreepoolManagerTest {
                 new Token("token2"),
                 new Resource(40, 40, 40));
 
-        Mockito.when(nodeRepository.findAll()).thenReturn(List.of(node1, node2));
+        nodeRepository.saveAll(List.of(node1, node2));
 
         Resource availableResources = sut.getAvailableResources(date);
 
-        Resource clusterResources = Resource.add(node1.getResources(), node2.getResources());
-
         assertThat(availableResources)
-                .isEqualTo(Resource.sub(clusterResources, res1));
+                .isEqualTo(new Resource(0, 50, 80));
     }
 
     @Test
@@ -65,24 +74,16 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        Mockito.when(resourcesRepository.findByReserverAndDate(Reserver.FREEPOOL, date))
-                .thenReturn(Optional.of(new ReservedResources(date, Reserver.FREEPOOL, res1)));
-
-        Mockito.when(nodeRepository.findAll()).thenReturn(List.of());
+        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
 
         Resource availableResources = sut.getAvailableResources(date);
 
         assertThat(availableResources)
-                .isEqualTo(Resource.sub(new Resource(0, 0, 0), res1));
+                .isEqualTo(new Resource(-100, -50, -20));
     }
 
     @Test
     void get_available_resources_no_reserved_resources() {
-        LocalDate date = LocalDate.of(2022, 1, 1);
-
-        Mockito.when(resourcesRepository.findByReserverAndDate(Reserver.FREEPOOL, date))
-                .thenReturn(Optional.empty());
-
         ClusterNode node1 = new ClusterNode(
                 new OwnerName("name1"),
                 new URL("url1"),
@@ -95,16 +96,12 @@ class FreepoolManagerTest {
                 new Token("token2"),
                 new Resource(40, 40, 40));
 
-        Mockito.when(nodeRepository.findAll()).thenReturn(List.of(node1, node2));
+        nodeRepository.saveAll(List.of(node1, node2));
 
+        LocalDate date = LocalDate.of(2022, 1, 1);
         Resource availableResources = sut.getAvailableResources(date);
 
         assertThat(availableResources)
-                .isEqualTo(Resource.add(node1.getResources(), node2.getResources()));
-    }
-
-    @Test
-    void update_available_resource() {
-
+                .isEqualTo(new Resource(100, 100, 100));
     }
 }

@@ -18,13 +18,13 @@ import java.util.Objects;
 @AllArgsConstructor
 public class Resource {
     @Column(name = "cpu", nullable = false)
-    private transient int cpuResources;
+    private int cpuResources;
 
     @Column(name = "gpu", nullable = false)
-    private transient int gpuResources;
+    private int gpuResources;
 
     @Column(name = "memory", nullable = false)
-    private transient int memResources;
+    private int memResources;
 
     /**
      * Utility method for adding 2 {@link Resource Resources}.

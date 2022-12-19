@@ -3,19 +3,13 @@ package nl.tudelft.sem.resource.manager.domain.node;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.TokenConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.URLConverter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embedded;
-import javax.persistence.GenerationType;
+import javax.persistence.*;
 import java.util.Objects;
 
 
@@ -27,6 +21,7 @@ import java.util.Objects;
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
 @Getter
+@Setter
 public class ClusterNode {
     /**
      * Identifier for the node.
@@ -49,7 +44,7 @@ public class ClusterNode {
     private Token token;
 
     @Embedded
-    private Resource resources;
+    public Resource resources;
 
     /**
      * Basic constructor.

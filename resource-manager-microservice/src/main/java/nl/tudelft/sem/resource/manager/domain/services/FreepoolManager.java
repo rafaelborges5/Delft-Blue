@@ -48,6 +48,10 @@ public class FreepoolManager {
                 .stream()
                 .map(ClusterNode::getResources)
                 .reduce(new Resource(), (r1, r2) -> {
+                    if (r2 == null) {
+                        return r1;
+                    }
+
                     r1.setCpuResources(r1.getCpuResources() + r2.getCpuResources());
                     r1.setGpuResources(r1.getGpuResources() + r2.getGpuResources());
                     r1.setMemResources(r1.getMemResources() + r2.getMemResources());
@@ -60,23 +64,5 @@ public class FreepoolManager {
                 .orElse(new Resource(0, 0, 0));
 
         return Resource.sub(freepoolSize, usedResources);
-    }
-
-    /**
-     * Updates the amount of resources available in the freepool on a given date.
-     * The resources are added to the currently used resources. This way you can also
-     * free space in the event that a faculty releases its resources by passing
-     * a negative amount of resources as the parameter.
-     *
-     * @param date the date on which to update the resources
-     * @param resources the resources to add to the currently used resources
-     */
-    public void updateAvailableResources(LocalDate date, Resource resources) {
-        Resource currentResources = getAvailableResources(date);
-        ReservedResources newEntry = new ReservedResources(
-                date,
-                Reserver.FREEPOOL,
-                Resource.add(currentResources, resources));
-        resourcesRepository.save(newEntry);
     }
 }
