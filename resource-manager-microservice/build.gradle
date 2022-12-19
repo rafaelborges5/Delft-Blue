@@ -71,9 +71,11 @@ test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['nl.tudelft.sem.template.*']
+		includes = ['nl.tudelft.sem.resource.manager.*']
 		excludes = []
 	}
+
+	finalizedBy jacocoTestReport
 }
 
 repositories {
@@ -94,6 +96,18 @@ jacocoTestCoverageVerification() {
 				minimum = 0.1
 			}
 		}
+	}
+}
+
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"nl/tudelft/sem/resource/manager/config/*"
+			])
+		}))
 	}
 }
 
