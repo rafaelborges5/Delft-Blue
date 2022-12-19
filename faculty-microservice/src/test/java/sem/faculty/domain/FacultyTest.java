@@ -74,8 +74,8 @@ class FacultyTest {
 
         assertThat(faculty.getPendingRequests()).isEmpty();
         faculty.addPendingRequest(request1);
-        Queue<Request> queue = faculty.getPendingRequests();
+        List<Request> queue = faculty.getPendingRequests();
         assertThat(queue.size()).isEqualTo(1);
-        assertThat(queue.poll()).isEqualTo(request1);
+        assertThat(queue.get(0)).isEqualTo(request1);
     }
 }
