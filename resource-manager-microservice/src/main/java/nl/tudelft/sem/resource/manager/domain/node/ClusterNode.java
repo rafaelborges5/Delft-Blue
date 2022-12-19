@@ -44,7 +44,7 @@ public class ClusterNode {
     private Token token;
 
     @Embedded
-    public Resource resources;
+    private Resource resources;
 
     /**
      * Basic constructor.

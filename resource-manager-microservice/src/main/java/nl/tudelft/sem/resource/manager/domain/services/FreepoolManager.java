@@ -51,11 +51,7 @@ public class FreepoolManager {
                     if (r2 == null) {
                         return r1;
                     }
-
-                    r1.setCpuResources(r1.getCpuResources() + r2.getCpuResources());
-                    r1.setGpuResources(r1.getGpuResources() + r2.getGpuResources());
-                    r1.setMemResources(r1.getMemResources() + r2.getMemResources());
-                    return r1;
+                    return Resource.add(r1, r2);
                 });
 
         Resource usedResources = resourcesRepository
