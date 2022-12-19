@@ -25,7 +25,8 @@ public class Faculty {
 
     /**
      * Constructor method.
-     * @param facultyName - FacultyName and represents the key to the faculty.
+     *
+     * @param facultyName  - FacultyName and represents the key to the faculty.
      * @param timeProvider - TimeProvider that provides the current time. It allows for easy mocking.
      */
     public Faculty(FacultyName facultyName, TimeProvider timeProvider) {
@@ -97,6 +98,7 @@ public class Faculty {
 
     /**
      * Choose how to handle Incoming Requests.
+     *
      * @param request - incoming Request.
      */
     public void handleIncomingRequest(Request request) {
@@ -112,10 +114,25 @@ public class Faculty {
 
     /**
      * TODO: Implement method with connection to resource manager.
+     *
      * @param request - incoming Request.
      * @return true if there are enough resources in any day until the preferred date.
      */
     private boolean canScheduleRequest(Request request) {
         return true;
+    }
+
+
+    /**
+     * Gets pending requests.
+     *
+     * @return the pending requests
+     */
+    public List<Request> getPendingRequests() {
+        List<Request> pendingList = new ArrayList<>();
+        while (!pendingRequests.isEmpty()) {
+            pendingList.add(pendingRequests.remove());
+        }
+        return pendingList;
     }
 }
