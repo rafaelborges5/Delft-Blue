@@ -45,8 +45,8 @@ public class RegistrationServiceTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         // Act
         registrationService.registerUser(testUser, testPassword, testRole, testFaculty);
@@ -67,8 +67,8 @@ public class RegistrationServiceTests {
         final HashedPassword existingTestPassword = new HashedPassword("password123");
         final Password newTestPassword = new Password("password456");
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole, testFaculty);
         userRepository.save(existingAppUser);

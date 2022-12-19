@@ -25,9 +25,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .authorizeRequests().antMatchers("/user/hello").hasRole("EMPLOYEE")
+                .and()
                 .authorizeRequests()
-                .antMatchers("/example/user", "/user/login", "/faculty/pending", "/faculty/accept",
-                        "/notification/abraham").permitAll()
+                .antMatchers("/example/user", "/user/login", "/faculty/pending",
+                        "/faculty/accept", "/notification/abraham", "/user/add", "/user/authenticate")
+                .permitAll()
                 .and()
                 .authorizeRequests().anyRequest().authenticated()
                 .and()

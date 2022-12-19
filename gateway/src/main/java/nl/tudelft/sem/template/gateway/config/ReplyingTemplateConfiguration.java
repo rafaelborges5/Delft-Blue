@@ -84,5 +84,38 @@ public class ReplyingTemplateConfiguration {
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+    /**
+     * Reply kafka template user replying kafka template.
+     *
+     * @param pf the pf
+     * @param cf the cf
+     * @return the replying kafka template
+     */
+    @Bean
+    public ReplyingKafkaTemplate<String, UserDTO, StatusDTO> replyKafkaTemplateUser(
+            ProducerFactory<String, UserDTO> pf,
+            ConsumerFactory<String, StatusDTO> cf
+    ) {
+        //SPECIAL TEMPLATE AS LISTENER FOR StatusDTO IS REUSED WITH DIFFERENT TOPIC, DO NOT COPY MINDLESSLY
+        ContainerProperties containerProperties = new ContainerProperties("add-user-topic-reply");
+        KafkaMessageListenerContainer<String, StatusDTO> container =
+                new KafkaMessageListenerContainer<>(cf, containerProperties);
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public ReplyingKafkaTemplate<String, UserCredentials, TokenDTO> replyKafkaTemplateTokenDTO(
+            ProducerFactory<String, UserCredentials> pf,
+            KafkaMessageListenerContainer<String, TokenDTO> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, TokenDTO> replyContainerTokenDTO(
+            ConsumerFactory<String, TokenDTO> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("user-auth-topic-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
 
 }
