@@ -1,6 +1,5 @@
 package nl.tudelft.sem.notification.manager.producers;
 
-import lombok.Getter;
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -1,6 +1,5 @@
 package nl.tudelft.sem.notification.manager.controllers;
 
-import lombok.Getter;
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
 import nl.tudelft.sem.notification.manager.domain.notification.NotificationRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,7 +13,6 @@ import sem.commons.NotificationDTO;
 import sem.commons.NotificationPackage;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
