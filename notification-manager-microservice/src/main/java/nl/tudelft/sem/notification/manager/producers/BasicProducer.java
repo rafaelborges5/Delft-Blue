@@ -7,11 +7,10 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-@Getter
 public class BasicProducer {
 
     @Autowired
-    private KafkaTemplate<String, Notification> kafkaTemplate;
+    private transient KafkaTemplate<String, Notification> kafkaTemplate;
 
     public void send(String topic, Notification payload) {
         kafkaTemplate.send(topic, payload);

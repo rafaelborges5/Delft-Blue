@@ -19,10 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@Getter
 public class NotificationController {
 
-    private final NotificationRepository notificationRepository;
+    private final transient NotificationRepository notificationRepository;
 
     @Autowired
     public NotificationController(NotificationRepository notificationRepository) {

@@ -20,11 +20,10 @@ import java.util.Map;
  */
 
 @Configuration
-@Getter
 public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
+    private transient String bootstrapServers;
 
     /**
      * This method return the config of the producer. It will specify which server does it produce to, what
