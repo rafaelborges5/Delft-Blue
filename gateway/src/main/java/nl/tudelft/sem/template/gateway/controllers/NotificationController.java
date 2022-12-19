@@ -55,8 +55,8 @@ public class NotificationController {
      * @throws TimeoutException in case of Timeout in the retrieval
      */
     @GetMapping("{netId}")
-    public ResponseEntity<NotificationPackage> getNewNotifications(@PathVariable("netId") String netId) throws ExecutionException,
-            InterruptedException, TimeoutException {
+    public ResponseEntity<NotificationPackage> getNewNotifications(@PathVariable("netId") String netId) throws
+            ExecutionException, InterruptedException, TimeoutException {
         if (!checkIdentity(netId)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
