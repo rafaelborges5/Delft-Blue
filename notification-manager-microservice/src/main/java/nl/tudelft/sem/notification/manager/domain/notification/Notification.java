@@ -8,7 +8,7 @@ import javax.persistence.*;
  * A DDD entity representing user Notification.
  */
 @Entity
-@Table(name = "notifications")
+@Table(name = "Notification")
 @NoArgsConstructor
 @Setter
 @Getter

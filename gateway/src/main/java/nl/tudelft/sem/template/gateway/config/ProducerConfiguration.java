@@ -11,6 +11,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import sem.commons.*;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,13 +67,23 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
+    public ProducerFactory<String, NetIdDTO> producerFactoryNetIdDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *
      * @return the kafka template
      */
     @Bean
-    public KafkaTemplate<String, ExampleUser> kafkaTemplate() {
+    public KafkaTemplate<String, ExampleUser> kafkaTemplateExampleUser() {
         return new KafkaTemplate<>(producerFactoryExampleUser());
+    }
+
+    @Bean
+    public KafkaTemplate<String, NetIdDTO> kafkaTemplateNetIdDTO() {
+        return new KafkaTemplate<>(producerFactoryNetIdDTO());
     }
 }

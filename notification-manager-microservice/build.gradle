@@ -52,6 +52,8 @@ dependencies {
 	implementation 'org.testcontainers:yugabytedb:1.17.6'
 
 
+	implementation project(path: ':commons')
+
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
 	developmentOnly 'org.hibernate:hibernate-entitymanager'
@@ -74,6 +76,8 @@ test {
 		includes = ['nl.tudelft.sem.template.*']
 		excludes = []
 	}
+
+	finalizedBy jacocoTestReport
 }
 
 repositories {
@@ -94,6 +98,18 @@ jacocoTestCoverageVerification() {
 				minimum = 0.1
 			}
 		}
+	}
+}
+
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"nl/tudelft/sem/notification/manager/config/*"
+			])
+		}))
 	}
 }
 

@@ -5,15 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 import nl.tudelft.sem.notification.manager.domain.notification.Notification;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
+import sem.commons.FacultyNameDTO;
+import sem.commons.NotificationDTO;
+import sem.commons.PendingRequestsDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,21 +36,20 @@ public class KafkaConsumerConfig {
         this.kafkaProperties = kafkaProperties;
     }
 
+
     /**
      * This method will set the consumer factory so we can consume messages in general. It should be used by the
      * ListenerFactory so we can consume messages through the @KafkaListener annotation.
      * @return the ConsumerFactory
      */
     @Bean
-    public ConsumerFactory<String, Notification> consumerFactory() {
+    public ConsumerFactory<String, NotificationDTO> consumerFactoryNotification() {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
-        JsonDeserializer<Notification> jsonDeserializer = new JsonDeserializer<>(Notification.class, false);
-        jsonDeserializer.addTrustedPackages("*");
-
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
+        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
+                new JsonDeserializer<>(NotificationDTO.class));
     }
 
     /**
@@ -54,10 +58,10 @@ public class KafkaConsumerConfig {
      * @return the KafkaListenerContainer
      */
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Notification> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Notification> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, NotificationDTO> kafkaListenerContainerFactoryNotification() {
+        ConcurrentKafkaListenerContainerFactory<String, NotificationDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(consumerFactoryNotification());
         return factory;
     }
 

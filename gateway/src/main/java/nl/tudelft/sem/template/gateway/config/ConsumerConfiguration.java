@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import sem.commons.NotificationPackage;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.StatusDTO;
 import sem.commons.TokenDTO;
@@ -56,15 +57,32 @@ public class ConsumerConfiguration {
                 new StringDeserializer(), new JsonDeserializer<>(PendingRequestsDTO.class));
     }
 
+    /**
+     * The Consumer Factory for StatusDTOs.
+     * @return the consumerFactory
+     */
     @Bean
     public ConsumerFactory<String, StatusDTO> consumerFactoryStatus() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(StatusDTO.class));
     }
 
+    /**
+     * The Consumer Factory for TokenDTOs.
+     * @return the consumerFactory
+     */
     @Bean
     public ConsumerFactory<String, TokenDTO> consumerFactoryTokenDTO() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(TokenDTO.class));
+    }
+    /**
+     * The Consumer Factory for NotificationPackages.
+     * @return the consumerFactory
+     */
+    @Bean
+    public ConsumerFactory<String, NotificationPackage> consumerFactoryListNotifications() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(NotificationPackage.class));
     }
 }

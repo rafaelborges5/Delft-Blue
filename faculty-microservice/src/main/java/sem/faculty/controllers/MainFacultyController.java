@@ -59,7 +59,7 @@ public class MainFacultyController {
     @SendTo
     public StatusDTO acceptRequests(AcceptRequestsDTO acceptRequestsDTO) {
         System.out.println("got a list of requests to accept " + acceptRequestsDTO.getAcceptedRequests().toString() +
-                " from faculty " + acceptRequestsDTO.getFacultyName());
+                " for faculty " + acceptRequestsDTO.getFacultyName());
         return facultyHandlerService.acceptRequests(
                 acceptRequestsDTO.getFacultyName(), acceptRequestsDTO.getAcceptedRequests()
         );

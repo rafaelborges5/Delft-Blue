@@ -9,9 +9,7 @@ import lombok.*;
  * The status was also omitted, because the status is only stored
  * in the database and not needed in between microservices.
  */
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestDTO {
