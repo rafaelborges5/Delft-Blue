@@ -42,9 +42,9 @@ public class JwtUserDetailsServiceTests {
         final NetId testUser = new NetId("SomeUser");
         final HashedPassword testHashedPassword = new HashedPassword("password123Hash");
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
-        testFaculty.add(Faculty.AE);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
+        testFaculty.add(FacultyName.AE);
 
         AppUser appUser = new AppUser(testUser, testHashedPassword, testRole, testFaculty);
         userRepository.save(appUser);
@@ -67,8 +67,8 @@ public class JwtUserDetailsServiceTests {
         final NetId testUser = new NetId("AnotherUser");
         final String testPasswordHash = "password123Hash";
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash), testRole, testFaculty);
         userRepository.save(appUser);

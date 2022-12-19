@@ -1,5 +1,6 @@
 package sem.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -19,7 +20,7 @@ public class UserCredentials {
      * @param netId    the net id
      * @param password the password
      */
-    public UserCredentials(String netId, String password) {
+    public UserCredentials(@JsonProperty("netId") String netId, @JsonProperty("password") String password) {
         this.netId = netId;
         this.password = password;
     }

@@ -9,10 +9,10 @@ import java.util.List;
  * JPA Converter for the Faculty Enum.
  */
 @Converter
-public class FacultyAttributeConverter implements AttributeConverter<List<Faculty>, String> {
+public class FacultyAttributeConverter implements AttributeConverter<List<FacultyName>, String> {
 
     @Override
-    public String convertToDatabaseColumn(List<Faculty> attribute) {
+    public String convertToDatabaseColumn(List<FacultyName> attribute) {
         String faculties = attribute.toString();
         faculties = faculties.replace("[", "");
         faculties = faculties.replace("]", "");
@@ -20,11 +20,11 @@ public class FacultyAttributeConverter implements AttributeConverter<List<Facult
     }
 
     @Override
-    public List<Faculty> convertToEntityAttribute(String dbData) {
+    public List<FacultyName> convertToEntityAttribute(String dbData) {
         String[] facultyList = dbData.split(", ");
-        List<Faculty> faculty = new ArrayList<>();
+        List<FacultyName> faculty = new ArrayList<>();
         for (String f : facultyList) {
-            faculty.add(Faculty.valueOf(f));
+            faculty.add(FacultyName.valueOf(f));
         }
         return faculty;
     }

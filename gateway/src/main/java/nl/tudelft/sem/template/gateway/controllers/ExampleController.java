@@ -24,16 +24,6 @@ public class ExampleController {
         this.templateExampleUser = templateExampleUser;
     }
 
-    /**
-     * Gets example by id.
-     *
-     * @return the example found in the database with the given id
-     */
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok("Hello ");
-    }
-
     @PostMapping("example/user")
     public void sendToTopic(@RequestBody ExampleUser user) {
         System.out.println(user.getNetId());

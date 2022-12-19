@@ -33,8 +33,10 @@ public class RegistrationService {
      * @param faculty  The faculty of the user
      * @throws Exception if the user already exists
      */
-    public AppUser registerUser(NetId netId, Password password, Role role, List<Faculty> faculty) throws Exception {
+    public AppUser registerUser(NetId netId, Password password, Role role, List<FacultyName> faculty)
+            throws NetIdAlreadyInUseException {
 
+        //TODO: add other checks (for example password cannot be empty)
         if (checkNetIdIsUnique(netId)) {
             // Hash password
             HashedPassword hashedPassword = passwordHashingService.hash(password);
