@@ -47,12 +47,7 @@ public class FreepoolManager {
                 .findAll()
                 .stream()
                 .map(ClusterNode::getResources)
-                .reduce(new Resource(), (r1, r2) -> {
-                    if (r2 == null) {
-                        return r1;
-                    }
-                    return Resource.add(r1, r2);
-                });
+                .reduce(new Resource(), Resource::add);
 
         Resource usedResources = resourcesRepository
                 .findByReserverAndDate(Reserver.FREEPOOL, date)
