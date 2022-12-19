@@ -42,6 +42,7 @@ public class FreepoolManager {
      * @param date a {@link LocalDate} representing the date to check for
      * @return what Resources are available
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public Resource getAvailableResources(LocalDate date) {
         Resource freepoolSize = nodeRepository
                 .findAll()
