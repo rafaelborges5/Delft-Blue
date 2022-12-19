@@ -9,6 +9,7 @@ import nl.tudelft.sem.template.authentication.domain.providers.TimeProvider;
 import nl.tudelft.sem.template.authentication.domain.user.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +44,8 @@ public class JwtTokenGenerator {
      */
     public String generateToken(UserDetails userCredentials) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userCredentials", userCredentials);
+        claims.put("ROLE", ((SimpleGrantedAuthority) userCredentials.getAuthorities().toArray()[0]).getAuthority());
+        claims.put("FACULTIES", ((SimpleGrantedAuthority) userCredentials.getAuthorities().toArray()[1]).getAuthority());
 
         return Jwts.builder().setClaims(claims).setSubject(userCredentials.getUsername())
                 .setIssuedAt(new Date(timeProvider.getCurrentTime().toEpochMilli()))

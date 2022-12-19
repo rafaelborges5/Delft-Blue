@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.authentication;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -15,5 +16,10 @@ public class AuthManager {
      */
     public String getNetId() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public String getFaculties() {
+        return ((SimpleGrantedAuthority)
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities().toArray()[1]).getAuthority();
     }
 }

@@ -1,17 +1,12 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
-import org.assertj.core.api.FactoryBasedNavigableIterableAssert;
-import org.hamcrest.beans.HasProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.webservices.client.WebServiceClientTest;
-import scala.App;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class AppUserTest {
     AppUser user;
@@ -19,7 +14,7 @@ class AppUserTest {
     NetId testNetID;
     HashedPassword testPassword;
     Role testRole;
-    List<Faculty> testFaculty;
+    List<FacultyName> testFaculty;
 
     @BeforeEach
     void createUser() {
@@ -27,8 +22,8 @@ class AppUserTest {
         testPassword = new HashedPassword("password123");
         testRole = Role.EMPLOYEE;
         testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
-        testFaculty.add(Faculty.CEG);
+        testFaculty.add(FacultyName.EEMCS);
+        testFaculty.add(FacultyName.CEG);
         user = new AppUser(testNetID, testPassword, testRole, testFaculty);
     }
 
@@ -103,9 +98,9 @@ class AppUserTest {
     @Test
     void setFaculty() {
         assertThat(user.getFaculty()).isEqualTo(testFaculty);
-        List<Faculty> newFaculty = new ArrayList<>();
-        newFaculty.add(Faculty.ARCH);
-        newFaculty.add(Faculty.MMME);
+        List<FacultyName> newFaculty = new ArrayList<>();
+        newFaculty.add(FacultyName.ARCH);
+        newFaculty.add(FacultyName.MMME);
         user.setFaculty(newFaculty);
         assertThat(user.getFaculty()).isEqualTo(newFaculty);
     }
@@ -113,8 +108,8 @@ class AppUserTest {
     @Test
     void testAddFaculty() {
         assertThat(user.getFaculty()).isEqualTo(testFaculty);
-        user.addFaculty(Faculty.AE);
-        testFaculty.add(Faculty.AE);
+        user.addFaculty(FacultyName.AE);
+        testFaculty.add(FacultyName.AE);
         assertThat(user.getFaculty()).isEqualTo(testFaculty);
     }
 
@@ -146,8 +141,8 @@ class AppUserTest {
     @Test
     void testNotEquals1() {
         Role newRole = Role.SYSADMIN;
-        List<Faculty> newFaculty = new ArrayList<>();
-        newFaculty.add(Faculty.MMME);
+        List<FacultyName> newFaculty = new ArrayList<>();
+        newFaculty.add(FacultyName.MMME);
         AppUser newUser = new AppUser(testNetID, testPassword, newRole, newFaculty);
         newUser.setId(1);
         assertThat(newUser).isNotEqualTo(user);

@@ -10,6 +10,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.StatusDTO;
+import sem.commons.TokenDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,5 +60,11 @@ public class ConsumerConfiguration {
     public ConsumerFactory<String, StatusDTO> consumerFactoryStatus() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(StatusDTO.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, TokenDTO> consumerFactoryTokenDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(TokenDTO.class));
     }
 }
