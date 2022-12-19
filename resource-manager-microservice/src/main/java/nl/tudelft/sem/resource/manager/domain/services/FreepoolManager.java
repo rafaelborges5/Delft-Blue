@@ -18,22 +18,22 @@ import java.time.LocalDate;
 @Service
 public class FreepoolManager {
     private final transient DefaultResources defaultResources;
-    private final transient ReservedResourcesRepository resourcesRepository;
+    private final transient ReservedResourcesRepository reservedResourcesRepository;
     private final transient NodeRepository nodeRepository;
 
     /**
      * Injects dependencies.
      *
      * @param defaultResources DefaultResources
-     * @param resourcesRepository ResourcesRepository
+     * @param reservedResourcesRepository ResourcesRepository
      * @param nodeRepository NodeRepository
      */
     @Autowired
     public FreepoolManager(DefaultResources defaultResources,
-                           ReservedResourcesRepository resourcesRepository,
+                           ReservedResourcesRepository reservedResourcesRepository,
                            NodeRepository nodeRepository) {
         this.defaultResources = defaultResources;
-        this.resourcesRepository = resourcesRepository;
+        this.reservedResourcesRepository = reservedResourcesRepository;
         this.nodeRepository = nodeRepository;
     }
 
@@ -49,7 +49,7 @@ public class FreepoolManager {
                 .map(ClusterNode::getResources)
                 .reduce(new Resource(), Resource::add);
 
-        Resource usedResources = resourcesRepository
+        Resource usedResources = reservedResourcesRepository
                 .findByReserverAndDate(Reserver.FREEPOOL, date)
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));

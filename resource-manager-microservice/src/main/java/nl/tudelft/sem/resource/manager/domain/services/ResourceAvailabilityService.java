@@ -23,18 +23,18 @@ public class ResourceAvailabilityService {
 
     /**
      * Injects dependencies.
-     * @param resourcesRepository ResourcesRepository
+     * @param reservedResourcesRepository ResourcesRepository
      * @param timeProvider TimeProvider
      * @param freepoolManager FreepoolManager
      * @param defaultResources DefaultResources
      */
     public ResourceAvailabilityService(NodeRepository nodeRepository,
-                                       ReservedResourcesRepository resourcesRepository,
+                                       ReservedResourcesRepository reservedResourcesRepository,
                                        DateProvider timeProvider,
                                        FreepoolManager freepoolManager,
                                        DefaultResources defaultResources) {
         this.nodeRepository = nodeRepository;
-        this.reservedResourcesRepository = resourcesRepository;
+        this.reservedResourcesRepository = reservedResourcesRepository;
         this.timeProvider = timeProvider;
         this.freepoolManager = freepoolManager;
         this.defaultResources = defaultResources;

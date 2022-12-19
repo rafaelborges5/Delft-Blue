@@ -9,16 +9,13 @@ import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,13 +30,13 @@ class FreepoolManagerTest {
     @Autowired
     private transient DefaultResources defaultResources;
     @Autowired
-    private transient ReservedResourcesRepository resourcesRepository;
+    private transient ReservedResourcesRepository reservedResourcesRepository;
     @Autowired
     private transient NodeRepository nodeRepository;
 
     @BeforeEach
     void setUp() {
-        sut = new FreepoolManager(defaultResources, resourcesRepository, nodeRepository);
+        sut = new FreepoolManager(defaultResources, reservedResourcesRepository, nodeRepository);
     }
 
     @Test
@@ -47,7 +44,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
+        reservedResourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
 
         ClusterNode node1 = new ClusterNode(
                 new OwnerName("name1"),
@@ -74,7 +71,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
+        reservedResourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
 
         Resource availableResources = sut.getAvailableResources(date);
 
