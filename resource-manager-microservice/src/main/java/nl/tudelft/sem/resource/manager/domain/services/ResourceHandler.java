@@ -10,7 +10,9 @@ import java.util.List;
 
 /**
  * Service that handles reserving resources for a request, and releasing a faculty's
- * resources for a time period.
+ * resources for a time period. Also provides a callback that checks whether a node
+ * being removed makes it so there are insufficient resources left for the planned
+ * requests
  */
 @Service
 public class ResourceHandler {
@@ -40,6 +42,15 @@ public class ResourceHandler {
      */
     public void releaseResourcesOnDays(Reserver faculty,
                                        List<LocalDate> releasedDays) {
+
+    }
+
+    /**
+     * Checks if there are enough resources in the freepool, on all days
+     * with reserved resources. This should be used as a callback in the
+     * event that a cluster node is deleted.
+     */
+    public void checkNotEnoughFreepoolResources() {
 
     }
 }
