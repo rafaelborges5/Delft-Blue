@@ -19,6 +19,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservedResourceId implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 

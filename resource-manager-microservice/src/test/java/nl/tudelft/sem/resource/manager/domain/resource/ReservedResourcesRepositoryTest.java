@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class ReservedResourcesRepositoryTest {
     @Autowired
-    private ReservedResourcesRepository reservedResourcesRepository;
-    private ReservedResources reservedResources1;
-    private ReservedResources reservedResources2;
-    private ReservedResources reservedResources3;
+    private transient ReservedResourcesRepository reservedResourcesRepository;
+    private transient ReservedResources reservedResources1;
+    private transient ReservedResources reservedResources2;
+    private transient ReservedResources reservedResources3;
 
     @BeforeEach
     void setUp() {

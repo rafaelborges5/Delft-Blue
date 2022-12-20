@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class NodeRepositoryTest {
     @Autowired
-    private NodeRepository nodeRepository;
-    private ClusterNode node1;
-    private ClusterNode node2;
+    private transient NodeRepository nodeRepository;
+    private transient ClusterNode node1;
+    private transient ClusterNode node2;
 
     @BeforeEach
     void setUp() {
