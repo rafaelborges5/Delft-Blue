@@ -72,4 +72,10 @@ public class ReservedResourcesRepositoryTest {
                 reservedResources3
         );
     }
+
+    @Test
+    void find_all_by_id_date_test() {
+        assertThat(reservedResourcesRepository.findAllById_Date(LocalDate.of(2022, 1, 1)))
+                .containsExactlyInAnyOrder(reservedResources1, reservedResources2);
+    }
 }
