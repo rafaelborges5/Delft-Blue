@@ -5,6 +5,7 @@ import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -47,9 +48,9 @@ public class ResourceAvailabilityService {
      */
     public Resource seeFreeResourcesOnDate(LocalDate date) {
         Resource freeFacultyResources = reservedResourcesRepository
-                .findAllByDate(date)
+                .findAllById_Date(date)
                 .stream()
-                .filter(rr -> !rr.getReserver().equals(Reserver.FREEPOOL))
+                .filter(rr -> !rr.getId().getReserver().equals(Reserver.FREEPOOL))
                 .map(ReservedResources::getResources)
                 .map(r -> Resource.sub(defaultResources.getInitialResources(), r))
                 .reduce(new Resource(), Resource::add);
@@ -72,7 +73,7 @@ public class ResourceAvailabilityService {
         LocalDate date = timeProvider.getCurrentDate().plusDays(1);
         Resource availableFreepoolResources = freepoolManager.getAvailableResources(date);
         Resource usedFacultyResources = reservedResourcesRepository
-                .findByReserverAndDate(faculty, date)
+                .findById(new ReservedResourceId(date, faculty))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 
@@ -95,15 +96,15 @@ public class ResourceAvailabilityService {
      */
     public Resource seeReservedResourcesOnDate(LocalDate date) {
         Resource reservedFacultyResources = reservedResourcesRepository
-                .findAllByDate(date)
+                .findAllById_Date(date)
                 .stream()
                 .map(ReservedResources::getResources)
                 .reduce(new Resource(), Resource::add);
 
         Resource reservedFreepoolResources = reservedResourcesRepository
-                .findAllByDate(date)
+                .findAllById_Date(date)
                 .stream()
-                .filter(rr -> rr.getReserver().equals(Reserver.FREEPOOL))
+                .filter(rr -> rr.getId().getReserver().equals(Reserver.FREEPOOL))
                 .map(ReservedResources::getResources)
                 .reduce(new Resource(), Resource::add);
 

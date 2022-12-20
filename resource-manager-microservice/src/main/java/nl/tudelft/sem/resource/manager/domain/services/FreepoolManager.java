@@ -4,6 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -51,7 +52,7 @@ public class FreepoolManager {
                 .reduce(new Resource(), Resource::add);
 
         Resource usedResources = reservedResourcesRepository
-                .findByReserverAndDate(Reserver.FREEPOOL, date)
+                .findById(new ReservedResourceId(date, Reserver.FREEPOOL))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 

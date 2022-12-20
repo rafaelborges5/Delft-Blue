@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ReservedResourcesRepository extends JpaRepository<ReservedResources, Date> {
-    Optional<ReservedResources> findByReserverAndDate(Reserver reserver, LocalDate date);
-
-    List<ReservedResources> findAllByDate(LocalDate date);
+public interface ReservedResourcesRepository extends JpaRepository<ReservedResources, ReservedResourceId> {
+    List<ReservedResources> findAllById_Date(LocalDate date);
 }
