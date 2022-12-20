@@ -85,7 +85,7 @@ public class ConsumerConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, RegularUserView> consumerFactoryRe() {
+    public ConsumerFactory<String, RegularUserView> consumerFactoryRegularView() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(RegularUserView.class));
     }

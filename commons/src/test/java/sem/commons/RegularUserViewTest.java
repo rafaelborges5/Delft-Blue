@@ -19,7 +19,7 @@ class RegularUserViewTest {
         resource = new Resource(3, 2, 1);
         regularUserView = new RegularUserView(Map.of(facultyNameDTO, resource));
     }
-    
+
     @Test
     void getResourcesPerFaculty() {
         Map<FacultyNameDTO, Resource> returned = regularUserView.getResourcesPerFaculty();
