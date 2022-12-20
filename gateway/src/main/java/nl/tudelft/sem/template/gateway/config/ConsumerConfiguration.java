@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import sem.commons.NotificationPackage;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
-import sem.commons.TokenDTO;
+import sem.commons.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -85,5 +82,11 @@ public class ConsumerConfiguration {
     public ConsumerFactory<String, NotificationPackage> consumerFactoryListNotifications() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(NotificationPackage.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, RegularUserView> consumerFactoryRegularView() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(RegularUserView.class));
     }
 }
