@@ -20,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NodeClusterControllerTest {
 
-    private ResourceAvailabilityService resourceAvailabilityService;
-    private NodeClusterController nodeClusterController;
-    private FacultyNameDTO facultyNameDTO;
-    private Resource resource;
-    private RegularUserView regularUserView;
-    private FacultyNamePackageDTO facultyNamePackageDTO;
+    private transient ResourceAvailabilityService resourceAvailabilityService;
+    private transient NodeClusterController nodeClusterController;
+    private transient FacultyNameDTO facultyNameDTO;
+    private transient Resource resource;
+    private transient RegularUserView regularUserView;
+    private transient FacultyNamePackageDTO facultyNamePackageDTO;
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
