@@ -3,6 +3,7 @@ package nl.tudelft.sem.resource.manager.domain.services;
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.*;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -47,7 +48,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
+        resourcesRepository.save(new ReservedResources(new ReservedResourceId(date, Reserver.FREEPOOL), res1));
 
         ClusterNode node1 = new ClusterNode(
                 new OwnerName("name1"),
@@ -74,7 +75,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         Resource res1 = new Resource(100, 50, 20);
 
-        resourcesRepository.save(new ReservedResources(date, Reserver.FREEPOOL, res1));
+        resourcesRepository.save(new ReservedResources(new ReservedResourceId(date, Reserver.FREEPOOL), res1));
 
         Resource availableResources = sut.getAvailableResources(date);
 

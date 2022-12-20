@@ -3,6 +3,7 @@ package nl.tudelft.sem.resource.manager.domain.services;
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -48,7 +49,7 @@ public class ResourceAvailabilityService {
         LocalDate date = timeProvider.getCurrentDate().plusDays(1);
         Resource availableFreepoolResources = freepoolManager.getAvailableResources(date);
         Resource usedFacultyResources = resourcesRepository
-                .findByReserverAndDate(faculty, date)
+                .findById(new ReservedResourceId(date, faculty))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 
