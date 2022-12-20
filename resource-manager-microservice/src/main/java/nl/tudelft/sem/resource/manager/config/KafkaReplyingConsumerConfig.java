@@ -13,6 +13,8 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import sem.commons.FacultyNamePackageDTO;
+import sem.commons.RegularUserView;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -58,17 +60,26 @@ public class KafkaReplyingConsumerConfig {
         return props;
     }
 
+    /**
+     * This method will return the factory for consumers of FacultyNamePackageDTO.
+     * @return the consumer factory
+     */
     @Bean
-    public ConsumerFactory<String, LocalDate> consumerFactoryLocalDate() {
+    public ConsumerFactory<String, FacultyNamePackageDTO> consumerFactoryFacultyNamePackageDTO() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
-                new StringDeserializer(), new JsonDeserializer<>(LocalDate.class));
+                new StringDeserializer(), new JsonDeserializer<>(FacultyNamePackageDTO.class));
     }
 
+    /**
+     * This method will return the kafkaListener so that we can listen to messages with the @KafkaListener annotation.
+     * @return the concurrentListenerFactory
+     */
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, LocalDate> kafkaListenerContainerFactoryLocalDate() {
-        ConcurrentKafkaListenerContainerFactory<String, LocalDate> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, FacultyNamePackageDTO>
+        kafkaListenerContainerFactoryFacultyNamePackageDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, FacultyNamePackageDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactoryLocalDate());
+        factory.setConsumerFactory(consumerFactoryFacultyNamePackageDTO());
 
         //Setup of reply template
         factory.setReplyTemplate(kafkaTemplateUserView());
@@ -77,12 +88,12 @@ public class KafkaReplyingConsumerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, Resource> kafkaTemplateUserView() {
+    public KafkaTemplate<String, RegularUserView> kafkaTemplateUserView() {
         return new KafkaTemplate<>(producerFactoryUserView());
     }
 
     @Bean
-    public ProducerFactory<String, Resource> producerFactoryUserView() {
+    public ProducerFactory<String, RegularUserView> producerFactoryUserView() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 }

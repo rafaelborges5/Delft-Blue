@@ -72,6 +72,11 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
+    public ProducerFactory<String, FacultyNamePackageDTO> producerFactoryFacultyNamePackageDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *
@@ -85,5 +90,10 @@ public class ProducerConfiguration {
     @Bean
     public KafkaTemplate<String, NetIdDTO> kafkaTemplateNetIdDTO() {
         return new KafkaTemplate<>(producerFactoryNetIdDTO());
+    }
+
+    @Bean
+    public KafkaTemplate<String, FacultyNamePackageDTO> kafkaTemplateFacultyNamePackageDTO() {
+        return new KafkaTemplate<>(producerFactoryFacultyNamePackageDTO());
     }
 }
