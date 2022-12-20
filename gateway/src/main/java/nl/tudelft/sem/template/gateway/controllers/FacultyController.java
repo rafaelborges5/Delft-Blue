@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.controllers;
 
+import nl.tudelft.sem.template.gateway.authentication.AuthManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -18,6 +19,7 @@ import sem.commons.FacultyNameDTO;
 import sem.commons.PendingRequestsDTO;
 import sem.commons.StatusDTO;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -27,6 +29,8 @@ import java.util.concurrent.TimeoutException;
  */
 @RestController
 public class FacultyController {
+
+    private transient AuthManager authManager;
 
     private transient ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequests;
 
@@ -40,8 +44,10 @@ public class FacultyController {
      */
     @Autowired
     public FacultyController(
+            AuthManager authManager,
             ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequests,
             ReplyingKafkaTemplate<String, AcceptRequestsDTO, StatusDTO> replyingKafkaTemplateAcceptRequests) {
+        this.authManager = authManager;
         this.replyingKafkaTemplatePendingRequests = replyingKafkaTemplatePendingRequests;
         this.replyingKafkaTemplateAcceptRequests = replyingKafkaTemplateAcceptRequests;
     }
@@ -59,6 +65,11 @@ public class FacultyController {
     @PostMapping("/faculty/pending")
     public ResponseEntity<PendingRequestsDTO> getPendingRequests(
             @RequestBody FacultyNameDTO facultyNameDTO) throws ExecutionException, InterruptedException, TimeoutException {
+
+        if (!authManager.getFaculties().contains(facultyNameDTO.getFacultyName())) {
+            return ResponseEntity.status(401).body(
+                    new PendingRequestsDTO("You are not allowed to access this faculty", new ArrayList<>()));
+        }
         // create producer record
         ProducerRecord<String, FacultyNameDTO> record =
                 new ProducerRecord<String, FacultyNameDTO>("pendingRequestsTopic", facultyNameDTO);
@@ -90,9 +101,12 @@ public class FacultyController {
      * @throws InterruptedException the interrupted exception
      */
     @PostMapping("/faculty/accept")
-    public ResponseEntity<StatusDTO> acceptRequests(
-            @RequestBody AcceptRequestsDTO acceptRequestsDTO
-    ) throws ExecutionException, InterruptedException {
+    public ResponseEntity<StatusDTO> acceptRequests(@RequestBody AcceptRequestsDTO acceptRequestsDTO)
+            throws ExecutionException, InterruptedException {
+        if (!authManager.getFaculties().contains(acceptRequestsDTO.getFacultyName())) {
+            return ResponseEntity.status(401).body(
+                    new StatusDTO("You are not allowed to access this faculty"));
+        }
         ProducerRecord<String, AcceptRequestsDTO> record =
                 new ProducerRecord<>("acceptRequestsTopic", acceptRequestsDTO);
 

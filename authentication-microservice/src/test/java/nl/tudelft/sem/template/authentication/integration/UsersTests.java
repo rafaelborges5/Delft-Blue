@@ -43,7 +43,7 @@ import java.util.List;
 // activate profiles to have spring use mocks during auto-injection of certain beans.
 @ActiveProfiles({"test", "mockPasswordEncoder", "mockTokenGenerator", "mockAuthenticationManager"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+//@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @AutoConfigureMockMvc
 public class UsersTests {
     @Autowired
@@ -257,9 +257,9 @@ public class UsersTests {
         verify(mockJwtTokenGenerator, times(0)).generateToken(any());
     }
 
-    @AfterAll
-    static void afterAll(@Autowired ApplicationContext applicationContext) {
-        EmbeddedKafkaBroker embeddedKafkaBroker = applicationContext.getBean(EmbeddedKafkaBroker.class);
-        embeddedKafkaBroker.destroy();
-    }
+    //@AfterAll
+    //static void afterAll(@Autowired ApplicationContext applicationContext) {
+    //    EmbeddedKafkaBroker embeddedKafkaBroker = applicationContext.getBean(EmbeddedKafkaBroker.class);
+    //    embeddedKafkaBroker.destroy();
+    //}
 }
