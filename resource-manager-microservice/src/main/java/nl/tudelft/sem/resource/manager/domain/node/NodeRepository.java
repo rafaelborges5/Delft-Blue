@@ -10,6 +10,5 @@ import java.util.List;
  */
 
 @Repository
-public interface NodeRepository extends JpaRepository<ClusterNode, Long> {
-    List<ClusterNode> findAllByOwnerNameOrOwnerName(OwnerName owner1, OwnerName owner2);
+public interface NodeRepository extends JpaRepository<ClusterNode, Token> {
 }

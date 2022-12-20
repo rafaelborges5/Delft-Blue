@@ -120,7 +120,6 @@ checkstyle {
 pmd {
 	incrementalAnalysis = true
 	sourceSets = [sourceSets.main]
-	ignoreFailures = true
 
 }
 

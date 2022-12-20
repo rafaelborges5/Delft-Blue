@@ -4,6 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -42,6 +43,7 @@ public class FreepoolManager {
      * @param date a {@link LocalDate} representing the date to check for
      * @return what Resources are available
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public Resource getAvailableResources(LocalDate date) {
         Resource freepoolSize = nodeRepository
                 .findAll()
@@ -55,7 +57,7 @@ public class FreepoolManager {
                 });
 
         Resource usedResources = resourcesRepository
-                .findByReserverAndDate(Reserver.FREEPOOL, date)
+                .findById(new ReservedResourceId(date, Reserver.FREEPOOL))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 

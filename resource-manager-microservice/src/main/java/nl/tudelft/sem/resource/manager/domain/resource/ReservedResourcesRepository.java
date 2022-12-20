@@ -8,6 +8,5 @@ import java.util.Date;
 import java.util.Optional;
 
 @Repository
-public interface ReservedResourcesRepository extends JpaRepository<ReservedResources, Date> {
-    Optional<ReservedResources> findByReserverAndDate(Reserver reserver, LocalDate date);
+public interface ReservedResourcesRepository extends JpaRepository<ReservedResources, ReservedResourceId> {
 }

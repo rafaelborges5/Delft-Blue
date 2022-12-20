@@ -13,14 +13,13 @@ import sem.commons.NotificationDTO;
 import sem.commons.NotificationPackage;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class NotificationController {
 
-    private final NotificationRepository notificationRepository;
+    private final transient NotificationRepository notificationRepository;
 
     @Autowired
     public NotificationController(NotificationRepository notificationRepository) {

@@ -53,6 +53,7 @@ public class ConsumerConfiguration {
      * @return the consumer factory
      */
     @Bean
+    @SuppressWarnings("PMD.CloseResource")
     public ConsumerFactory<String, ExampleUser> consumerFactory1() {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
