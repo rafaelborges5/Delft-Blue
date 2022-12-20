@@ -61,15 +61,15 @@ public class ClusterNode {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ClusterNode)) {
             return false;
         }
-        ClusterNode clusterNode = (ClusterNode) o;
-        return token == (clusterNode.token);
+        ClusterNode that = (ClusterNode) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token);
+        return Objects.hash(id);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class NodeHandler {
-    NodeRepository nodeRepository;
+    private transient NodeRepository nodeRepository;
 
     public NodeHandler(NodeRepository nodeRepository) {
         this.nodeRepository = nodeRepository;
