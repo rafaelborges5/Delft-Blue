@@ -15,7 +15,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -29,14 +28,14 @@ class FreepoolManagerTest {
     private transient FreepoolManager sut;
     private transient DefaultResources defaultResources;
     @Mock
-    private transient ReservedResourcesRepository resourcesRepository;
+    private transient ReservedResourcesRepository reservedResourcesRepository;
     @Mock
     private transient NodeRepository nodeRepository;
 
     @BeforeEach
     void setUp() {
         defaultResources = new DefaultResources();
-        sut = new FreepoolManager(defaultResources, resourcesRepository, nodeRepository);
+        sut = new FreepoolManager(defaultResources, reservedResourcesRepository, nodeRepository);
     }
 
     @Test
@@ -48,7 +47,7 @@ class FreepoolManagerTest {
                 new Resource(50, 40, 30)
         );
 
-        Mockito.when(resourcesRepository.findById(id))
+        Mockito.when(reservedResourcesRepository.findById(id))
                 .thenReturn(Optional.of(reservedResources));
 
         ClusterNode node1 = new ClusterNode(
@@ -81,7 +80,7 @@ class FreepoolManagerTest {
                 new Resource(50, 40, 30)
         );
 
-        Mockito.when(resourcesRepository.findById(id))
+        Mockito.when(reservedResourcesRepository.findById(id))
                 .thenReturn(Optional.of(reservedResources));
 
         Mockito.when(nodeRepository.findAll())
@@ -98,7 +97,7 @@ class FreepoolManagerTest {
         LocalDate date = LocalDate.of(2022, 1, 1);
         ReservedResourceId id = new ReservedResourceId(date, Reserver.FREEPOOL);
 
-        Mockito.when(resourcesRepository.findById(id))
+        Mockito.when(reservedResourcesRepository.findById(id))
                 .thenReturn(Optional.empty());
 
         ClusterNode node1 = new ClusterNode(
