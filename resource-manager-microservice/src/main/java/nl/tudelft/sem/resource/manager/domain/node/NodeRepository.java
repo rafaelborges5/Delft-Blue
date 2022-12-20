@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 @Repository
-public interface NodeRepository extends JpaRepository<ClusterNode, Token> {
+public interface NodeRepository extends JpaRepository<ClusterNode, Long> {
 }

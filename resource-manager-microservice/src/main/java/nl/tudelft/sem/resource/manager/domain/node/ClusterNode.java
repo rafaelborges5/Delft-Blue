@@ -22,6 +22,10 @@ import java.util.Objects;
 @ToString
 public class ClusterNode {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false, unique = true)
+    private long id;
+
     @Column(name = "token", nullable = false, unique = true)
     @Convert(converter = TokenConverter.class)
     private Token token;
