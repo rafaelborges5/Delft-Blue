@@ -68,16 +68,28 @@ public class ResourceAvailabilityService {
      * @return the amount of free resources
      */
     public Resource seeFreeResourcesTomorrow(Reserver faculty) {
-        Resource initialResources = defaultResources.getInitialResources();
+        LocalDate tomorrow = timeProvider.getCurrentDate().plusDays(1);
+        return seeFreeResourcesByDateAndReserver(tomorrow, faculty);
+    }
 
-        LocalDate date = timeProvider.getCurrentDate().plusDays(1);
-        Resource availableFreepoolResources = freepoolManager.getAvailableResources(date);
+    /**
+     * Returns the amount of free Resources available to the reserver, on the given date.
+     *
+     * @param date the date on which to get the amount of free resources
+     * @param reserver the entity for which to check the amount of free resources
+     * @return the amount of free Resources
+     */
+    public Resource seeFreeResourcesByDateAndReserver(LocalDate date, Reserver reserver) {
+        Resource initialResources = defaultResources.getInitialResources();
         Resource usedFacultyResources = reservedResourcesRepository
-                .findById(new ReservedResourceId(date, faculty))
+                .findById(new ReservedResourceId(date, reserver))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
+        Resource freeFacultyResources = Resource.sub(initialResources, usedFacultyResources);
 
-        return Resource.sub(Resource.add(initialResources, availableFreepoolResources), usedFacultyResources);
+        Resource freeFreepoolResources = freepoolManager.getAvailableResources(date);
+
+        return Resource.add(freeFacultyResources, freeFreepoolResources);
     }
 
     /**

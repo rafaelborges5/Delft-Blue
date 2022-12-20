@@ -28,6 +28,15 @@ public class Resource {
     private int memResources;
 
     /**
+     * Utility method for returning a new Resource with all resources set to the same value.
+     * @param resources the value to set all resources to
+     * @return the new Resource object
+     */
+    public static Resource with(int resources) {
+        return new Resource(resources, resources, resources);
+    }
+
+    /**
      * Utility method for adding 2 {@link Resource Resources}.
      *
      * @param r1 the first addend

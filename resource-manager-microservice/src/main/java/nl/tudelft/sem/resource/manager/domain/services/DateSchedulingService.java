@@ -1,24 +1,21 @@
 package nl.tudelft.sem.resource.manager.domain.services;
 
+import lombok.AllArgsConstructor;
 import nl.tudelft.sem.resource.manager.domain.Resource;
+import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 /**
- * Service that handles the logic behind interfaces consumed by the faculty-microservice.
- * These include:
- * <ul>
- *     <li>Retrieving the first available date for a Request.</li>
- *     <li>
- *         Informing the faculty-microservice that X amount of resources
- *         on a given day need to be freed by dropping requests.
- *     </li>
- * </ul>
+ * Service that handles getting the date for a request.
  */
 @Service
+@AllArgsConstructor
 public class DateSchedulingService {
+    private final transient DateProvider dateProvider;
+    private final transient ResourceAvailabilityService resourceAvailabilityService;
 
     /**
      * Retrieves the first available date when the given resources are available.
@@ -29,11 +26,24 @@ public class DateSchedulingService {
      * @return a LocalDate that represents when the reservation can be made, or null
      *          if there is no opening by that date
      */
-    LocalDate getDateForRequest(Resource resources,
-                                        LocalDate date,
-                                        Reserver facultyName) {
-        return LocalDate.of(2022, 1, 1);
+    LocalDate getDateForRequest(
+            Resource resources,
+            LocalDate date,
+            Reserver facultyName) {
+        LocalDate today = dateProvider.getCurrentDate();
+
+        while (!date.isBefore(today)) {
+            Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, facultyName);
+
+            if (freeResources.getCpuResources() >= resources.getCpuResources() &&
+                freeResources.getGpuResources() >= resources.getGpuResources() &&
+                freeResources.getMemResources() >= resources.getMemResources()) {
+
+                return date;
+            }
+            date = date.minusDays(1);
+        }
+
+        return null;
     }
-
-
 }
