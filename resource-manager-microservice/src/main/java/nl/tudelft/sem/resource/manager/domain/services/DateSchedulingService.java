@@ -32,7 +32,7 @@ public class DateSchedulingService {
             Reserver facultyName) {
         LocalDate today = dateProvider.getCurrentDate();
 
-        while (!date.isBefore(today)) {
+        while (date.isAfter(today)) {
             Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, facultyName);
 
             if (freeResources.getCpuResources() >= resources.getCpuResources() &&

@@ -37,11 +37,11 @@ class DateSchedulingServiceTest {
                 .thenReturn(Resource.with(100));
         when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(afterTomorrow, faculty))
                 .thenReturn(Resource.with(50));
-        Resource neededResources = Resource.with(150);
+        Resource neededResources = Resource.with(70);
 
         LocalDate chosenDate = sut.getDateForRequest(neededResources, afterTomorrow, faculty);
 
-        assertThat(chosenDate).isEqualTo(today);
+        assertThat(chosenDate).isEqualTo(tomorrow);
     }
 
     @Test
