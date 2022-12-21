@@ -2,7 +2,8 @@ package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
-import nl.tudelft.sem.resource.manager.domain.node.*;
+import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
+import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
@@ -10,7 +11,6 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesReposito
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import sem.commons.OwnerName;
 import sem.commons.Token;
 import sem.commons.URL;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

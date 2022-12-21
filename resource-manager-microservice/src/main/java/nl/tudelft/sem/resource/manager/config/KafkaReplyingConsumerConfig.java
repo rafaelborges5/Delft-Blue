@@ -12,8 +12,10 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import sem.commons.ClusterNodeDTO;
 import sem.commons.FacultyNamePackageDTO;
 import sem.commons.RegularUserView;
+import sem.commons.TokenDTO;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -93,5 +95,60 @@ public class KafkaReplyingConsumerConfig {
     @Bean
     public ProducerFactory<String, RegularUserView> producerFactoryUserView() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ConsumerFactory<String, ClusterNodeDTO> consumerFactoryClusterNodeDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(ClusterNodeDTO.class));
+    }
+
+    /**
+     * This method will return the kafkaListener so that we can listen to messages with the @KafkaListener annotation.
+     * @return the concurrentListenerFactory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ClusterNodeDTO>
+        kafkaListenerContainerFactoryClusterNodeDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, ClusterNodeDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryClusterNodeDTO());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateString());
+
+        return factory;
+    }
+
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplateString() {
+        return new KafkaTemplate<>(producerFactoryString());
+    }
+
+    @Bean
+    public ProducerFactory<String, String> producerFactoryString() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ConsumerFactory<String, TokenDTO> consumerFactoryTokenDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(TokenDTO.class));
+    }
+
+    /**
+     * This method will return the kafkaListener so that we can listen to messages with the @KafkaListener annotation.
+     * @return the concurrentListenerFactory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, TokenDTO> kafkaListenerContainerFactoryTokenDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, TokenDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryTokenDTO());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateString());
+
+        return factory;
     }
 }
