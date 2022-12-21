@@ -76,7 +76,7 @@ public class ConsumerConfiguration {
 
     /**
      * The Consumer Factory for NotificationPackages.
-     * @return the consumerFactory
+     * @return the consumer factory for Notification Package
      */
     @Bean
     public ConsumerFactory<String, NotificationPackage> consumerFactoryListNotifications() {
@@ -88,5 +88,11 @@ public class ConsumerConfiguration {
     public ConsumerFactory<String, RegularUserView> consumerFactoryRegularView() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(RegularUserView.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, String> consumerFactoryString() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(String.class));
     }
 }

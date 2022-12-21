@@ -18,11 +18,12 @@ public class NodeHandler {
     }
 
     /**
-     * Adds the node to the cluster.
-     * @param node the node to add to the cluster
+     * This method will add a new node to the system.
+     * @param node the node to add to the system
+     * @return a string representing weather the addition was successful or not.
      */
-    public void addNodeToCluster(ClusterNode node) {
-
+    public String addNodeToCluster(ClusterNode node) {
+        return ("NotImplemented");
     }
 
     /**

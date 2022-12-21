@@ -87,6 +87,11 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
+    public ProducerFactory<String, Token> producerFactoryToken() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *
@@ -116,5 +121,9 @@ public class ProducerConfiguration {
     public KafkaTemplate<String, ClusterNodeDTO> kafkaTemplateClusterNodeDTO() {
         return new KafkaTemplate<>(producerFactoryClusterNodeDTO());
     }
-}
 
+    @Bean
+    public KafkaTemplate<String, Token> kafkaTemplateToken() {
+        return new KafkaTemplate<>(producerFactoryToken());
+    }
+}
