@@ -11,6 +11,9 @@ import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import sem.commons.OwnerName;
+import sem.commons.Token;
+import sem.commons.URL;
 
 import java.time.LocalDate;
 import java.util.List;
