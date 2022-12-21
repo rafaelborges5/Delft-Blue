@@ -73,12 +73,14 @@ public class NodeClusterController {
             containerFactory = "kafkaListenerContainerFactoryClusterNode"
     )
     @SendTo
-    public void addClusterNode(ConsumerRecord<String, ClusterNodeDTO> record, @Payload ClusterNodeDTO clusterNode) {
-        nodeHandler.addNodeToCluster(new ClusterNode(clusterNode.getOwnerName(), clusterNode.getUrl(),
+    public String addClusterNode(ConsumerRecord<String, ClusterNodeDTO> record, @Payload ClusterNodeDTO clusterNode) {
+        return nodeHandler.addNodeToCluster(new ClusterNode(clusterNode.getOwnerName(), clusterNode.getUrl(),
                 clusterNode.getToken(),
                 new Resource(clusterNode.getResources().getCpu(), clusterNode.getResources().getGpu(),
                         clusterNode.getResources().getMemory())));
     }
+
+
 
 
 

@@ -147,5 +147,20 @@ public class ReplyingTemplateConfiguration {
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+    @Bean
+    public ReplyingKafkaTemplate<String, ClusterNodeDTO, String> replyKafkaTemplateString(
+            ProducerFactory<String, ClusterNodeDTO> pf,
+            KafkaMessageListenerContainer<String, String> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, String> replyContainerString(
+            ConsumerFactory<String, String> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("add-node-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
 }
 
