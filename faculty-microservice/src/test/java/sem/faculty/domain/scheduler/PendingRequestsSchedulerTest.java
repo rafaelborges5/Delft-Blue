@@ -17,6 +17,7 @@ import java.time.Month;
 import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class PendingRequestsSchedulerTest {
@@ -87,5 +88,58 @@ class PendingRequestsSchedulerTest {
 
         LocalDate availableDate = scheduler.getAvailableDate(request, faculty.getFacultyName());
         assertThat(availableDate).isEqualTo(date);
+    }
+
+    @Test
+    void getAvailableDateThrowsError()
+            throws NotValidResourcesException, NotEnoughResourcesLeftException,
+            ExecutionException, InterruptedException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
+        Request request = new Request("name", "netId", "description",
+                date, RequestStatus.DROPPED,
+                FacultyName.ARCH, new Resource(5, 1, 1));
+        Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
+        when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(null));
+
+        assertThatThrownBy(() -> {
+            scheduler.getAvailableDate(request, faculty.getFacultyName());
+        }).isInstanceOf(NotEnoughResourcesLeftException.class);
+    }
+
+    @Test
+    void scheduleExecutionException()
+            throws NotValidResourcesException,
+            ExecutionException, InterruptedException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
+        Request request = new Request("name", "netId", "description",
+                date, RequestStatus.DROPPED,
+                FacultyName.ARCH, new Resource(5, 1, 1));
+        Faculty faculty = mock(Faculty.class);
+        when(controller.sendScheduleRequest(any())).thenThrow(ExecutionException.class);
+
+        assertThatThrownBy(() -> {
+            scheduler.scheduleRequest(request, faculty);
+        }).isInstanceOf(RuntimeException.class);
+        verify(faculty, times(1)).getFacultyName();
+        verifyNoMoreInteractions(faculty);
+
+    }
+
+    @Test
+    void scheduleInteruptedException()
+            throws NotValidResourcesException,
+            ExecutionException, InterruptedException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
+        Request request = new Request("name", "netId", "description",
+                date, RequestStatus.DROPPED,
+                FacultyName.ARCH, new Resource(5, 1, 1));
+        Faculty faculty = mock(Faculty.class);
+        when(controller.sendScheduleRequest(any())).thenThrow(InterruptedException.class);
+
+        assertThatThrownBy(() -> {
+            scheduler.scheduleRequest(request, faculty);
+        }).isInstanceOf(RuntimeException.class);
+        verify(faculty, times(1)).getFacultyName();
+        verifyNoMoreInteractions(faculty);
     }
 }
