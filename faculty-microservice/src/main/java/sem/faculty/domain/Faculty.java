@@ -13,7 +13,7 @@ import sem.commons.FacultyName;
 import sem.faculty.provider.TimeProvider;
 
 @Getter
-public class Faculty {
+public class   Faculty {
 
     //TODO: Replace ALLOCATED_RESOURCES with an actual bound after resource_manager is implemented.
     private static final long ALLOCATED_RESOURCES = 2;

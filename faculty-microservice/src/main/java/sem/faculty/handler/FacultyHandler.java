@@ -15,6 +15,7 @@ import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,17 +79,29 @@ public class FacultyHandler {
      * @param request - Request to be scheduled.
      */
     void handleIncomingRequests(Request request) {
-        LocalDate currentDate = timeProvider.getCurrentTime();
+        LocalDate currentDate = timeProvider.getCurrentDate();
         LocalDate preferredDate = request.getPreferredDate();
 
         // if the date of the request is invalid, deny the request
-        if (preferredDate.isBefore(currentDate)) {
+        if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler();
         } else {
             scheduler = new PendingRequestsScheduler();
         }
 
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
+    }
+
+    /**
+     * Returns true if time is within 5 minutes of the preferred day, false otherwise.
+     * @param preferredDate
+     * @return boolean
+     */
+    boolean isInfiveMinutesBeforePreferredDay(LocalDate preferredDate) {
+        LocalDateTime preferredDateStart = preferredDate.atStartOfDay();
+        LocalDateTime currentTime = timeProvider.getCurrentDateTime();
+        return currentTime.plusMinutes(5).isAfter(preferredDateStart) ||
+                currentTime.plusMinutes(5).isEqual(preferredDateStart);
     }
 
     /**
