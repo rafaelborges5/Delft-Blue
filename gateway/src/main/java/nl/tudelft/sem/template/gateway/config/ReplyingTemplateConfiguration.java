@@ -147,5 +147,18 @@ public class ReplyingTemplateConfiguration {
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+    @Bean
+    public ReplyingKafkaTemplate<String, DateDTO, SysadminUserView> replyKafkaTemplateSysadminView(
+            ProducerFactory<String, DateDTO> pf,
+            KafkaMessageListenerContainer<String, SysadminUserView> container)  {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, SysadminUserView> replyContainerSysadminView(
+            ConsumerFactory<String, SysadminUserView> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("sysadmin-view-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
 }
 

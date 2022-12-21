@@ -89,4 +89,10 @@ public class ConsumerConfiguration {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(RegularUserView.class));
     }
+
+    @Bean
+    public ConsumerFactory<String, SysadminUserView> consumerFactorySysadminView() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(SysadminUserView.class));
+    }
 }

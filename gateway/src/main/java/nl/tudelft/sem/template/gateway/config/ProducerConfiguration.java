@@ -87,6 +87,11 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
+    public ProducerFactory<String, DateDTO> producerFactoryDateDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *

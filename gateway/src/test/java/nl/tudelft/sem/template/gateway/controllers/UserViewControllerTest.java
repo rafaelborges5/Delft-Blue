@@ -19,6 +19,7 @@ import java.util.concurrent.TimeoutException;
 class UserViewControllerTest {
 
     private ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView> resourceReplyingKafkaTemplateUserView;
+    private ReplyingKafkaTemplate<String, DateDTO, SysadminUserView> replyingKafkaTemplateSysadminView;
     private AuthManager authManager;
     private UserViewController userViewController;
 
@@ -29,8 +30,10 @@ class UserViewControllerTest {
     @BeforeEach
     void setUp() throws NotValidResourcesException {
         resourceReplyingKafkaTemplateUserView = Mockito.mock(ReplyingKafkaTemplate.class);
+        replyingKafkaTemplateSysadminView = Mockito.mock(ReplyingKafkaTemplate.class);
         authManager = Mockito.mock(AuthManager.class);
-        userViewController = new UserViewController(resourceReplyingKafkaTemplateUserView, authManager);
+        userViewController = new UserViewController(resourceReplyingKafkaTemplateUserView,
+                replyingKafkaTemplateSysadminView, authManager);
 
         facultyNameDTO = new FacultyNameDTO("EEMCS");
         resource = new Resource(3, 2, 1);
