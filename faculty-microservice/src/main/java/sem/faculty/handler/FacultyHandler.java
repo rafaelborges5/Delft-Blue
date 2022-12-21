@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
 import sem.faculty.domain.scheduler.Scheduler;
@@ -85,6 +86,8 @@ public class FacultyHandler {
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler();
+        } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
+            scheduler = new AcceptRequestsScheduler();
         } else {
             scheduler = new PendingRequestsScheduler();
         }
@@ -94,7 +97,7 @@ public class FacultyHandler {
 
     /**
      * Returns true if time is within 5 minutes of the preferred day, false otherwise.
-     * @param preferredDate
+     * @param preferredDate - preferred Date to schedule request
      * @return boolean
      */
     boolean isInfiveMinutesBeforePreferredDay(LocalDate preferredDate) {
@@ -102,6 +105,18 @@ public class FacultyHandler {
         LocalDateTime currentTime = timeProvider.getCurrentDateTime();
         return currentTime.plusMinutes(5).isAfter(preferredDateStart) ||
                 currentTime.plusMinutes(5).isEqual(preferredDateStart);
+    }
+
+    /**
+     * Returns true if time is within 6 hours of the preferred day, false otherwise.
+     * @param preferredDate - preferred Date to schedule request
+     * @return boolean
+     */
+    boolean isInSixHoursBeforePreferredDay(LocalDate preferredDate) {
+        LocalDateTime preferredDateStart = preferredDate.atStartOfDay();
+        LocalDateTime currentTime = timeProvider.getCurrentDateTime();
+        return currentTime.plusHours(6).isAfter(preferredDateStart) ||
+                currentTime.plusHours(6).isEqual(preferredDateStart);
     }
 
     /**
