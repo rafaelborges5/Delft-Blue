@@ -12,14 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class AcceptRequestsDTOTest {
 
     AcceptRequestsDTO acceptRequestsDTO;
-    List<RequestDTO> list;
-    Resource resource;
+    List<Long> list;
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
-        resource = new Resource(3, 2, 1);
-        list = List.of(new RequestDTO(0L, "name", "NETID", FacultyName.EEMCS, "descr",
-                LocalDate.of(2015, 2, 3), resource));
+        list = List.of(1L);
         acceptRequestsDTO = new AcceptRequestsDTO("EEMCS", list);
     }
 
@@ -46,20 +43,14 @@ class AcceptRequestsDTOTest {
 
     @Test
     void setAcceptedRequests() throws NotValidResourcesException {
-        List<RequestDTO> list2 = List.of(
-                new RequestDTO(0L, "name2", "NETID2", FacultyName.EEMCS, "descr2",
-                        LocalDate.of(2015, 2, 3), resource)
-        );
+        List<Long> list2 = List.of(2L);
         acceptRequestsDTO.setAcceptedRequests(list2);
         assertEquals(list2, acceptRequestsDTO.getAcceptedRequests());
     }
 
     @Test
     void testEquals() throws NotValidResourcesException {
-        List<RequestDTO> list2 = List.of(
-                new RequestDTO(0L, "name", "NETID", FacultyName.EEMCS, "descr",
-                        LocalDate.of(2015, 2, 3), resource)
-        );
+        List<Long> list2 = List.of(1L);
         AcceptRequestsDTO acceptRequestsDTO2 = new AcceptRequestsDTO("EEMCS", list2);
         assertEquals(acceptRequestsDTO2, acceptRequestsDTO);
     }
@@ -73,9 +64,7 @@ class AcceptRequestsDTOTest {
     @Test
     void testToString() {
         System.out.println(acceptRequestsDTO.toString());
-        assertEquals("AcceptRequestsDTO(facultyName=EEMCS, acceptedRequests=[RequestDTO(" +
-                        "requestId=0, name=name, netId=NETID, faculty=EEMCS, description=descr, " +
-                        "preferredDate=2015-02-03, resource=Resource(cpu=3, gpu=2, memory=1))])",
+        assertEquals("AcceptRequestsDTO(facultyName=EEMCS, acceptedRequests=[1])",
                 acceptRequestsDTO.toString());
     }
 }
