@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
+import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
 import sem.faculty.provider.CurrentTimeProvider;
@@ -17,6 +18,7 @@ import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +77,9 @@ class FacultyHandlerTest {
 
     void handleIncomingRequestsPendingScheduler()
             throws NotValidResourcesException, ExecutionException, InterruptedException {
+        LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 14);
+        LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 14, 12, 0);
+
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 15);
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
@@ -82,9 +87,8 @@ class FacultyHandlerTest {
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 
-        when(timeProvider.getCurrentTime()).thenReturn(date);
         when(scheduleRequestController.sendScheduleRequest(any()))
-                .thenReturn(ResponseEntity.ok(date.plusDays(1)));
+                .thenReturn(ResponseEntity.ok(todayDate));
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
@@ -132,46 +136,58 @@ class FacultyHandlerTest {
 
     //Tests for accepting requests within 6 hours before the preferred day
     @Test
-    void handleIncomingRequestsSixHoursBeforePreferredDate() throws NotValidResourcesException {
+    void handleIncomingRequestsSixHoursBeforePreferredDate() throws NotValidResourcesException,
+            ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
-        when(timeProvider.getCurrentDate()).thenReturn(// "Today" LocalDate
-                LocalDate.of(2022, Month.DECEMBER, 12));
-        when(timeProvider.getCurrentDateTime()).thenReturn(// "Today" LocalDateTime
-                LocalDateTime.of(2022, Month.DECEMBER, 12, 18, 0));
+        LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
+        LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12, 18, 0);
 
+        when(timeProvider.getCurrentDate()).thenReturn(todayDate);
+        when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
+
+        when(scheduleRequestController.sendScheduleRequest(any()))
+                .thenReturn(ResponseEntity.ok(todayDate));
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
 
     @Test
-    void handleIncomingRequestsSevenHoursBeforePreferredDate() throws NotValidResourcesException {
+    void handleIncomingRequestsSevenHoursBeforePreferredDate() throws NotValidResourcesException,
+            ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
+        LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12, 17, 59);
 
-        when(timeProvider.getCurrentDate()).thenReturn(// "Today" LocalDate
-                LocalDate.of(2022, Month.DECEMBER, 12));
-        when(timeProvider.getCurrentDateTime()).thenReturn(// "Today" LocalDateTime
-                LocalDateTime.of(2022, Month.DECEMBER, 12, 17, 59));
+        when(timeProvider.getCurrentDate()).thenReturn(todayDate);
+        when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
+
+        when(scheduleRequestController.sendScheduleRequest(any()))
+                .thenReturn(ResponseEntity.ok(todayDate));
 
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
 
     @Test
-    void handleIncomingRequestsOneHourBeforePreferredDate() throws NotValidResourcesException {
+    void handleIncomingRequestsOneHourBeforePreferredDate() throws NotValidResourcesException,
+            ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
+        LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12,
+                23, 54, 59);
 
-        when(timeProvider.getCurrentDate()).thenReturn(// "Today" LocalDate
-                LocalDate.of(2022, Month.DECEMBER, 12));
-        when(timeProvider.getCurrentDateTime()).thenReturn(// "Today" LocalDateTime
-                LocalDateTime.of(2022, Month.DECEMBER, 12, 23, 54, 59));
+        when(timeProvider.getCurrentDate()).thenReturn(todayDate);
+        when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 
+        when(scheduleRequestController.sendScheduleRequest(any()))
+                .thenReturn(ResponseEntity.ok(todayDate));
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }

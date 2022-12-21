@@ -89,7 +89,7 @@ public class FacultyHandler {
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler();
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler();
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController);
         } else {
             scheduler = new PendingRequestsScheduler(scheduleRequestController);
         }
