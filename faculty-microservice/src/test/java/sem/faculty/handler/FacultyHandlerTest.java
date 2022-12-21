@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
+import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
@@ -22,10 +24,12 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,6 +37,9 @@ class FacultyHandlerTest {
 
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
+    @Mock
+    private final ScheduleRequestController scheduleRequestController = mock(ScheduleRequestController.class);
+
     FacultyHandler facultyHandler;
 
 
@@ -40,6 +47,7 @@ class FacultyHandlerTest {
     void setUp() {
         facultyHandler = new FacultyHandler();
         facultyHandler.timeProvider = timeProvider;
+        facultyHandler.scheduleRequestController = scheduleRequestController;
     }
 
     @Test
@@ -64,12 +72,15 @@ class FacultyHandlerTest {
     }
 
     @Test
-    void handleIncomingRequestsPendingScheduler() throws NotValidResourcesException {
-        LocalDate today = LocalDate.of(2022, Month.DECEMBER, 15);
+
+    void handleIncomingRequestsPendingScheduler()
+            throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 15);
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
-        when(timeProvider.getCurrentTime()).thenReturn(today);
+        when(timeProvider.getCurrentTime()).thenReturn(date);
+        when(scheduleRequestController.sendScheduleRequest(any()))
+                .thenReturn(ResponseEntity.ok(date.plusDays(1)));
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
