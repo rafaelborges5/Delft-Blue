@@ -1,6 +1,11 @@
 package nl.tudelft.sem.resource.manager.domain.services;
 
+import lombok.AllArgsConstructor;
+import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.resource.exceptions.NotEnoughResourcesException;
 import org.springframework.stereotype.Service;
@@ -15,7 +20,11 @@ import java.util.List;
  * requests
  */
 @Service
+@AllArgsConstructor
 public class ResourceHandler {
+    private final transient ResourceAvailabilityService resourceAvailabilityService;
+    private final transient ReservedResourcesRepository reservedResourcesRepository;
+    private final transient DefaultResources defaultResources;
 
     /**
      * Reserve resources for a request from a faculty on a given date.
@@ -23,14 +32,40 @@ public class ResourceHandler {
      * allocated to the faculty
      *
      * @param faculty the faculty for which to reserve resources from
-     * @param resourceAmount the amount of resources to reserve
+     * @param requestedResources the amount of resources to reserve
      * @param date the date on which to reserve the resources
      * @throws NotEnoughResourcesException if there are not enough resources on that day
      */
     public void reserveResourcesOnDay(Reserver faculty,
-                                      Resource resourceAmount,
+                                      Resource requestedResources,
                                       LocalDate date) throws NotEnoughResourcesException {
+        Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, faculty);
 
+        // Not enough resources to reserve the request
+        if (requestedResources.getCpuResources() > freeResources.getCpuResources() ||
+            requestedResources.getGpuResources() > freeResources.getGpuResources() ||
+            requestedResources.getMemResources() > freeResources.getMemResources()) {
+            throw new NotEnoughResourcesException(date, requestedResources);
+        }
+
+        // Free resources left for the faculty
+        Resource freeFacultyResources = reservedResourcesRepository
+                .findById(new ReservedResourceId(date, faculty))
+                .map(r -> Resource.sub(defaultResources.getInitialResources(), r.getResources()))
+                .orElse(Resource.with(0));
+
+        updateReservedResources(date, faculty, new Resource(
+                Math.min(freeFacultyResources.getCpuResources(), requestedResources.getCpuResources()),
+                Math.min(freeFacultyResources.getGpuResources(), requestedResources.getGpuResources()),
+                Math.min(freeFacultyResources.getMemResources(), requestedResources.getMemResources())
+        ));
+
+        Resource leftoverResources = Resource.sub(requestedResources, freeFacultyResources);
+        updateReservedResources(date, Reserver.FREEPOOL, new Resource(
+                Math.max(0, leftoverResources.getCpuResources()),
+                Math.max(0, leftoverResources.getGpuResources()),
+                Math.max(0, leftoverResources.getMemResources())
+        ));
     }
 
     /**
@@ -52,5 +87,25 @@ public class ResourceHandler {
      */
     public void checkNotEnoughFreepoolResources() {
 
+    }
+
+    /**
+     * Updates the amount of reserved resources by adding the newResources to
+     * the already existing ones.
+     *
+     * @param date the date for the ReservedResrouces
+     * @param reserver the reserver name for the ReservedResources
+     * @param newResources the amount of resources to add
+     */
+    public void updateReservedResources(LocalDate date, Reserver reserver, Resource newResources) {
+        Resource currentResources = reservedResourcesRepository
+                .findById(new ReservedResourceId(date, reserver))
+                .map(ReservedResources::getResources)
+                .orElse(Resource.with(0));
+
+        reservedResourcesRepository.save(new ReservedResources(
+                new ReservedResourceId(date, reserver),
+                Resource.add(currentResources, newResources)
+        ));
     }
 }
