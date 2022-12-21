@@ -12,6 +12,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
+import sem.commons.ClusterNodeDTO;
 import sem.commons.ScheduleDateDTO;
 
 import java.util.HashMap;
@@ -29,6 +30,18 @@ public class KafkaConsumerConfig {
     }
 
     /**
+     * This method will return the consumer properties to be used.
+     * @return the Map that represents the consume properties
+     */
+    @Bean
+    public Map<String, Object> consumerProperties() {
+        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        return props;
+    }
+
+    /**
      * This method will set the {@link ConsumerFactory} so we can consume messages in general.
      * It should be used by the ListenerFactory, so we can consume messages
      * through the {@link org.springframework.kafka.annotation.KafkaListener KafkaListener} annotation.
@@ -37,11 +50,7 @@ public class KafkaConsumerConfig {
      */
     @Bean
     public ConsumerFactory<String, ScheduleDateDTO> consumerFactory() {
-        Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-
-        return new DefaultKafkaConsumerFactory<>(props,
+        return new DefaultKafkaConsumerFactory<>(consumerProperties(),
                 new StringDeserializer(),
                 new JsonDeserializer<>(ScheduleDateDTO.class));
     }
@@ -56,6 +65,30 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, ScheduleDateDTO> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    /**
+     * This method will create the consumer factory for the ClusterNodeDTOs.
+     * @return the consumer factory
+     */
+    @Bean
+    public ConsumerFactory<String, ClusterNodeDTO> consumerFactoryClusterNode() {
+        return new DefaultKafkaConsumerFactory<>(consumerProperties(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(ClusterNodeDTO.class));
+    }
+
+    /**
+     * This method will create the factory in order to build the ListenerContainer so we can use the @KafkaListener
+     * annotation.
+     * @return the KafkaListenerContainer
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ClusterNodeDTO> kafkaListenerContainerFactoryClusterNode() {
+        ConcurrentKafkaListenerContainerFactory<String, ClusterNodeDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryClusterNode());
         return factory;
     }
 }

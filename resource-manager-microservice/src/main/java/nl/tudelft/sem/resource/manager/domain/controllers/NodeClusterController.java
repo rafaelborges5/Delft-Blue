@@ -1,7 +1,9 @@
 package nl.tudelft.sem.resource.manager.domain.controllers;
 
 import nl.tudelft.sem.resource.manager.domain.Resource;
+import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
+import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import sem.commons.FacultyNameDTO;
-import sem.commons.FacultyNamePackageDTO;
-import sem.commons.NotValidResourcesException;
-import sem.commons.RegularUserView;
+import sem.commons.*;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -23,9 +22,12 @@ public class NodeClusterController {
 
     private final transient ResourceAvailabilityService resourceAvailabilityService;
 
+    private final transient NodeHandler nodeHandler;
+
     @Autowired
-    public NodeClusterController(ResourceAvailabilityService resourceAvailabilityService) {
+    public NodeClusterController(ResourceAvailabilityService resourceAvailabilityService, NodeHandler nodeHandler) {
         this.resourceAvailabilityService = resourceAvailabilityService;
+        this.nodeHandler = nodeHandler;
     }
 
 
@@ -56,6 +58,26 @@ public class NodeClusterController {
             }
         });
         return new RegularUserView(map);
+    }
+
+
+    /**
+     * This method will be the kafka endpoint to add new cluster nodes to the resource manager.
+     * It will receive a DTO that represents the cluster node to add to the system
+     * @param record the consumer record
+     * @param clusterNode the DTO representing the node to add
+     */
+    @KafkaListener(
+            topics = "add-node",
+            groupId = "default",
+            containerFactory = "kafkaListenerContainerFactoryClusterNode"
+    )
+    @SendTo
+    public void addClusterNode(ConsumerRecord<String, ClusterNodeDTO> record, @Payload ClusterNodeDTO clusterNode) {
+        nodeHandler.addNodeToCluster(new ClusterNode(clusterNode.getOwnerName(), clusterNode.getUrl(),
+                clusterNode.getToken(),
+                new Resource(clusterNode.getResources().getCpu(), clusterNode.getResources().getGpu(),
+                        clusterNode.getResources().getMemory())));
     }
 
 
