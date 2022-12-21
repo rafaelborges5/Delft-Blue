@@ -20,16 +20,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class NodeClusterControllerTest {
+    private transient ResourceAvailabilityService resourceAvailabilityService;
+    private transient NodeClusterController nodeClusterController;
 
-    private ResourceAvailabilityService resourceAvailabilityService;
-    private NodeClusterController nodeClusterController;
-
-    private NodeHandler nodeHandler;
-    private FacultyNameDTO facultyNameDTO;
-    private Resource resource;
-    private RegularUserView regularUserView;
-    private FacultyNamePackageDTO facultyNamePackageDTO;
-    private ClusterNodeDTO clusterNodeDTO;
+    private transient NodeHandler nodeHandler;
+    private transient FacultyNameDTO facultyNameDTO;
+    private transient Resource resource;
+    private transient RegularUserView regularUserView;
+    private transient FacultyNamePackageDTO facultyNamePackageDTO;
+    private transient ClusterNodeDTO clusterNodeDTO;
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
@@ -45,6 +44,7 @@ class NodeClusterControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void getUserViewResourcesForDate() {
         Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Reserver.EEMCS))
                 .thenReturn(new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1));
@@ -54,6 +54,7 @@ class NodeClusterControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void testAddClusterNode() {
         ClusterNode clusterNode = new ClusterNode(clusterNodeDTO.getOwnerName(), clusterNodeDTO.getUrl(),
                 clusterNodeDTO.getToken(),

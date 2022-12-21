@@ -1,9 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -18,6 +15,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ReservedResourceId implements Serializable {
     private static final long serialVersionUID = 1L;
 
