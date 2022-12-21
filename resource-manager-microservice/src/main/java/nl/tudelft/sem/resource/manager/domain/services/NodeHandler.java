@@ -2,9 +2,9 @@ package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
-import nl.tudelft.sem.resource.manager.domain.node.Token;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import org.springframework.stereotype.Service;
+import sem.commons.Token;
 
 /**
  * Service that handles adding and removing ClusterNodes from the cluster.

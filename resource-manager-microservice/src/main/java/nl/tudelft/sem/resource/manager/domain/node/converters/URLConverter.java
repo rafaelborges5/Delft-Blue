@@ -1,6 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.node.converters;
 
-import nl.tudelft.sem.resource.manager.domain.node.URL;
+import sem.commons.URL;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
