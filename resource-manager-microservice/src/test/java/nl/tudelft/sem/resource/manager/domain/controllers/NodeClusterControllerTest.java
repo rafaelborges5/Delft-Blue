@@ -1,10 +1,13 @@
 package nl.tudelft.sem.resource.manager.domain.controllers;
 
+import javassist.NotFoundException;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
+import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class NodeClusterControllerTest {
 
@@ -58,5 +62,26 @@ class NodeClusterControllerTest {
         ConsumerRecord<String, ClusterNodeDTO> record = new ConsumerRecord<>("test", 1, 1, "test", clusterNodeDTO);
         nodeClusterController.addClusterNode(record, clusterNodeDTO);
         Mockito.verify(nodeHandler).addNodeToCluster(clusterNode);
+    }
+
+    @Test
+    void testRemoveClusterNodeValid() {
+        Token token = new Token("test");
+        try {
+            nodeHandler.removeNodeFromCluster(token);
+        } catch (NodeNotFoundException e) {
+            fail("Shouldn't have thrown an exception");
+        }
+    }
+
+    @Test
+    void testRemoveClusterNodeNotValid() throws NodeNotFoundException {
+        Token token = new Token("test");
+        NodeNotFoundException exception = new NodeNotFoundException(token);
+        Mockito.doThrow(exception)
+                .when(nodeHandler)
+                .removeNodeFromCluster(token);
+        assertThat(nodeClusterController.removeClusterNode(Mockito.any(), token))
+                .isEqualTo("There are no nodes with that token!");
     }
 }

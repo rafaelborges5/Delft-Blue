@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sem.commons.ClusterNodeDTO;
-import sem.commons.TokenDTO;
+import sem.commons.Token;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -25,13 +25,23 @@ import java.util.concurrent.TimeoutException;
 public class ClusterNodeController {
 
     private final transient ReplyingKafkaTemplate<String, ClusterNodeDTO, String> kafkaTemplateClusterNodeDTO;
+
+    private final transient ReplyingKafkaTemplate<String, Token, String> kafkaTemplateToken;
     private final transient AuthManager authManager;
 
+    /**
+     * The constructor for the controller.
+     * @param kafkaTemplateClusterNodeDTO the kafka template for the ClusterNodeDTO
+     * @param kafkaTemplateToken the kafka template for the Token
+     * @param authManager the authentication manager
+     */
     @Autowired
     public ClusterNodeController(ReplyingKafkaTemplate<String, ClusterNodeDTO, String> kafkaTemplateClusterNodeDTO,
+                                 ReplyingKafkaTemplate<String, Token, String> kafkaTemplateToken,
                                  AuthManager authManager) {
         this.kafkaTemplateClusterNodeDTO = kafkaTemplateClusterNodeDTO;
         this.authManager = authManager;
+        this.kafkaTemplateToken = kafkaTemplateToken;
     }
 
     /**
@@ -40,7 +50,8 @@ public class ClusterNodeController {
      * @return a ResponseEntity specifying weather or not the node was added successfully
      */
     @PostMapping("/add")
-    public ResponseEntity<String> addClusterNode(@RequestBody ClusterNodeDTO clusterNodeDTO) throws ExecutionException, InterruptedException, TimeoutException {
+    public ResponseEntity<String> addClusterNode(@RequestBody ClusterNodeDTO clusterNodeDTO)
+            throws ExecutionException, InterruptedException, TimeoutException {
         if (!clusterNodeDTO.getOwnerName().getName().equals(authManager.getNetId())) {
             return ResponseEntity.status(401).body("You can only submit new nodes in your own name!");
         }
@@ -57,9 +68,24 @@ public class ClusterNodeController {
         return ResponseEntity.ok(consumerRecord.value());
     }
 
+    /**
+     * This method is the api endpoint to remove cluster nodes from the system.
+     * @param token the token that identifies the token to remove
+     * @return success/failure message
+     * @throws ExecutionException in case the reply times out
+     * @throws InterruptedException in case the reply times out
+     * @throws TimeoutException in case the reply times out
+     */
     @PostMapping("/remove")
-    public ResponseEntity<String> removeClusterNode(@RequestBody TokenDTO token) {
-        return ResponseEntity.ok("");
+    public ResponseEntity<String> removeClusterNode(@RequestBody Token token)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        ProducerRecord<String, Token> record = new ProducerRecord<>("remove-node", token);
+        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "remove-node-reply".getBytes()));
+        RequestReplyFuture<String, Token, String> sendAndReceive =
+                kafkaTemplateToken.sendAndReceive(record);
+        ConsumerRecord<String, String> consumerRecord = sendAndReceive.get(10, TimeUnit.SECONDS);
+
+        return ResponseEntity.ok(consumerRecord.value());
     }
 
 }

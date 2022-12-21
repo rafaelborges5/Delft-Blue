@@ -1,6 +1,7 @@
 package nl.tudelft.sem.resource.manager.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.internals.Topic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
@@ -46,6 +47,13 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic getAddNode() {
         return TopicBuilder.name("add-node")
+                .build();
+    }
+
+
+    @Bean
+    public NewTopic getRemoveNode() {
+        return TopicBuilder.name("remove-node")
                 .build();
     }
 }

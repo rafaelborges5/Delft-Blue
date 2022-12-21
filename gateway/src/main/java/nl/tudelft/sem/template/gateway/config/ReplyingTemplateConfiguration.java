@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -114,7 +115,7 @@ public class ReplyingTemplateConfiguration {
     }
 
     @Bean
-    public KafkaMessageListenerContainer<String, TokenDTO> replyContainerTokenDTO(
+    public KafkaMessageListenerContainer<String, TokenDTO> replyContainerToken(
             ConsumerFactory<String, TokenDTO> cf) {
         ContainerProperties containerProperties = new ContainerProperties("user-auth-topic-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
@@ -148,17 +149,33 @@ public class ReplyingTemplateConfiguration {
     }
 
     @Bean
-    public ReplyingKafkaTemplate<String, ClusterNodeDTO, String> replyKafkaTemplateString(
+    public ReplyingKafkaTemplate<String, ClusterNodeDTO, String> replyKafkaTemplateClusterNodeDTOString(
             ProducerFactory<String, ClusterNodeDTO> pf,
-            KafkaMessageListenerContainer<String, String> container
+            @Qualifier("replyContainerClusterNodeDTOString") KafkaMessageListenerContainer<String, String> container
     ) {
         return new ReplyingKafkaTemplate<>(pf, container);
     }
 
     @Bean
-    public KafkaMessageListenerContainer<String, String> replyContainerString(
+    public KafkaMessageListenerContainer<String, String> replyContainerClusterNodeDTOString(
             ConsumerFactory<String, String> cf) {
         ContainerProperties containerProperties = new ContainerProperties("add-node-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+
+    @Bean
+    public ReplyingKafkaTemplate<String, Token, String> replyKafkaTemplateTokenString(
+            ProducerFactory<String, Token> pf,
+            @Qualifier("replyContainerTokenString") KafkaMessageListenerContainer<String, String> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, String> replyContainerTokenString(
+            ConsumerFactory<String, String> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("remove-node-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 

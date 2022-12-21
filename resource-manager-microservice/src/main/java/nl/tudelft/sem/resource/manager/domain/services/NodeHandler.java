@@ -18,7 +18,7 @@ public class NodeHandler {
     }
 
     /**
-     * This method will add a new node to the system
+     * This method will add a new node to the system.
      * @param node the node to add to the system
      * @return a string representing weather the addition was successful or not.
      */

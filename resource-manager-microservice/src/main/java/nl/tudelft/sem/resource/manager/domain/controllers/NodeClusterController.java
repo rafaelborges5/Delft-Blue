@@ -2,6 +2,7 @@ package nl.tudelft.sem.resource.manager.domain.controllers;
 
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
+import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
@@ -70,7 +71,7 @@ public class NodeClusterController {
     @KafkaListener(
             topics = "add-node",
             groupId = "default",
-            containerFactory = "kafkaListenerContainerFactoryClusterNode"
+            containerFactory = "kafkaListenerContainerFactoryClusterNodeDTO"
     )
     @SendTo
     public String addClusterNode(ConsumerRecord<String, ClusterNodeDTO> record, @Payload ClusterNodeDTO clusterNode) {
@@ -78,6 +79,29 @@ public class NodeClusterController {
                 clusterNode.getToken(),
                 new Resource(clusterNode.getResources().getCpu(), clusterNode.getResources().getGpu(),
                         clusterNode.getResources().getMemory())));
+    }
+
+
+    /**
+     * This method will be the kafka endpoint to remove cluster nodes from the system.
+     * It will receive a DTO that identifies the node to remove
+     * @param record the consumer record
+     * @param token the token that identifies the node
+     * @return a success/failure message
+     */
+    @KafkaListener(
+            topics = "remove-node",
+            groupId = "default",
+            containerFactory = "kafkaListenerContainerFactoryTokenDTO"
+    )
+    @SendTo
+    public String removeClusterNode(ConsumerRecord<String, String> record, @Payload Token token) {
+        try {
+            nodeHandler.removeNodeFromCluster(token);
+            return "Node removed successfully";
+        } catch (NodeNotFoundException e) {
+            return "There are no nodes with that token!";
+        }
     }
 
 
