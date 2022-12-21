@@ -61,12 +61,19 @@ public class MainUserController {
     @SendTo
     public StatusDTO addNewUser(UserDTO userDTO) {
         try {
+            if (userDTO.getNetId().equals("")) {
+                return new StatusDTO("NetId cannot be empty!");
+            }
+            if (userDTO.getPassword().equals("")) {
+                return new StatusDTO("Password cannot be empty!");
+            }
+
             NetId netId = new NetId(userDTO.getNetId());
             Password password = new Password(userDTO.getPassword());
             Role role;
             try {
                 role = Role.valueOf(userDTO.getRole());
-            } catch (IllegalArgumentException  e) {
+            } catch (IllegalArgumentException e) {
                 return new StatusDTO("Provided role does not exist!");
             }
             List<String> facultiesStrings = userDTO.getFaculties();
@@ -76,7 +83,7 @@ public class MainUserController {
             for (String name : facultiesStrings) {
                 try {
                     faculties.add(FacultyName.valueOf(name));
-                } catch (IllegalArgumentException  e) {
+                } catch (IllegalArgumentException e) {
                     return new StatusDTO("Wrong faculty name");
                 }
             }

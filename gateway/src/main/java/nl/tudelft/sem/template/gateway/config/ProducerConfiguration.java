@@ -73,7 +73,17 @@ public class ProducerConfiguration {
     }
 
     @Bean
+    public ProducerFactory<String, RequestDTO> producerFactoryRequestDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
     public ProducerFactory<String, FacultyNamePackageDTO> producerFactoryFacultyNamePackageDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, ClusterNodeDTO> producerFactoryClusterNodeDTO() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
@@ -93,7 +103,18 @@ public class ProducerConfiguration {
     }
 
     @Bean
+    public KafkaTemplate<String, RequestDTO> kafkaTemplateRequestDTO() {
+        return new KafkaTemplate<>(producerFactoryRequestDTO());
+    }
+
+    @Bean
     public KafkaTemplate<String, FacultyNamePackageDTO> kafkaTemplateFacultyNamePackageDTO() {
         return new KafkaTemplate<>(producerFactoryFacultyNamePackageDTO());
     }
+
+    @Bean
+    public KafkaTemplate<String, ClusterNodeDTO> kafkaTemplateClusterNodeDTO() {
+        return new KafkaTemplate<>(producerFactoryClusterNodeDTO());
+    }
 }
+

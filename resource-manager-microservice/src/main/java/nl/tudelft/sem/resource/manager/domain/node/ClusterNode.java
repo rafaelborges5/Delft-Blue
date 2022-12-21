@@ -1,10 +1,16 @@
 package nl.tudelft.sem.resource.manager.domain.node;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.TokenConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.URLConverter;
+import sem.commons.OwnerName;
+import sem.commons.Token;
+import sem.commons.URL;
 
 import javax.persistence.*;
 import java.util.Objects;

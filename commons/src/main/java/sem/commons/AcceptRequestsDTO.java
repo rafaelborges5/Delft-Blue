@@ -8,11 +8,11 @@ import java.util.List;
 public class AcceptRequestsDTO {
 
     private String facultyName;
-    private List<RequestDTO> acceptedRequests;
+    private List<Long> acceptedRequests;
 
     public AcceptRequestsDTO(
             @JsonProperty("facultyName") String facultyName,
-            @JsonProperty("requests") List<RequestDTO> acceptedRequests
+            @JsonProperty("requests") List<Long> acceptedRequests
     ) {
         this.facultyName = facultyName;
         this.acceptedRequests = acceptedRequests;

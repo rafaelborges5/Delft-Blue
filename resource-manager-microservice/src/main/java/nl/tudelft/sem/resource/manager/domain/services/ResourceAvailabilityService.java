@@ -107,19 +107,10 @@ public class ResourceAvailabilityService {
      * @return the amount of reserved resources
      */
     public Resource seeReservedResourcesOnDate(LocalDate date) {
-        Resource reservedFacultyResources = reservedResourcesRepository
+        return reservedResourcesRepository
                 .findAllById_Date(date)
                 .stream()
                 .map(ReservedResources::getResources)
                 .reduce(new Resource(), Resource::add);
-
-        Resource reservedFreepoolResources = reservedResourcesRepository
-                .findAllById_Date(date)
-                .stream()
-                .filter(rr -> rr.getId().getReserver().equals(Reserver.FREEPOOL))
-                .map(ReservedResources::getResources)
-                .reduce(new Resource(), Resource::add);
-
-        return Resource.add(reservedFacultyResources, reservedFreepoolResources);
     }
 }
