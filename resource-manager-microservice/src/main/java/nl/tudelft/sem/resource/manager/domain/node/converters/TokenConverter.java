@@ -1,6 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.node.converters;
 
-import nl.tudelft.sem.resource.manager.domain.node.Token;
+import sem.commons.Token;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Convert;

@@ -1,6 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.node.converters;
 
-import nl.tudelft.sem.resource.manager.domain.node.OwnerName;
+import sem.commons.OwnerName;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

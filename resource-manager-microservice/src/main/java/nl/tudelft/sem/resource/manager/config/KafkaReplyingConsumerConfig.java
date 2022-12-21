@@ -1,6 +1,5 @@
 package nl.tudelft.sem.resource.manager.config;
 
-import nl.tudelft.sem.resource.manager.domain.Resource;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -16,7 +15,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import sem.commons.FacultyNamePackageDTO;
 import sem.commons.RegularUserView;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
