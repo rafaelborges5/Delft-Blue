@@ -9,6 +9,8 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import sem.commons.*;
 
+import java.util.Map;
+
 /**
  * This class has all the configurations that allow for the consuming and replying of messages. There is some
  * duplication with the ProducerConfiguration and ConsumerConfiguration classes but this way it improves readability
@@ -118,4 +120,32 @@ public class ReplyingTemplateConfiguration {
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+
+    /**
+     * This method will set up the kafkaTemplate for Consuming and Replying to messages.
+     * @param pf the producerFactory to reply
+     * @param container the listener container
+     * @return the kafkaTemplate
+     */
+    @Bean
+    public ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView>
+        replyKafkaTemplateUserView(
+            ProducerFactory<String, FacultyNamePackageDTO> pf,
+            KafkaMessageListenerContainer<String, RegularUserView> container) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    /**
+     * This method will return the container used in replyKafkaTemplatePendingRequests.
+     * @param cf the consumer factory
+     * @return the listenerContainer
+     */
+    @Bean
+    public KafkaMessageListenerContainer<String, RegularUserView> replyContainerUserView(
+            ConsumerFactory<String, RegularUserView> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("user-view-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
 }
+

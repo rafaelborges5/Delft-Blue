@@ -4,6 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -18,22 +19,22 @@ import java.time.LocalDate;
 @Service
 public class FreepoolManager {
     private final transient DefaultResources defaultResources;
-    private final transient ReservedResourcesRepository resourcesRepository;
+    private final transient ReservedResourcesRepository reservedResourcesRepository;
     private final transient NodeRepository nodeRepository;
 
     /**
      * Injects dependencies.
      *
      * @param defaultResources DefaultResources
-     * @param resourcesRepository ResourcesRepository
+     * @param reservedResourcesRepository ResourcesRepository
      * @param nodeRepository NodeRepository
      */
     @Autowired
     public FreepoolManager(DefaultResources defaultResources,
-                           ReservedResourcesRepository resourcesRepository,
+                           ReservedResourcesRepository reservedResourcesRepository,
                            NodeRepository nodeRepository) {
         this.defaultResources = defaultResources;
-        this.resourcesRepository = resourcesRepository;
+        this.reservedResourcesRepository = reservedResourcesRepository;
         this.nodeRepository = nodeRepository;
     }
 
@@ -42,20 +43,16 @@ public class FreepoolManager {
      * @param date a {@link LocalDate} representing the date to check for
      * @return what Resources are available
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public Resource getAvailableResources(LocalDate date) {
         Resource freepoolSize = nodeRepository
                 .findAll()
                 .stream()
                 .map(ClusterNode::getResources)
-                .reduce(new Resource(), (r1, r2) -> {
-                    if (r2 == null) {
-                        return r1;
-                    }
-                    return Resource.add(r1, r2);
-                });
+                .reduce(new Resource(), Resource::add);
 
-        Resource usedResources = resourcesRepository
-                .findByReserverAndDate(Reserver.FREEPOOL, date)
+        Resource usedResources = reservedResourcesRepository
+                .findById(new ReservedResourceId(date, Reserver.FREEPOOL))
                 .map(ReservedResources::getResources)
                 .orElse(new Resource(0, 0, 0));
 

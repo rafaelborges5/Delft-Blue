@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.controllers;
 
+import nl.tudelft.sem.template.gateway.authentication.AuthManager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ import static org.mockito.Mockito.when;
 class FacultyControllerTest {
 
     @Mock
+    private AuthManager authManager;
+
+    @Mock
     private ReplyingKafkaTemplate<String, FacultyNameDTO, PendingRequestsDTO> replyingKafkaTemplatePendingRequestsMock;
 
     @Mock
@@ -34,10 +38,12 @@ class FacultyControllerTest {
 
     @BeforeEach
     void setUp() {
+        authManager = Mockito.mock(AuthManager.class);
         replyingKafkaTemplatePendingRequestsMock = Mockito.mock(ReplyingKafkaTemplate.class);
         replyingKafkaTemplateAcceptRequestsMock = Mockito.mock(ReplyingKafkaTemplate.class);
 
         facultyController = new FacultyController(
+                authManager,
                 replyingKafkaTemplatePendingRequestsMock,
                 replyingKafkaTemplateAcceptRequestsMock
         );
@@ -53,6 +59,7 @@ class FacultyControllerTest {
                 new ConsumerRecord<>("topic", 1, 1L, "key", new PendingRequestsDTO("OK", list));
         RequestReplyFuture<String, FacultyNameDTO, PendingRequestsDTO> future = Mockito.mock(RequestReplyFuture.class);
 
+        when(authManager.getFaculties()).thenReturn("[EEMCS]");
         when(future.get(10, TimeUnit.SECONDS)).thenReturn(consumerRecord);
         when(replyingKafkaTemplatePendingRequestsMock.sendAndReceive(any())).thenReturn(future);
 
@@ -71,6 +78,7 @@ class FacultyControllerTest {
                 new ConsumerRecord<>("topic", 1, 1L, "key", new PendingRequestsDTO("WRONG", list));
         RequestReplyFuture<String, FacultyNameDTO, PendingRequestsDTO> future = Mockito.mock(RequestReplyFuture.class);
 
+        when(authManager.getFaculties()).thenReturn("[EEMCS]");
         when(future.get(10, TimeUnit.SECONDS)).thenReturn(consumerRecord);
         when(replyingKafkaTemplatePendingRequestsMock.sendAndReceive(any())).thenReturn(future);
 
@@ -81,11 +89,23 @@ class FacultyControllerTest {
     }
 
     @Test
+    void getPendingRequestsWrongFaculty() throws ExecutionException, InterruptedException, TimeoutException {
+
+        when(authManager.getFaculties()).thenReturn("[AE]");
+
+        ResponseEntity<PendingRequestsDTO> response = facultyController.getPendingRequests(new FacultyNameDTO("EEMCS"));
+
+        assertEquals(response.getStatusCodeValue(), 401);
+        assertEquals("You are not allowed to access this faculty", response.getBody().getStatus());
+    }
+
+    @Test
     void acceptRequests() throws ExecutionException, InterruptedException {
         ConsumerRecord<String, StatusDTO> consumerRecord =
                 new ConsumerRecord<>("topic", 1, 1L, "key", new StatusDTO("OK"));
         RequestReplyFuture<String, AcceptRequestsDTO, StatusDTO> future = Mockito.mock(RequestReplyFuture.class);
 
+        when(authManager.getFaculties()).thenReturn("[EEMCS]");
         when(replyingKafkaTemplateAcceptRequestsMock.sendAndReceive(any())).thenReturn(future);
         when(future.get()).thenReturn(consumerRecord);
 
@@ -102,6 +122,7 @@ class FacultyControllerTest {
                 new ConsumerRecord<>("topic", 1, 1L, "key", new StatusDTO("WRONG"));
         RequestReplyFuture<String, AcceptRequestsDTO, StatusDTO> future = Mockito.mock(RequestReplyFuture.class);
 
+        when(authManager.getFaculties()).thenReturn("[EEMCS]");
         when(replyingKafkaTemplateAcceptRequestsMock.sendAndReceive(any())).thenReturn(future);
         when(future.get()).thenReturn(consumerRecord);
 
@@ -110,5 +131,16 @@ class FacultyControllerTest {
 
         assertEquals(response.getStatusCodeValue(), 400);
         assertEquals(Objects.requireNonNull(response.getBody()).getStatus(), "WRONG");
+    }
+
+    @Test
+    void acceptRequestsWrongFaculty() throws ExecutionException, InterruptedException {
+        when(authManager.getFaculties()).thenReturn("[EEMCS]");
+
+        ResponseEntity<StatusDTO> response = facultyController.acceptRequests(
+                new AcceptRequestsDTO("AE", new ArrayList<>()));
+
+        assertEquals(response.getStatusCodeValue(), 401);
+        assertEquals("You are not allowed to access this faculty", response.getBody().getStatus());
     }
 }

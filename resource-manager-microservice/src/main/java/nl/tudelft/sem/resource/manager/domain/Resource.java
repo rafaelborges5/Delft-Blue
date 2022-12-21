@@ -16,6 +16,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Resource {
     @Column(name = "cpu", nullable = false)
     private int cpuResources;

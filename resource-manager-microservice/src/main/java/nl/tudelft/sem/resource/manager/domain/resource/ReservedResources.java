@@ -3,10 +3,12 @@ package nl.tudelft.sem.resource.manager.domain.resource;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * A DDD entity representing the number of resources allocated to a Faculty on a given Date.
@@ -17,15 +19,28 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@ToString
 public class ReservedResources {
-    @Id
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
-
-    @Column(name = "reserver", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Reserver reserver;
+    @EmbeddedId
+    private ReservedResourceId id;
 
     @Embedded
     private Resource resources;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ReservedResources)) {
+            return false;
+        }
+        ReservedResources that = (ReservedResources) o;
+        return Objects.equals(id, that.id) && Objects.equals(resources, that.resources);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, resources);
+    }
 }
