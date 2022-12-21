@@ -18,7 +18,7 @@ public class DateSchedulingService {
     private final transient ResourceAvailabilityService resourceAvailabilityService;
 
     /**
-     * Retrieves the first available date when the given resources are available.
+     * Retrieves the closest available date when the given resources are available.
      *
      * @param resources the amount of resources to be reserved
      * @param date the date by which the resources need to be reserved
