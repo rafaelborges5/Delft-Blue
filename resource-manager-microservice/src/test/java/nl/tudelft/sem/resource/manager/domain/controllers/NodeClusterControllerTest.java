@@ -40,6 +40,7 @@ class NodeClusterControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void getUserViewResourcesForDate() {
         Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Reserver.EEMCS))
                 .thenReturn(new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1));
@@ -49,6 +50,7 @@ class NodeClusterControllerTest {
     }
 
     @Test
+    @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void testAddClusterNode() {
         ClusterNode clusterNode = new ClusterNode(clusterNodeDTO.getOwnerName(), clusterNodeDTO.getUrl(),
                 clusterNodeDTO.getToken(),
