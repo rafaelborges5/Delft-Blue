@@ -76,7 +76,7 @@ public class ConsumerConfiguration {
 
     /**
      * The Consumer Factory for NotificationPackages.
-     * @return the consumerFactoryUserView
+     * @return the consumer factory for Notification Package
      */
     @Bean
     public ConsumerFactory<String, NotificationPackage> consumerFactoryListNotifications() {
