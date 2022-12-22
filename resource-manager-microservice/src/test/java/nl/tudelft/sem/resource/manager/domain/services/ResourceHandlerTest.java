@@ -20,66 +20,12 @@ import static org.mockito.Mockito.*;
 
 class ResourceHandlerTest {
     private transient ResourceHandler sut;
-    private transient ResourceAvailabilityService resourceAvailabilityService;
     private transient ReservedResourcesRepository reservedResourcesRepository;
-    private transient DefaultResources defaultResources;
 
     @BeforeEach
     void setUp() {
-        resourceAvailabilityService = mock(ResourceAvailabilityService.class);
         reservedResourcesRepository = mock(ReservedResourcesRepository.class);
-        defaultResources = new DefaultResources(100);
-        sut = new ResourceHandler(resourceAvailabilityService, reservedResourcesRepository, defaultResources);
-    }
-
-    @Test
-    void reserve_resources_on_day_test() {
-        LocalDate date = LocalDate.of(2022, 1, 1);
-        Reserver faculty = Reserver.AE;
-        ReservedResourceId facultyId = new ReservedResourceId(date, Reserver.AE);
-        ReservedResourceId poolId = new ReservedResourceId(date, Reserver.FREEPOOL);
-
-        when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, faculty))
-                .thenReturn(new Resource(50, 100, 150));
-        when(reservedResourcesRepository.findById(facultyId))
-                .thenReturn(Optional.of(new ReservedResources(
-                        facultyId,
-                        new Resource(80, 50, 50))
-                //      Free resources: 20, 50, 50
-                ));
-        try {
-            sut.reserveResourcesOnDay(faculty, new Resource(50, 40, 50), date);
-        } catch (NotEnoughResourcesException e) {
-            e.printStackTrace();
-        }
-
-        ArgumentCaptor<ReservedResources> arg = ArgumentCaptor.forClass(ReservedResources.class);
-
-        verify(reservedResourcesRepository, times(2)).save(arg.capture());
-        assertThat(arg.getAllValues()).containsExactlyInAnyOrder(
-                new ReservedResources(facultyId, new Resource(100, 90, 100)),
-                new ReservedResources(poolId, new Resource(30, 0, 0))
-        );
-    }
-
-    @Test
-    void reserve_resources_on_day_insufficient_resources_test() {
-        LocalDate date = LocalDate.of(2022, 1, 1);
-        Reserver faculty = Reserver.AE;
-        ReservedResourceId facultyId = new ReservedResourceId(date, Reserver.AE);
-
-        when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, faculty))
-                .thenReturn(new Resource(50, 100, 150));
-        when(reservedResourcesRepository.findById(facultyId))
-                .thenReturn(Optional.of(new ReservedResources(
-                                facultyId,
-                                new Resource(80, 50, 50))
-                //              Free resources: 20, 50, 50
-                ));
-
-        assertThatThrownBy(() -> {
-            sut.reserveResourcesOnDay(faculty, new Resource(60, 40, 50), date);
-        }).isInstanceOf(NotEnoughResourcesException.class);
+        sut = new ResourceHandler(reservedResourcesRepository);
     }
 
     @Test

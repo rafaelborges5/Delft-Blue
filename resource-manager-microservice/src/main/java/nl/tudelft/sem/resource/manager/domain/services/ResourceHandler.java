@@ -22,63 +22,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ResourceHandler {
-    private final transient ResourceAvailabilityService resourceAvailabilityService;
     private final transient ReservedResourcesRepository reservedResourcesRepository;
-    private final transient DefaultResources defaultResources;
-
-    /**
-     * Reserve resources for a request from a faculty on a given date.
-     * May reserve resources from the freepool if there are not enough free resources
-     * allocated to the faculty
-     *
-     * @param faculty the faculty for which to reserve resources from
-     * @param requestedResources the amount of resources to reserve
-     * @param date the date on which to reserve the resources
-     * @throws NotEnoughResourcesException if there are not enough resources on that day
-     */
-    public void reserveResourcesOnDay(Reserver faculty,
-                                      Resource requestedResources,
-                                      LocalDate date) throws NotEnoughResourcesException {
-        Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, faculty);
-
-        // Not enough resources to reserve the request
-        if (requestedResources.getCpuResources() > freeResources.getCpuResources() ||
-            requestedResources.getGpuResources() > freeResources.getGpuResources() ||
-            requestedResources.getMemResources() > freeResources.getMemResources()) {
-            throw new NotEnoughResourcesException(date, requestedResources);
-        }
-
-        // Free resources left for the faculty
-        Resource freeFacultyResources = reservedResourcesRepository
-                .findById(new ReservedResourceId(date, faculty))
-                .map(r -> Resource.sub(defaultResources.getInitialResources(), r.getResources()))
-                .orElse(Resource.with(0));
-
-        updateReservedResources(date, faculty, new Resource(
-                Math.min(freeFacultyResources.getCpuResources(), requestedResources.getCpuResources()),
-                Math.min(freeFacultyResources.getGpuResources(), requestedResources.getGpuResources()),
-                Math.min(freeFacultyResources.getMemResources(), requestedResources.getMemResources())
-        ));
-
-        Resource leftoverResources = Resource.sub(requestedResources, freeFacultyResources);
-        updateReservedResources(date, Reserver.FREEPOOL, new Resource(
-                Math.max(0, leftoverResources.getCpuResources()),
-                Math.max(0, leftoverResources.getGpuResources()),
-                Math.max(0, leftoverResources.getMemResources())
-        ));
-    }
-
-    /**
-     * Releases a faculty's resources on a list of days. This is done by
-     * adding the amount of free resources left for the faculty on that day,
-     * and subtracting it from the freepool's reserved resources.
-     * @param faculty the faculty that has frees its resources
-     * @param releasedDays the days on which to release the resources
-     */
-    public void releaseResourcesOnDays(Reserver faculty,
-                                       List<LocalDate> releasedDays) {
-
-    }
 
     /**
      * Checks if there are enough resources in the freepool, on all days
