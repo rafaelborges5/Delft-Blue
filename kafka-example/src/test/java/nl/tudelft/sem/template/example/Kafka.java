@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example;
 
 import nl.tudelft.sem.template.kafka.KafkaConsumer;
+import nl.tudelft.sem.template.kafka.KafkaExampleApplication;
 import nl.tudelft.sem.template.kafka.KafkaProducer;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringRunner.class)
 @Import(com.baeldung.kafka.testcontainers.KafkaTestContainersLiveTest.KafkaTestContainersConfiguration.class)
-@SpringBootTest(classes = KafkaProducerConsumerApplication.class)
+@SpringBootTest(classes = KafkaExampleApplication.class)
 @DirtiesContext
 public class KafkaTestContainersLiveTest {
 
