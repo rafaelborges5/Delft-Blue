@@ -41,7 +41,8 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      * @param date - Date on which the request can be scheduled
      * @param requestRepository - Repository that stores the requests
      */
-    abstract void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date, RequestRepository requestRepository);
+    abstract void saveRequestInFaculty(Request request, Faculty faculty,
+                                       LocalDate date, RequestRepository requestRepository);
 
 
     /**

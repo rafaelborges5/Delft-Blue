@@ -27,7 +27,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findByRequestId(long requestID);
 
     @Query("SELECT r FROM Request r WHERE r.facultyName = ?1")
-    List<Request> findByFacultyName(FacultyName FacultyName);
+    List<Request> findByFacultyName(FacultyName facultyName);
 
     /**
      * Queries for Pending Requests.
@@ -39,7 +39,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findPendingRequests();
 
     @Query("SELECT r FROM Request r WHERE r.status = 'PENDING' AND r.facultyName = ?1")
-    List<Request> findPendingRequestsByFaculty(FacultyName FacultyName);
+    List<Request> findPendingRequestsByFaculty(FacultyName facultyName);
 
     @Modifying
     @Query("UPDATE Request r SET r.status = 'PENDING' WHERE r.requestId = ?1")
@@ -52,7 +52,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findDroppedRequests();
 
     @Query("SELECT r FROM Request r WHERE r.status = 'DROPPED' AND r.facultyName = ?1")
-    List<Request> findDroppedRequestsByFaculty(FacultyName FacultyName);
+    List<Request> findDroppedRequestsByFaculty(FacultyName facultyName);
 
     @Modifying
     @Query("UPDATE Request r SET r.status = 'DROPPED' WHERE r.requestId = ?1")
@@ -65,7 +65,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findDeniedRequests();
 
     @Query("SELECT r FROM Request r WHERE r.status = 'DENIED' AND r.facultyName = ?1")
-    List<Request> findDeniedRequestsByFaculty(FacultyName FacultyName);
+    List<Request> findDeniedRequestsByFaculty(FacultyName facultyName);
 
     @Modifying
     @Query("UPDATE Request r SET r.status = 'DENIED' WHERE r.requestId = ?1")
@@ -78,7 +78,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findAcceptedRequests();
 
     @Query("SELECT r FROM Request r WHERE r.status = 'ACCEPTED' AND r.facultyName = ?1")
-    List<Request> findAcceptedRequestsByFaculty(FacultyName FacultyName);
+    List<Request> findAcceptedRequestsByFaculty(FacultyName facultyName);
 
     @Modifying
     @Query("UPDATE Request r SET r.status = 'ACCEPTED' WHERE r.requestId = ?1")
