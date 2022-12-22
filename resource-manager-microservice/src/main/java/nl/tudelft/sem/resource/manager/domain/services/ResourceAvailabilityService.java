@@ -4,7 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
-import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.providers.implementations.CurrentDateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ResourceAvailabilityService {
     private final transient NodeRepository nodeRepository;
     private final transient ReservedResourcesRepository reservedResourcesRepository;
-    private final transient DateProvider timeProvider;
+    private final transient CurrentDateProvider timeProvider;
     private final transient FreepoolManager freepoolManager;
     private final transient DefaultResources defaultResources;
 
@@ -31,7 +31,7 @@ public class ResourceAvailabilityService {
      */
     public ResourceAvailabilityService(NodeRepository nodeRepository,
                                        ReservedResourcesRepository reservedResourcesRepository,
-                                       DateProvider timeProvider,
+                                       CurrentDateProvider timeProvider,
                                        FreepoolManager freepoolManager,
                                        DefaultResources defaultResources) {
         this.nodeRepository = nodeRepository;
