@@ -1,5 +1,6 @@
 package sem.faculty.config.kafka;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,10 +16,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.FacultyNameDTO;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
+import sem.commons.*;
 
 
 /**
@@ -142,6 +140,29 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, DateDTO> consumerFactoryDateDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(DateDTO.class));
+    }
+
+    /**
+     * Kafka listener container factory for DateDTO.
+     *
+     * @return the concurrent kafka listener container factory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, DateDTO> kafkaListenerContainerFactoryDateDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, DateDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryDateDTO());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateSysadminView());
+
+        return factory;
+    }
+
     /**
      * Kafka template status kafka template.
      *
@@ -160,5 +181,52 @@ public class KafkaConfig {
     @Bean
     public ProducerFactory<String, StatusDTO> producerFactoryStatus() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+
+    /**
+     * The Consumer Factory for date received as response.
+     * @return the consumerFactory
+     */
+    @Bean
+    public ConsumerFactory<String, LocalDate> consumerFactoryDate() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(LocalDate.class));
+    }
+
+
+    /**
+     * Producer factory.
+     *
+     * @return the producer factory
+     */
+    @Bean
+    public ProducerFactory<String, ScheduleDateDTO> producerFactoryScheduleDateDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    /**
+     * Kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, ScheduleDateDTO> kafkaTemplateScheduleDateDTO() {
+        return new KafkaTemplate<>(producerFactoryScheduleDateDTO());
+    }
+
+    @Bean
+    public ProducerFactory<String, SysadminScheduleDTO> producerFactorySysadminView() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    /**
+     * Kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, SysadminScheduleDTO> kafkaTemplateSysadminView() {
+        return new KafkaTemplate<>(producerFactorySysadminView());
     }
 }
