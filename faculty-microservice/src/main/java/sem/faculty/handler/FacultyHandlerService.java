@@ -102,14 +102,13 @@ public class FacultyHandlerService {
         return new PendingRequestsDTO("OK",
                 facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
                         .map(x -> new RequestDTO(
-                                requestRepository.findByRequestId(x).getRequestId(),
-                                requestRepository.findByRequestId(x).getName(),
-
-                                requestRepository.findByRequestId(x).getNetId(),
-                                requestRepository.findByRequestId(x).getFacultyName(),
-                                requestRepository.findByRequestId(x).getDescription(),
-                                requestRepository.findByRequestId(x).getPreferredDate(),
-                                requestRepository.findByRequestId(x).getResource()))
+                                x.getRequestId(),
+                                x.getName(),
+                                x.getNetId(),
+                                x.getFacultyName(),
+                                x.getDescription(),
+                                x.getPreferredDate(),
+                                x.getResource()))
                         .collect(Collectors.toList()));
 
     }

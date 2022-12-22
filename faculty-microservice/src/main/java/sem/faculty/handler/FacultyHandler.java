@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -115,8 +116,11 @@ public class FacultyHandler {
      * @param facultyName the faculty name
      * @return the pending requests
      */
-    public List<Long> getPendingRequests(FacultyName facultyName) {
+    public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        return faculty.getPendingRequests();
+        List<Request> requests = faculty.getPendingRequests().stream()
+                .map(x -> requestRepository.findByRequestId(x))
+                .collect(Collectors.toList());
+        return requests;
     }
 }

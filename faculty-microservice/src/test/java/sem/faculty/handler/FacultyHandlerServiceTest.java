@@ -32,10 +32,9 @@ class FacultyHandlerServiceTest {
 
     @Test
     void getPendingRequestsCorrect() throws NotValidResourcesException {
-        Request req = new Request("name", "netId", "desc",
+        List<Request> list = List.of(new Request("name", "netId", "desc",
                         LocalDate.of(2015, 2, 3),
-                        RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
-        List<Long> list = List.of(req.getRequestId());
+                        RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1)));
         when(facultyHandler.getPendingRequests(FacultyName.EEMCS)).thenReturn(list);
         PendingRequestsDTO pendingRequestsDTO = facultyHandlerService.getPendingRequests("EEMCS");
         assertEquals("OK", pendingRequestsDTO.getStatus());
