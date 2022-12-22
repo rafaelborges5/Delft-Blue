@@ -2,6 +2,8 @@ package sem.faculty.handler;
 
 import org.springframework.stereotype.Service;
 import sem.commons.*;
+import sem.faculty.domain.Request;
+import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,15 +63,28 @@ public class FacultyHandlerService {
      * @return the status dto
      */
     public StatusDTO acceptRequests(String facultyName, List<Long> acceptedRequests) {
-
+        FacultyName facName;
         try {
-            FacultyName.valueOf(facultyName);
+            facName = FacultyName.valueOf(facultyName);
         } catch (IllegalArgumentException e) {
             return new StatusDTO("Wrong faculty name");
         }
 
-        //TODO: accept the requests in given faculty (also check if there requests even exist)
+        //TODO: accept the requests in given faculty
 
-        return new StatusDTO("OK");
+        List<Long> badRequests = new ArrayList<>();
+        for(Long id: acceptedRequests) {
+            var request = requestRepository.findById(id);
+            if (request.isEmpty()) {
+                badRequests.add(id);
+                continue;
+            }
+            Request acceptedRequest = request.get();
+            facultyHandler.handleAcceptedRequests(facName, acceptedRequest);
+        }
+        if(badRequests.isEmpty()) {
+            return new StatusDTO("OK");
+        }
+        return new StatusDTO("Could not find the following requests: " + badRequests.toString());
     }
 }

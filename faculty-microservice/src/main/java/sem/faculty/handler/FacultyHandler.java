@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.commons.ScheduleDateDTO;
@@ -130,5 +131,15 @@ public class FacultyHandler {
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
         return faculty.getPendingRequests();
+    }
+
+    /**
+     * Handle incoming accepted request.
+     * @param facultyName - Faculty to which the request belong to.
+     * @param acceptedRequest - Request that will be handled using AcceptRequestScheduler strategy.
+     */
+    public void handleAcceptedRequests(FacultyName facultyName, Request acceptedRequest) {
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+        scheduler.scheduleRequest(acceptedRequest, faculties.get(facultyName));
     }
 }
