@@ -60,7 +60,7 @@ public class KafkaConfig {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "faculty-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "default");
         return props;
     }
 

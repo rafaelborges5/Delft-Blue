@@ -18,6 +18,7 @@ import java.time.LocalDate;
 public class MainFacultyController {
 
     private transient FacultyHandlerService facultyHandlerService;
+    final transient String groupId = "default";
 
     /**
      * Instantiates a new Main faculty controller.
@@ -34,7 +35,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "incoming-request",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactory2"
     )
     void listener(RequestDTO request) {
@@ -50,7 +51,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "pendingRequestsTopic",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryFacultyName"
     )
     @SendTo
@@ -67,7 +68,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "acceptRequestsTopic",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryAcceptRequests"
     )
     @SendTo
@@ -87,7 +88,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "sysadmin-view-faculty",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryDateDTO"
     )
     @SendTo
