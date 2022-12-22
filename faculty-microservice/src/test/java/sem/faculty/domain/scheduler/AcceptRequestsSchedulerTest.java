@@ -1,16 +1,20 @@
 package sem.faculty.domain.scheduler;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
 import sem.commons.FacultyName;
 import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
+import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.concurrent.ExecutionException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -18,11 +22,19 @@ import static org.mockito.Mockito.*;
 class AcceptRequestsSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
-    SchedulableRequestsScheduler scheduler = new AcceptRequestsScheduler();
+    @Mock
+    private final ScheduleRequestController controller = mock(ScheduleRequestController.class);
+    SchedulableRequestsScheduler scheduler;
+    @Mock
     private final RequestRepository requestRepository = mock(RequestRepository.class);
 
+    @BeforeEach
+    void setUp() {
+        scheduler = new AcceptRequestsScheduler(controller);
+    }
+
     @Test
-    void saveRequestInFaculty() throws NotValidResourcesException {
+    void saveRequestInFaculty() throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
         Request request = new Request("name", "netId", "description",
                 date, RequestStatus.DROPPED,

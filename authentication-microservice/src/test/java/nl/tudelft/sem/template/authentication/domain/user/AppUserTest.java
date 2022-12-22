@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AppUserTest {
     AppUser user;
@@ -146,6 +147,25 @@ class AppUserTest {
         AppUser newUser = new AppUser(testNetID, testPassword, newRole, newFaculty);
         newUser.setId(1);
         assertThat(newUser).isNotEqualTo(user);
+    }
+
+    @Test
+    void testNotEquals2() {
+        Object o = null;
+        assertNotEquals(user, o);
+    }
+
+    @Test
+    void testNotEquals3() {
+        Object o = new NetId("test");
+        assertNotEquals(user, o);
+    }
+
+    @Test
+    void changePassword() {
+        HashedPassword pas = new HashedPassword("somePas");
+        user.changePassword(pas);
+        assertEquals(user.getPassword(), pas);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package sem.faculty.provider;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public interface TimeProvider {
     /**
@@ -8,5 +9,7 @@ public interface TimeProvider {
      *
      * @return The current time
      */
-    LocalDate getCurrentTime();
+    LocalDate getCurrentDate();
+
+    LocalDateTime getCurrentDateTime();
 }

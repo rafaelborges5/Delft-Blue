@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.gateway.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -8,6 +9,8 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import sem.commons.*;
+
+import java.util.Map;
 
 /**
  * This class has all the configurations that allow for the consuming and replying of messages. There is some
@@ -112,10 +115,69 @@ public class ReplyingTemplateConfiguration {
     }
 
     @Bean
-    public KafkaMessageListenerContainer<String, TokenDTO> replyContainerTokenDTO(
+    public KafkaMessageListenerContainer<String, TokenDTO> replyContainerToken(
             ConsumerFactory<String, TokenDTO> cf) {
         ContainerProperties containerProperties = new ContainerProperties("user-auth-topic-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+
+    /**
+     * This method will set up the kafkaTemplate for Consuming and Replying to messages.
+     * @param pf the producerFactory to reply
+     * @param container the listener container
+     * @return the kafkaTemplate
+     */
+    @Bean
+    public ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView>
+        replyKafkaTemplateUserView(
+            ProducerFactory<String, FacultyNamePackageDTO> pf,
+            KafkaMessageListenerContainer<String, RegularUserView> container) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    /**
+     * This method will return the container used in replyKafkaTemplatePendingRequests.
+     * @param cf the consumer factory
+     * @return the listenerContainer
+     */
+    @Bean
+    public KafkaMessageListenerContainer<String, RegularUserView> replyContainerUserView(
+            ConsumerFactory<String, RegularUserView> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("user-view-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+    @Bean
+    public ReplyingKafkaTemplate<String, ClusterNodeDTO, String> replyKafkaTemplateClusterNodeDTOString(
+            ProducerFactory<String, ClusterNodeDTO> pf,
+            @Qualifier("replyContainerClusterNodeDTOString") KafkaMessageListenerContainer<String, String> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, String> replyContainerClusterNodeDTOString(
+            ConsumerFactory<String, String> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("add-node-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+
+    @Bean
+    public ReplyingKafkaTemplate<String, Token, String> replyKafkaTemplateTokenString(
+            ProducerFactory<String, Token> pf,
+            @Qualifier("replyContainerTokenString") KafkaMessageListenerContainer<String, String> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, String> replyContainerTokenString(
+            ConsumerFactory<String, String> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("remove-node-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
 }
+

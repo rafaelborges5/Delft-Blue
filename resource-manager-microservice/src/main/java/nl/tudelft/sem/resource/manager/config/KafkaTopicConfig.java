@@ -26,4 +26,34 @@ public class KafkaTopicConfig {
         return TopicBuilder.name("fit-request")
                 .build();
     }
+
+    /**
+     * Instantiates a new Topic.
+     * This topic should be used for communication with the gateway to get the regular userView
+     * of the system.
+     * @return a new Topic
+     */
+    @Bean
+    public NewTopic getUserView() {
+        return TopicBuilder.name("user-view")
+                .build();
+    }
+
+    /**
+     * Instantiates a new Topic.
+     * This topic should be used for communication with the gateway to add a new ClusterNode to the system
+     * @return a new Topic
+     */
+    @Bean
+    public NewTopic getAddNode() {
+        return TopicBuilder.name("add-node")
+                .build();
+    }
+
+
+    @Bean
+    public NewTopic getRemoveNode() {
+        return TopicBuilder.name("remove-node")
+                .build();
+    }
 }

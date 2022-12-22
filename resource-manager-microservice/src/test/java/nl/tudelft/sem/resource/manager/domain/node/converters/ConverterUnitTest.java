@@ -1,10 +1,10 @@
 package nl.tudelft.sem.resource.manager.domain.node.converters;
 
-import nl.tudelft.sem.resource.manager.domain.node.OwnerName;
-import nl.tudelft.sem.resource.manager.domain.node.Token;
-import nl.tudelft.sem.resource.manager.domain.node.URL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sem.commons.OwnerName;
+import sem.commons.Token;
+import sem.commons.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,15 +31,15 @@ class ConverterUnitTest {
 
     @Test
     void convertToDatabaseColumn() {
-        assertThat(ownerNameConverter.convertToDatabaseColumn(ownerName)).isEqualTo("John Doe");
-        assertThat(tokenConverter.convertToDatabaseColumn(token)).isEqualTo("tokenValue");
-        assertThat(urlConverter.convertToDatabaseColumn(url)).isEqualTo("urlValue");
+        assertThat(ownerNameConverter.convertToDatabaseColumn(ownerName)).isEqualTo("OwnerName(name=John Doe)");
+        assertThat(tokenConverter.convertToDatabaseColumn(token)).isEqualTo("Token(tokenValue=tokenValue)");
+        assertThat(urlConverter.convertToDatabaseColumn(url)).isEqualTo("URL(urlValue=urlValue)");
     }
 
     @Test
     void convertToEntityAttribute() {
-        assertThat(ownerNameConverter.convertToEntityAttribute("John Doe")).isEqualTo(ownerName);
-        assertThat(tokenConverter.convertToEntityAttribute("tokenValue")).isEqualTo(token);
-        assertThat(urlConverter.convertToEntityAttribute("urlValue")).isEqualTo(url);
+        assertThat(ownerNameConverter.convertToEntityAttribute("OwnerName(name=John Doe)")).isEqualTo(ownerName);
+        assertThat(tokenConverter.convertToEntityAttribute("Token(tokenValue=tokenValue)")).isEqualTo(token);
+        assertThat(urlConverter.convertToEntityAttribute("URL(urlValue=urlValue)")).isEqualTo(url);
     }
 }

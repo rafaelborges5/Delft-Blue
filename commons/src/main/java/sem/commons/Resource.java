@@ -12,11 +12,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class Resource {
 
-    //@Column(name = "resource_cpu", nullable = false)
     private int cpu;
-    //@Column(name = "resource_gpu", nullable = false)
     private int gpu;
-    //@Column(name = "resource_memory", nullable = false)
     private int memory;
 
     @SuppressWarnings("unused")

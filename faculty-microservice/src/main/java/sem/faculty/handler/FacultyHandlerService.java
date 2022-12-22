@@ -110,7 +110,7 @@ public class FacultyHandlerService {
      * @param acceptedRequests the accepted requests
      * @return the status dto
      */
-    public StatusDTO acceptRequests(String facultyName, List<RequestDTO> acceptedRequests) {
+    public StatusDTO acceptRequests(String facultyName, List<Long> acceptedRequests) {
 
         try {
             FacultyName.valueOf(facultyName);
