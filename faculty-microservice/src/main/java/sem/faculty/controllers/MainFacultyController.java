@@ -4,11 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.FacultyNameDTO;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
+import sem.commons.*;
 import sem.faculty.handler.FacultyHandlerService;
+
+import java.time.LocalDate;
 
 /**
  * The type Main faculty controller.
@@ -62,6 +61,24 @@ public class MainFacultyController {
                 " for faculty " + acceptRequestsDTO.getFacultyName());
         return facultyHandlerService.acceptRequests(
                 acceptRequestsDTO.getFacultyName(), acceptRequestsDTO.getAcceptedRequests()
+        );
+    }
+
+    /**
+     * Gets schedule for date.
+     *
+     * @param dateDTO the date dto
+     * @return the schedule for date
+     */
+    @KafkaListener(
+            topics = "sysadmin-view-faculty",
+            groupId = "default",
+            containerFactory = "kafkaListenerContainerFactoryDateDTO"
+    )
+    @SendTo
+    public SysadminScheduleDTO getScheduleForDate(DateDTO dateDTO) {
+        return facultyHandlerService.getScheduleForDate(
+                LocalDate.of(dateDTO.getYear(), dateDTO.getMonth(), dateDTO.getDay())
         );
     }
 }

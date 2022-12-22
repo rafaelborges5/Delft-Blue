@@ -4,12 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import sem.commons.*;
+import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -59,5 +62,17 @@ class FacultyHandlerServiceTest {
     void acceptRequestsWrong() {
         StatusDTO statusDTO = facultyHandlerService.acceptRequests("FOO", List.of(1L));
         assertEquals("Wrong faculty name", statusDTO.getStatus());
+    }
+
+    @Test
+    void getScheduleForDate() throws NotValidResourcesException {
+        Map<FacultyName, List<RequestDTO>> map = new HashMap<>();
+        RequestDTO requestDTO = new RequestDTO(1L, "name", "netId", FacultyName.EEMCS, "desc",
+                LocalDate.of(2015, 2, 3), new Resource(1, 1, 1));
+        map.put(FacultyName.EEMCS, List.of(requestDTO));
+        LocalDate date = LocalDate.of(2015, 2, 3);
+        when(facultyHandler.getRequestForDate(date)).thenReturn(map);
+        SysadminScheduleDTO sysadminScheduleDTO = facultyHandlerService.getScheduleForDate(date);
+        assertEquals(sysadminScheduleDTO.getSchedule(), map);
     }
 }
