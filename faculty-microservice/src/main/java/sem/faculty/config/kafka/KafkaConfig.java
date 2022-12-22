@@ -229,4 +229,20 @@ public class KafkaConfig {
     public KafkaTemplate<String, SysadminScheduleDTO> kafkaTemplateSysadminView() {
         return new KafkaTemplate<>(producerFactorySysadminView());
     }
+
+    @Bean
+    public ProducerFactory<String, NotificationDTO> producerFactoryNotificationDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    /**
+     * Kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, NotificationDTO> kafkaTemplateNotificationDTO() {
+        return new KafkaTemplate<>(producerFactoryNotificationDTO());
+    }
+
 }

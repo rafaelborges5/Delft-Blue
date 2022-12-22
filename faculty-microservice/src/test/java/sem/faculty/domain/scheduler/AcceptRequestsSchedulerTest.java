@@ -4,7 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import sem.commons.FacultyName;
+import sem.commons.NotificationDTO;
 import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
 import sem.faculty.controllers.ScheduleRequestController;
@@ -24,11 +26,15 @@ class AcceptRequestsSchedulerTest {
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
     private final ScheduleRequestController controller = mock(ScheduleRequestController.class);
+
+    @Mock
+    private final KafkaTemplate<String, NotificationDTO> kafkaTemplate = mock(KafkaTemplate.class);
+
     SchedulableRequestsScheduler scheduler;
 
     @BeforeEach
     void setUp() {
-        scheduler = new AcceptRequestsScheduler(controller);
+        scheduler = new AcceptRequestsScheduler(controller, kafkaTemplate);
     }
 
     @Test

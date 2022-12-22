@@ -15,6 +15,5 @@ public class DenyRequestsScheduler implements Scheduler {
     @Override
     public void scheduleRequest(Request request, Faculty faculty) {
         request.setStatus(RequestStatus.DENIED);
-        //TODO Could add some notifications here.
     }
 }

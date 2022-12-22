@@ -44,6 +44,7 @@ public class ReplyingTemplateConfiguration {
     public KafkaMessageListenerContainer<String, LocalDate> replyContainerScheduleDateDTO(
             ConsumerFactory<String, LocalDate> cf) {
         ContainerProperties containerProperties = new ContainerProperties("schedule-date-reply");
+        containerProperties.setGroupId("default");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 

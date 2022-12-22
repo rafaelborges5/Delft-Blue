@@ -1,10 +1,11 @@
 package sem.faculty.domain.scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import sem.commons.FacultyName;
+import sem.commons.NotificationDTO;
 import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
@@ -23,9 +24,13 @@ import java.util.concurrent.ExecutionException;
 public abstract class SchedulableRequestsScheduler implements Scheduler {
     private final transient ScheduleRequestController controller;
 
+    private final transient KafkaTemplate<String, NotificationDTO> kafkaTemplate;
+
     @Autowired
-    SchedulableRequestsScheduler(ScheduleRequestController controller) {
+    SchedulableRequestsScheduler(ScheduleRequestController controller,
+                                 KafkaTemplate<String, NotificationDTO> kafkaTemplate) {
         this.controller = controller;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
 
@@ -38,7 +43,9 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
             date = getAvailableDate(request, faculty.getFacultyName());
         } catch (NotEnoughResourcesLeftException e) {
             request.setStatus(RequestStatus.DENIED);
-            //TODO Could add some notifications here.
+            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getNetId(),
+                    "Could not schedule request with name " + request.getName() +
+                            " because there was not enough resources"));
             return;
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -73,5 +80,9 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
             throw new NotEnoughResourcesLeftException(request.getRequestId());
         }
         return availableDate.getBody();
+    }
+
+    public KafkaTemplate<String, NotificationDTO> getKafkaTemplate() {
+        return kafkaTemplate;
     }
 }
