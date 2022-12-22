@@ -36,7 +36,7 @@ public class ResourceHandler {
      * @param date the date on which to reserve the resources
      * @throws NotEnoughResourcesException if there are not enough resources on that day
      */
-    public void reserveResourcesOnDay(Reserver faculty,
+    void reserveResourcesOnDay(Reserver faculty,
                                       Resource requestedResources,
                                       LocalDate date) throws NotEnoughResourcesException {
         Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, faculty);
@@ -75,7 +75,7 @@ public class ResourceHandler {
      * @param faculty the faculty that has frees its resources
      * @param releasedDays the days on which to release the resources
      */
-    public void releaseResourcesOnDays(Reserver faculty,
+    void releaseResourcesOnDays(Reserver faculty,
                                        List<LocalDate> releasedDays) {
         for (LocalDate day : releasedDays) {
             ReservedResourceId id = new ReservedResourceId(day, faculty);
@@ -95,7 +95,7 @@ public class ResourceHandler {
      * with reserved resources. This should be used as a callback in the
      * event that a cluster node is deleted.
      */
-    public void checkNotEnoughFreepoolResources() {
+    void checkNotEnoughFreepoolResources() {
 
     }
 
