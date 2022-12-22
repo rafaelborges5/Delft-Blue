@@ -6,4 +6,4 @@ spring:
 
 server:
   #Port where our producer application will be running
-  port: 8004
+  port: 8085
