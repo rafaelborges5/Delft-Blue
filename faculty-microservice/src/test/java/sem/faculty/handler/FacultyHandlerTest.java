@@ -49,7 +49,7 @@ class FacultyHandlerTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         facultyHandler = new FacultyHandler();
         facultyHandler.timeProvider = timeProvider;
         facultyHandler.scheduleRequestController = scheduleRequestController;
@@ -72,7 +72,7 @@ class FacultyHandlerTest {
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         when(timeProvider.getCurrentDate()).thenReturn(today);
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyRequestsScheduler.class);
     }
 
@@ -92,7 +92,7 @@ class FacultyHandlerTest {
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
 
@@ -117,7 +117,7 @@ class FacultyHandlerTest {
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyRequestsScheduler.class);
     }
 
@@ -133,7 +133,7 @@ class FacultyHandlerTest {
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyRequestsScheduler.class);
     }
 
@@ -153,7 +153,7 @@ class FacultyHandlerTest {
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
 
@@ -172,7 +172,7 @@ class FacultyHandlerTest {
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
 
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
 
@@ -191,7 +191,7 @@ class FacultyHandlerTest {
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
-        facultyHandler.handleIncomingRequests(request, requestRepository);
+        facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
 

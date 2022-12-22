@@ -66,11 +66,11 @@ class RequestRepositoryTest {
 
     @Test
     void findByRequestId() {
-        List<Request> toCheck = List.of(request1);
-        List<Request> returned = requestRepository.findByRequestId(request1.getRequestId());
+        Request toCheck = request1;
+        Request returned = requestRepository.findByRequestId(request1.getRequestId());
         assertThat(toCheck).isEqualTo(returned);
-        List<Request> toCheck2 = List.of(request2);
-        List<Request> returned2 = requestRepository.findByRequestId(request2.getRequestId());
+        Request toCheck2 = request2;
+        Request returned2 = requestRepository.findByRequestId(request2.getRequestId());
         assertThat(toCheck2).isEqualTo(returned2);
     }
 
@@ -86,10 +86,10 @@ class RequestRepositoryTest {
 
     @Test
     void findPendingByRequestId() {
-        List<Request> toCheck = List.of(request1);
-        List<Request> returned = requestRepository.findPendingByRequestId(request1.getRequestId());
+        Request toCheck = request1;
+        Request returned = requestRepository.findPendingByRequestId(request1.getRequestId());
         assertThat(toCheck).isEqualTo(returned);
-        toCheck = List.of(request2);
+        toCheck = request2;
         returned = requestRepository.findPendingByRequestId(request2.getRequestId());
         assertThat(toCheck).isNotEqualTo(returned);
     }

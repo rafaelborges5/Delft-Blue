@@ -24,6 +24,7 @@ class PendingRequestsSchedulerTest {
 
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
+    @Mock
     private final RequestRepository requestRepository = mock(RequestRepository.class);
     @Mock
     private ScheduleRequestController controller;
@@ -32,7 +33,7 @@ class PendingRequestsSchedulerTest {
     @BeforeEach
     void setUp() {
         controller = mock(ScheduleRequestController.class);
-        scheduler = new PendingRequestsScheduler(controller);
+        scheduler = new PendingRequestsScheduler(controller, requestRepository);
     }
 
     @Test
@@ -43,7 +44,7 @@ class PendingRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = mock(Faculty.class);
 
-        scheduler.saveRequestInFaculty(request, faculty, date, requestRepository);
+        scheduler.saveRequestInFaculty(request, faculty, date);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
         verify(faculty, times(1)).addPendingRequest(request);
         verifyNoMoreInteractions(faculty);
@@ -60,7 +61,7 @@ class PendingRequestsSchedulerTest {
 
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(date));
 
-        scheduler.scheduleRequest(request, faculty, requestRepository);
+        scheduler.scheduleRequest(request, faculty);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
     }
 
@@ -72,7 +73,7 @@ class PendingRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(null));
-        scheduler.scheduleRequest(request, faculty, requestRepository);
+        scheduler.scheduleRequest(request, faculty);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.DENIED);
     }
 
@@ -119,7 +120,7 @@ class PendingRequestsSchedulerTest {
         when(controller.sendScheduleRequest(any())).thenThrow(ExecutionException.class);
 
         assertThatThrownBy(() -> {
-            scheduler.scheduleRequest(request, faculty, requestRepository);
+            scheduler.scheduleRequest(request, faculty);
         }).isInstanceOf(RuntimeException.class);
         verify(faculty, times(1)).getFacultyName();
         verifyNoMoreInteractions(faculty);
@@ -138,7 +139,7 @@ class PendingRequestsSchedulerTest {
         when(controller.sendScheduleRequest(any())).thenThrow(InterruptedException.class);
 
         assertThatThrownBy(() -> {
-            scheduler.scheduleRequest(request, faculty, requestRepository);
+            scheduler.scheduleRequest(request, faculty);
         }).isInstanceOf(RuntimeException.class);
         verify(faculty, times(1)).getFacultyName();
         verifyNoMoreInteractions(faculty);

@@ -26,7 +26,7 @@ class DenyRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
 
         denyScheduler.scheduleRequest(request,
-                new Faculty(FacultyName.ARCH, new CurrentTimeProvider()), requestRepository);
+                new Faculty(FacultyName.ARCH, new CurrentTimeProvider()));
 
         assertThat(request.getStatus()).isEqualTo(RequestStatus.DENIED);
     }

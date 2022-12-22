@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.FacultyNameDTO;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
+import sem.commons.*;
+import sem.faculty.domain.Request;
 import sem.faculty.handler.FacultyHandlerService;
 
 /**
@@ -26,6 +24,19 @@ public class MainFacultyController {
     @Autowired
     public MainFacultyController(FacultyHandlerService facultyHandlerService) {
         this.facultyHandlerService = facultyHandlerService;
+    }
+
+    /**
+     * Listen for incoming Requests.
+     */
+    @KafkaListener(
+            topics = "incoming-request",
+            groupId = "default",
+            containerFactory = "kafkaListenerContainerFactory2"
+    )
+    void listener(RequestDTO request) {
+        //handleIncomingRequests(request);
+        facultyHandlerService.requestListener(request);
     }
 
     /**

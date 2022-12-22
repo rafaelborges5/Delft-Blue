@@ -23,13 +23,15 @@ import java.util.concurrent.ExecutionException;
 @Service
 public abstract class SchedulableRequestsScheduler implements Scheduler {
     private final transient ScheduleRequestController controller;
+    @Autowired
+    private final transient RequestRepository requestRepository;
 
     @Autowired
-    SchedulableRequestsScheduler(ScheduleRequestController controller) {
+    SchedulableRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
         this.controller = controller;
+        this.requestRepository = requestRepository;
     }
-    @Autowired
-    public RequestRepository requestRepository;
+
 
 
     @Override

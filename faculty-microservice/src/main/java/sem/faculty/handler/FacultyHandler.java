@@ -65,19 +65,6 @@ public class FacultyHandler {
         }
     }
 
-
-    /**
-     * Listen for incoming Requests.
-     */
-    @KafkaListener(
-            topics = "incoming-request",
-            groupId = "default",
-            containerFactory = "kafkaListenerContainerFactory2"
-    )
-    void listener(Request request) {
-        handleIncomingRequests(request);
-    }
-
     /**
      * Choose how to handle an incoming Request and schedule it accordingly.
      *
@@ -91,9 +78,9 @@ public class FacultyHandler {
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler();
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
         } else {
-            scheduler = new PendingRequestsScheduler(scheduleRequestController);
+            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository);
         }
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }

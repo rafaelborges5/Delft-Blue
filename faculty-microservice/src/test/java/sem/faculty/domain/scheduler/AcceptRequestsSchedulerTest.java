@@ -9,6 +9,8 @@ import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
+import sem.faculty.handler.FacultyHandler;
+import sem.faculty.handler.FacultyHandlerService;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
@@ -20,17 +22,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class AcceptRequestsSchedulerTest {
+
+    SchedulableRequestsScheduler scheduler;
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
     private final ScheduleRequestController controller = mock(ScheduleRequestController.class);
-    SchedulableRequestsScheduler scheduler;
     @Mock
     private final RequestRepository requestRepository = mock(RequestRepository.class);
 
     @BeforeEach
     void setUp() {
-        scheduler = new AcceptRequestsScheduler(controller);
+        scheduler = new AcceptRequestsScheduler(controller, requestRepository);
+
     }
 
     @Test
@@ -41,7 +45,7 @@ class AcceptRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = mock(Faculty.class);
 
-        scheduler.saveRequestInFaculty(request, faculty, date, requestRepository);
+        scheduler.saveRequestInFaculty(request, faculty, date);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.ACCEPTED);
         verify(faculty, times(1)).scheduleForDate(request, date);
         verifyNoMoreInteractions(faculty);

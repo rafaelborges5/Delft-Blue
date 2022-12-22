@@ -19,8 +19,8 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
     @Autowired
     public RequestRepository requestRepository;
 
-    public AcceptRequestsScheduler(ScheduleRequestController controller) {
-        super(controller);
+    public AcceptRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
+        super(controller, requestRepository);
     }
 
     @Override

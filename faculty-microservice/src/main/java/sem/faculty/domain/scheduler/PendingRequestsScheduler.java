@@ -19,8 +19,8 @@ public class PendingRequestsScheduler extends SchedulableRequestsScheduler {
     @Autowired
     public RequestRepository requestRepository;
 
-    public PendingRequestsScheduler(ScheduleRequestController controller) {
-        super(controller);
+    public PendingRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
+        super(controller, requestRepository);
     }
 
     @Override

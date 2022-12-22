@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import sem.commons.*;
 import sem.faculty.domain.Request;
 import sem.faculty.domain.RequestRepository;
+import sem.faculty.domain.RequestStatus;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +37,24 @@ public class FacultyHandlerService {
         this.facultyHandler = facultyHandler;
         this.requestRepository = requestRepository;
     }
+
+
+    /**
+     * Converts the RequestDTO to a regular pending request Object and forwards it to the specific faculty.
+     *
+     * @param request the RequestDTO sent from the MainFacultyController
+     */
+    public void requestListener(RequestDTO request) {
+        String requestName = request.getName();
+        String requestNetId = request.getNetId();
+        String requestDescription = request.getDescription();
+        LocalDate requestDate = request.getPreferredDate();
+        Resource requestResources = request.getResource();
+        Request newRequest = new Request(requestName, requestNetId, requestDescription, requestDate,
+                RequestStatus.PENDING, request.getFaculty(), requestResources);
+        facultyHandler.handleIncomingRequests(newRequest);
+    }
+
 
 
     /**

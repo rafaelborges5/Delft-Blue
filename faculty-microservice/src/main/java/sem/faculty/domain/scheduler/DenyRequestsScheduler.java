@@ -25,7 +25,7 @@ public class DenyRequestsScheduler implements Scheduler {
 
         // update request repository
         long requestID = request.getRequestId();
-        if (requestRepository.findByRequestId(requestID)==request) {
+        if (requestRepository.findByRequestId(requestID) == request) {
             requestRepository.delete(requestRepository.findByRequestId(requestID));
         }
         //TODO Could add some notifications here.
