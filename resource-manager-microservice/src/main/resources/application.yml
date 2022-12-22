@@ -6,8 +6,4 @@ spring:
 
 server:
   #Port where our producer application will be running
-  port: 8004
-
-kafka:
-  #Topic where we want to post
-  topic: resource-manager-topic
+  port: 8085

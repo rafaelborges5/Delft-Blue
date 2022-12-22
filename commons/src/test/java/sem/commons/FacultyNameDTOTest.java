@@ -35,4 +35,15 @@ class FacultyNameDTOTest {
         FacultyNameDTO facultyName2 = new FacultyNameDTO("EEMCS");
         assertEquals(facultyName, facultyName2);
     }
+
+    @Test
+    void canEqual() {
+        FacultyNameDTO facultyName2 = new FacultyNameDTO("EEMCS");
+        assertTrue(facultyName.canEqual(facultyName2));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("FacultyNameDTO(facultyName=EEMCS)", facultyName.toString());
+    }
 }

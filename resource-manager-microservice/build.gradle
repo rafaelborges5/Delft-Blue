@@ -37,6 +37,8 @@ repositories {
 
 dependencies {
 
+	implementation project(path: ':commons')
+
 	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
@@ -69,9 +71,11 @@ test {
 	useJUnitPlatform()
 	jacoco {
 		enabled = true
-		includes = ['nl.tudelft.sem.template.*']
+		includes = ['nl.tudelft.sem.resource.manager.*']
 		excludes = []
 	}
+
+	finalizedBy jacocoTestReport
 }
 
 repositories {
@@ -84,7 +88,7 @@ jacocoTestCoverageVerification() {
 		rule {
 			enabled = true
 			element = 'CLASS'
-			includes = ['nl.tudelft.sem.template.*']
+			includes = ['nl.tudelft.sem.resource.manager.*']
 
 			limit {
 				counter = 'BRANCH'
@@ -92,6 +96,18 @@ jacocoTestCoverageVerification() {
 				minimum = 0.1
 			}
 		}
+	}
+}
+
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"nl/tudelft/sem/resource/manager/config/*"
+			])
+		}))
 	}
 }
 
@@ -106,7 +122,6 @@ checkstyle {
 pmd {
 	incrementalAnalysis = true
 	sourceSets = [sourceSets.main]
-	ignoreFailures = true
 }
 
 apply plugin: 'info.solidsoft.pitest'
@@ -114,7 +129,7 @@ pitest {
 	//adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
 	junit5PluginVersion = '0.12'
 
-	targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
+	targetClasses = ['nl.tudelft.sem.resource.manager.*']  //by default "${project.group}.*"
 	pitestVersion = '1.5.1' //not needed when a default PIT version should be used
 	threads = 4
 	outputFormats = ['XML', 'HTML']

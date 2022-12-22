@@ -8,8 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import sem.commons.PendingRequestsDTO;
-import sem.commons.StatusDTO;
+import sem.commons.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -55,9 +54,45 @@ public class ConsumerConfiguration {
                 new StringDeserializer(), new JsonDeserializer<>(PendingRequestsDTO.class));
     }
 
+    /**
+     * The Consumer Factory for StatusDTOs.
+     * @return the consumerFactory
+     */
     @Bean
     public ConsumerFactory<String, StatusDTO> consumerFactoryStatus() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(StatusDTO.class));
+    }
+
+    /**
+     * The Consumer Factory for TokenDTOs.
+     * @return the consumerFactory
+     */
+    @Bean
+    public ConsumerFactory<String, TokenDTO> consumerFactoryTokenDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(TokenDTO.class));
+    }
+
+    /**
+     * The Consumer Factory for NotificationPackages.
+     * @return the consumer factory for Notification Package
+     */
+    @Bean
+    public ConsumerFactory<String, NotificationPackage> consumerFactoryListNotifications() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(NotificationPackage.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, RegularUserView> consumerFactoryRegularView() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(RegularUserView.class));
+    }
+
+    @Bean
+    public ConsumerFactory<String, String> consumerFactoryString() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(String.class));
     }
 }

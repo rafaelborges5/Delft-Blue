@@ -2,11 +2,7 @@ package nl.tudelft.sem.template.authentication.domain.user;
 
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +22,7 @@ public class AppUser extends HasEvents {
      * Identifier for the application user.
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private int id;
 
@@ -43,7 +40,7 @@ public class AppUser extends HasEvents {
 
     @Column(name = "faculty", nullable = false)
     @Convert(converter = FacultyAttributeConverter.class)
-    private List<Faculty> faculty;
+    private List<FacultyName> faculty;
 
     /**
      * Create new application user.
@@ -53,7 +50,7 @@ public class AppUser extends HasEvents {
      * @param role     The role of the new user
      * @param faculty   The list of faculties of the new user
      */
-    public AppUser(NetId netId, HashedPassword password, Role role, List<Faculty> faculty) {
+    public AppUser(NetId netId, HashedPassword password, Role role, List<FacultyName> faculty) {
         this.netId = netId;
         this.password = password;
         this.role = role;
@@ -71,7 +68,7 @@ public class AppUser extends HasEvents {
      *
      * @param newFaculty  A new faculty the user also belongs to
      */
-    public void addFaculty(Faculty newFaculty) {
+    public void addFaculty(FacultyName newFaculty) {
         this.faculty.add(newFaculty);
     }
 

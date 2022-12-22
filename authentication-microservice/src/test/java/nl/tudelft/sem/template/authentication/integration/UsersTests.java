@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.authentication.integration;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -44,7 +43,7 @@ import java.util.List;
 // activate profiles to have spring use mocks during auto-injection of certain beans.
 @ActiveProfiles({"test", "mockPasswordEncoder", "mockTokenGenerator", "mockAuthenticationManager"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
+//@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 @AutoConfigureMockMvc
 public class UsersTests {
     @Autowired
@@ -71,8 +70,8 @@ public class UsersTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
@@ -103,8 +102,8 @@ public class UsersTests {
         final Password newTestPassword = new Password("password456");
         final HashedPassword existingTestPassword = new HashedPassword("password123");
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testRole, testFaculty);
         userRepository.save(existingAppUser);
@@ -139,8 +138,8 @@ public class UsersTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
         final Role testRole = Role.EMPLOYEE;
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 !testUser.toString().equals(authentication.getPrincipal())
@@ -188,8 +187,8 @@ public class UsersTests {
         final String testUser = "SomeUser";
         final String testPassword = "password123";
         final String testRole = "EMPLOYEE";
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal())
@@ -226,8 +225,8 @@ public class UsersTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         when(mockPasswordEncoder.hash(new Password(testPassword))).thenReturn(testHashedPassword);
         final String testRole = "EMPLOYEE";
-        final List<Faculty> testFaculty = new ArrayList<>();
-        testFaculty.add(Faculty.EEMCS);
+        final List<FacultyName> testFaculty = new ArrayList<>();
+        testFaculty.add(FacultyName.EEMCS);
 
         when(mockAuthenticationManager.authenticate(argThat(authentication ->
                 testUser.equals(authentication.getPrincipal())
@@ -258,9 +257,9 @@ public class UsersTests {
         verify(mockJwtTokenGenerator, times(0)).generateToken(any());
     }
 
-    @AfterAll
-    static void afterAll(@Autowired ApplicationContext applicationContext) {
-        EmbeddedKafkaBroker embeddedKafkaBroker = applicationContext.getBean(EmbeddedKafkaBroker.class);
-        embeddedKafkaBroker.destroy();
-    }
+    //@AfterAll
+    //static void afterAll(@Autowired ApplicationContext applicationContext) {
+    //    EmbeddedKafkaBroker embeddedKafkaBroker = applicationContext.getBean(EmbeddedKafkaBroker.class);
+    //    embeddedKafkaBroker.destroy();
+    //}
 }

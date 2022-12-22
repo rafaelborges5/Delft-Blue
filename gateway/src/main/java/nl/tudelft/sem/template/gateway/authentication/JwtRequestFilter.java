@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.gateway.authentication;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -66,7 +68,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         String netId = jwtTokenVerifier.getNetIdFromToken(token);
                         var authenticationToken = new UsernamePasswordAuthenticationToken(
                                 netId,
-                                null, List.of() // no credentials and no authorities
+                                null,
+                                List.of(
+                                        new SimpleGrantedAuthority(jwtTokenVerifier.getRole(token)),
+                                        new SimpleGrantedAuthority(jwtTokenVerifier.getFaculties(token))
+                                )
                         );
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource()
                                 .buildDetails(request));
@@ -80,10 +86,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 } catch (ExpiredJwtException e) {
                     System.err.println("JWT token has expired.");
                 } catch (IllegalArgumentException | JwtException e) {
+                    System.out.println(e.getMessage());
+                    System.out.println(e.toString());
+                    e.printStackTrace();
+                    System.out.println(Arrays.toString(e.getStackTrace()));
                     System.err.println("Unable to parse JWT token");
                 }
+            } else {
+                System.err.println("Invalid authorization header");
             }
-            System.err.println("Invalid authorization header");
         }
 
         filterChain.doFilter(request, response);

@@ -1,21 +1,18 @@
 package nl.tudelft.sem.resource.manager.domain.node;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.TokenConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.URLConverter;
+import sem.commons.OwnerName;
+import sem.commons.Token;
+import sem.commons.URL;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Embedded;
-import javax.persistence.GenerationType;
+import javax.persistence.*;
 import java.util.Objects;
 
 
@@ -27,14 +24,17 @@ import java.util.Objects;
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
 @Getter
+@Setter
+@ToString
 public class ClusterNode {
-    /**
-     * Identifier for the node.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, unique = true)
     private long id;
+
+    @Column(name = "token", nullable = false, unique = true)
+    @Convert(converter = TokenConverter.class)
+    private Token token;
 
     @Column(name = "owner_name", nullable = false, unique = false)
     @Convert(converter = OwnerNameConverter.class)
@@ -43,10 +43,6 @@ public class ClusterNode {
     @Column(name = "url", nullable = false, unique = true)
     @Convert(converter = URLConverter.class)
     private URL url;
-
-    @Column(name = "token", nullable = true, unique = true)
-    @Convert(converter = TokenConverter.class)
-    private Token token;
 
     @Embedded
     private Resource resources;
@@ -71,11 +67,11 @@ public class ClusterNode {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof ClusterNode)) {
             return false;
         }
-        ClusterNode clusterNode = (ClusterNode) o;
-        return id == (clusterNode.id);
+        ClusterNode that = (ClusterNode) o;
+        return id == that.id;
     }
 
     @Override

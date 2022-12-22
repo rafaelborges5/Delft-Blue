@@ -35,4 +35,15 @@ class StatusDTOTest {
         StatusDTO statusDTO2 = new StatusDTO("OK");
         assertEquals(statusDTO2, statusDTO);
     }
+
+    @Test
+    void canEqual() {
+        StatusDTO statusDTO2 = new StatusDTO("OK");
+        assertTrue(statusDTO.canEqual(statusDTO2));
+    }
+
+    @Test
+    void testToString() {
+        assertEquals("StatusDTO(status=OK)", statusDTO.toString());
+    }
 }

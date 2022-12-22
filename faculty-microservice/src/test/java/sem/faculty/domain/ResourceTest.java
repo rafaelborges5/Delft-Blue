@@ -4,8 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import sem.commons.Resource;
 
 public class ResourceTest {
+
+    @Test
+    void testEmptyConstructor() {
+        Resource resource = new Resource();
+        assertEquals(0, resource.getCpu());
+        assertEquals(0, resource.getGpu());
+        assertEquals(0, resource.getMemory());
+    }
 
     @Test
     void testResource() {

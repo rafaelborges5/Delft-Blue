@@ -1,8 +1,7 @@
 package nl.tudelft.sem.template.authentication.models;
 
 import lombok.Data;
-import nl.tudelft.sem.template.authentication.domain.user.Faculty;
-import nl.tudelft.sem.template.authentication.domain.user.Role;
+import nl.tudelft.sem.template.authentication.domain.user.FacultyName;
 
 import java.util.List;
 
@@ -14,5 +13,5 @@ public class AuthenticationRequestModel {
     private String netId;
     private String password;
     private String role;
-    private List<Faculty> faculty;
+    private List<FacultyName> faculty;
 }

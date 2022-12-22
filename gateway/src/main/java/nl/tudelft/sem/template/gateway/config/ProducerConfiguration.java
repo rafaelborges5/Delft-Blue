@@ -9,9 +9,8 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import sem.commons.AcceptRequestsDTO;
-import sem.commons.ExampleUser;
-import sem.commons.FacultyNameDTO;
+import sem.commons.*;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,13 +57,73 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
+    public ProducerFactory<String, UserDTO> producerFactoryUserDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, UserCredentials> producerFactoryUserCredentials() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, NetIdDTO> producerFactoryNetIdDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, RequestDTO> producerFactoryRequestDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, FacultyNamePackageDTO> producerFactoryFacultyNamePackageDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, ClusterNodeDTO> producerFactoryClusterNodeDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ProducerFactory<String, Token> producerFactoryToken() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *
      * @return the kafka template
      */
     @Bean
-    public KafkaTemplate<String, ExampleUser> kafkaTemplate() {
+    public KafkaTemplate<String, ExampleUser> kafkaTemplateExampleUser() {
         return new KafkaTemplate<>(producerFactoryExampleUser());
+    }
+
+    @Bean
+    public KafkaTemplate<String, NetIdDTO> kafkaTemplateNetIdDTO() {
+        return new KafkaTemplate<>(producerFactoryNetIdDTO());
+    }
+
+    @Bean
+    public KafkaTemplate<String, RequestDTO> kafkaTemplateRequestDTO() {
+        return new KafkaTemplate<>(producerFactoryRequestDTO());
+    }
+
+    @Bean
+    public KafkaTemplate<String, FacultyNamePackageDTO> kafkaTemplateFacultyNamePackageDTO() {
+        return new KafkaTemplate<>(producerFactoryFacultyNamePackageDTO());
+    }
+
+    @Bean
+    public KafkaTemplate<String, ClusterNodeDTO> kafkaTemplateClusterNodeDTO() {
+        return new KafkaTemplate<>(producerFactoryClusterNodeDTO());
+    }
+
+    @Bean
+    public KafkaTemplate<String, Token> kafkaTemplateToken() {
+        return new KafkaTemplate<>(producerFactoryToken());
     }
 }

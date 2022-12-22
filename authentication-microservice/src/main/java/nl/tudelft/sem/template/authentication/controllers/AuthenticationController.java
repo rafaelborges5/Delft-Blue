@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.authentication.controllers;
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.authentication.JwtUserDetailsService;
 import nl.tudelft.sem.template.authentication.domain.user.*;
-import nl.tudelft.sem.template.authentication.kafkaconfiguration.ProducerController;
+//import nl.tudelft.sem.template.authentication.kafkaconfiguration.ProducerController;
 import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.authentication.models.RegistrationRequestModel;
@@ -33,7 +33,7 @@ public class AuthenticationController {
 
     private final transient RegistrationService registrationService;
 
-    private final transient ProducerController producerController;
+    //private final transient ProducerController producerController;
 
     /**
      * Instantiates a new UsersController.
@@ -47,13 +47,12 @@ public class AuthenticationController {
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     JwtTokenGenerator jwtTokenGenerator,
                                     JwtUserDetailsService jwtUserDetailsService,
-                                    RegistrationService registrationService,
-                                    ProducerController producerController) {
+                                    RegistrationService registrationService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenGenerator = jwtTokenGenerator;
         this.jwtUserDetailsService = jwtUserDetailsService;
         this.registrationService = registrationService;
-        this.producerController = producerController;
+        //this.producerController = producerController;
     }
 
     /**
@@ -97,10 +96,10 @@ public class AuthenticationController {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
             Role role = Role.valueOf(request.getRole());
-            List<Faculty> faculty = request.getFaculty();
+            List<FacultyName> faculty = request.getFaculty();
 
             registrationService.registerUser(netId, password, role, faculty);
-            producerController.produce(netId.toString());
+            //producerController.produce(netId.toString());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
