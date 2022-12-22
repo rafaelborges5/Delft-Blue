@@ -43,8 +43,8 @@ class FacultyTest {
         Request request1 = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
-        Map<LocalDate, List<Request>> expected = new HashMap<>();
-        expected.put(date, List.of(request1));
+        Map<LocalDate, List<Long>> expected = new HashMap<>();
+        expected.put(date, List.of(request1.getRequestId()));
 
         faculty.scheduleForDate(request1, date);
         assertThat(faculty.getSchedule()).isEqualTo(expected);
@@ -58,8 +58,8 @@ class FacultyTest {
         Request request2 = new Request("Name2", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
 
-        Map<LocalDate, List<Request>> expected = new HashMap<>();
-        expected.put(date, List.of(request1, request2));
+        Map<LocalDate, List<Long>> expected = new HashMap<>();
+        expected.put(date, List.of(request1.getRequestId(), request2.getRequestId()));
 
         faculty.scheduleForDate(request1, date);
         faculty.scheduleForDate(request2, date);
@@ -74,8 +74,8 @@ class FacultyTest {
 
         assertThat(faculty.getPendingRequests()).isEmpty();
         faculty.addPendingRequest(request1);
-        List<Request> queue = faculty.getPendingRequests();
+        List<Long> queue = faculty.getPendingRequests();
         assertThat(queue.size()).isEqualTo(1);
-        assertThat(queue.get(0)).isEqualTo(request1);
+        assertThat(queue.get(0)).isEqualTo(request1.getRequestId());
     }
 }

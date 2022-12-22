@@ -115,7 +115,7 @@ public class FacultyHandler {
      * @param facultyName the faculty name
      * @return the pending requests
      */
-    public List<Request> getPendingRequests(FacultyName facultyName) {
+    public List<Long> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
         return faculty.getPendingRequests();
     }

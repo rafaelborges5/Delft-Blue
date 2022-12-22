@@ -20,8 +20,8 @@ public class   Faculty {
     private static final long ALLOCATED_RESOURCES = 2;
 
     private FacultyName facultyName;
-    private Map<LocalDate, List<Request>> schedule;
-    private Queue<Request> pendingRequests;
+    private Map<LocalDate, List<Long>> schedule;
+    private Queue<Long> pendingRequests;
     private final TimeProvider timeProvider;
     @Autowired
     public RequestRepository requestRepository;
@@ -46,11 +46,11 @@ public class   Faculty {
      * @param scheduledDate - LocalDate on which the request is scheduled.
      */
     public void scheduleForDate(Request request, LocalDate scheduledDate) {
-        List<Request> list = schedule.get(scheduledDate);
+        List<Long> list = schedule.get(scheduledDate);
         if (list == null) {
             list = new ArrayList<>();
         }
-        list.add(request);
+        list.add(request.getRequestId());
         //TODO: reserveResources(request, scheduledDate); //Reserve the resources for request on the scheduledDate.
         schedule.put(scheduledDate, list);
     }
@@ -60,7 +60,7 @@ public class   Faculty {
      * @param request - Request that will be added.
      */
     public void addPendingRequest(Request request) {
-        pendingRequests.add(request);
+        pendingRequests.add(request.getRequestId());
     }
 
     /**
@@ -68,8 +68,8 @@ public class   Faculty {
      *
      * @return the pending requests
      */
-    public List<Request> getPendingRequests() {
-        List<Request> pendingList = new ArrayList<>();
+    public List<Long> getPendingRequests() {
+        List<Long> pendingList = new ArrayList<>();
         while (!pendingRequests.isEmpty()) {
             pendingList.add(pendingRequests.remove());
         }
