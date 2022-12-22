@@ -20,6 +20,7 @@ class PendingRequestsSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     SchedulableRequestsScheduler scheduler = new PendingRequestsScheduler();
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
 
     @Test
     void saveRequestInFaculty() throws NotValidResourcesException {
@@ -29,7 +30,7 @@ class PendingRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = mock(Faculty.class);
 
-        scheduler.saveRequestInFaculty(request, faculty, date);
+        scheduler.saveRequestInFaculty(request, faculty, date, requestRepository);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
         verify(faculty, times(1)).addPendingRequest(request);
         verifyNoMoreInteractions(faculty);
@@ -44,7 +45,7 @@ class PendingRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
 
-        scheduler.scheduleRequest(request, faculty);
+        scheduler.scheduleRequest(request, faculty, requestRepository);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
     }
 
@@ -56,7 +57,7 @@ class PendingRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
 
-        scheduler.scheduleRequest(request, faculty);
+        scheduler.scheduleRequest(request, faculty, requestRepository);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.DENIED);
     }
 

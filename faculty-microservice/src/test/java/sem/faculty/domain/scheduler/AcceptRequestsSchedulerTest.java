@@ -19,6 +19,7 @@ class AcceptRequestsSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     SchedulableRequestsScheduler scheduler = new AcceptRequestsScheduler();
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
 
     @Test
     void saveRequestInFaculty() throws NotValidResourcesException {
@@ -28,7 +29,7 @@ class AcceptRequestsSchedulerTest {
                 FacultyName.ARCH, new Resource(5, 1, 1));
         Faculty faculty = mock(Faculty.class);
 
-        scheduler.saveRequestInFaculty(request, faculty, date);
+        scheduler.saveRequestInFaculty(request, faculty, date, requestRepository);
         assertThat(request.getStatus()).isEqualTo(RequestStatus.ACCEPTED);
         verify(faculty, times(1)).scheduleForDate(request, date);
         verifyNoMoreInteractions(faculty);

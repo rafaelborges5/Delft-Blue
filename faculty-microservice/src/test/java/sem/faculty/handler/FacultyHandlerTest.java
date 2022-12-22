@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
@@ -34,10 +35,12 @@ class FacultyHandlerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     FacultyHandler facultyHandler;
+    @Mock
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
 
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotValidResourcesException {
         facultyHandler = new FacultyHandler();
         facultyHandler.timeProvider = timeProvider;
     }
@@ -59,7 +62,7 @@ class FacultyHandlerTest {
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
         when(timeProvider.getCurrentTime()).thenReturn(today);
-        facultyHandler.handleIncomingRequests(request);
+        facultyHandler.handleIncomingRequests(request, requestRepository);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyRequestsScheduler.class);
     }
 
@@ -69,8 +72,9 @@ class FacultyHandlerTest {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 15);
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        facultyHandler.requestRepository.save(request);
         when(timeProvider.getCurrentTime()).thenReturn(today);
-        facultyHandler.handleIncomingRequests(request);
+        facultyHandler.handleIncomingRequests(request, requestRepository);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(PendingRequestsScheduler.class);
     }
 
