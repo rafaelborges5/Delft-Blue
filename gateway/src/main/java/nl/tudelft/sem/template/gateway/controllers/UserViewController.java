@@ -31,6 +31,11 @@ public class UserViewController {
     private final transient ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView>
             replyingKafkaTemplateUserView;
 
+    private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminUserView
+            getReplyingKafkaTemplateSysadminView;
+
+    private final transient ReplyingKafkaTemplate<String, View>
+
     private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminUserView>
             replyingKafkaTemplateSysadminView;
 
@@ -71,6 +76,16 @@ public class UserViewController {
         }
 
         return ResponseEntity.ok(consumerRecord.value());
+    }
+
+    @PostMapping("/sysadmin")
+    public ResponseEntity<SysadminUserView> getSysadminView(@Payload DateDTO dateDTO) {
+        ProducerRecord<String, DateDTO> record =
+                new ProducerRecord<>("sysadmin-view", dateDTO);
+
+        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "sysadmin-view-reply".getBytes()));
+
+
     }
 
     @PostMapping("/sysAdmin")
