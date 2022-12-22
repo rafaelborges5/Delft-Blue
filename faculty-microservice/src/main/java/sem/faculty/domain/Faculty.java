@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -15,7 +16,7 @@ import sem.commons.RequestDTO;
 import sem.faculty.provider.TimeProvider;
 
 @Getter
-public class   Faculty {
+public class Faculty {
 
     //TODO: Replace ALLOCATED_RESOURCES with an actual bound after resource_manager is implemented.
     private static final long ALLOCATED_RESOURCES = 2;
@@ -92,4 +93,6 @@ public class   Faculty {
                     x.getResource())).collect(Collectors.toList());
         }
     }
+
+
 }

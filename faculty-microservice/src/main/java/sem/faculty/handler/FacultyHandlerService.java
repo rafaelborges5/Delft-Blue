@@ -77,4 +77,11 @@ public class FacultyHandlerService {
     public SysadminScheduleDTO getScheduleForDate(LocalDate date) {
         return new SysadminScheduleDTO(facultyHandler.getRequestForDate(date));
     }
+
+    /**
+     * Schedule all pending requests for next day in all faculties.
+     */
+    public void acceptPendingRequestsForTomorrow() {
+        facultyHandler.acceptPendingRequestsForTomorrow();
+    }
 }
