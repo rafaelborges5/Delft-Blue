@@ -1,5 +1,6 @@
 package sem.faculty.domain.scheduler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
@@ -14,17 +15,22 @@ import java.time.LocalDate;
  */
 @Service
 public class PendingRequestsScheduler extends SchedulableRequestsScheduler {
+
+    @Autowired
+    public RequestRepository requestRepository;
+
     public PendingRequestsScheduler(ScheduleRequestController controller) {
         super(controller);
     }
 
     @Override
-    void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date, RequestRepository requestRepository) {
+    void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date) {
         request.setStatus(RequestStatus.PENDING);
 
         // update request repository
-        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
-            requestRepository.updateRequestStatusPending(request.getRequestId());
+        long requestID = request.getRequestId();
+        if (requestRepository.findByRequestId(requestID) == request) {
+            requestRepository.updateRequestStatusPending(requestID);
         } else {
             requestRepository.saveAndFlush(request);
         }

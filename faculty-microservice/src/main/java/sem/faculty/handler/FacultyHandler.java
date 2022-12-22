@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
-import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -47,15 +45,6 @@ public class FacultyHandler {
     }
 
     /**
-     * Method to set the requestRepository that is being used in the following methods.
-     *
-     * @param requestRepository the repository storing the request
-     */
-    public void setRequestRepository(RequestRepository requestRepository) {
-        this.requestRepository = requestRepository;
-    }
-
-    /**
      * Create a new Faculty Handler.
      *
      * @return a new FacultyHandler.
@@ -85,17 +74,16 @@ public class FacultyHandler {
             groupId = "default",
             containerFactory = "kafkaListenerContainerFactory2"
     )
-    void listener(Request request, RequestRepository requestRepository) {
-        handleIncomingRequests(request, requestRepository);
+    void listener(Request request) {
+        handleIncomingRequests(request);
     }
 
     /**
      * Choose how to handle an incoming Request and schedule it accordingly.
      *
      * @param request - Request to be scheduled.
-     * @param requestRepository - Repository that stores the requests to be scheduled.
      */
-    void handleIncomingRequests(Request request, RequestRepository requestRepository) {
+    void handleIncomingRequests(Request request) {
         LocalDate currentDate = timeProvider.getCurrentDate();
         LocalDate preferredDate = request.getPreferredDate();
 
@@ -107,7 +95,7 @@ public class FacultyHandler {
         } else {
             scheduler = new PendingRequestsScheduler(scheduleRequestController);
         }
-        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()), requestRepository);
+        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
     /**

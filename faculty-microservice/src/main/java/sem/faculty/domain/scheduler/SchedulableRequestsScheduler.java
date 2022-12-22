@@ -28,11 +28,13 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
     SchedulableRequestsScheduler(ScheduleRequestController controller) {
         this.controller = controller;
     }
+    @Autowired
+    public RequestRepository requestRepository;
 
 
     @Override
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
-    public void scheduleRequest(Request request, Faculty faculty, RequestRepository requestRepository) {
+    public void scheduleRequest(Request request, Faculty faculty) {
 
         LocalDate date = null;
         try {
@@ -40,16 +42,15 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
         } catch (NotEnoughResourcesLeftException e) {
             request.setStatus(RequestStatus.DENIED);
             //TODO Could add some notifications here.
-            if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
-                requestRepository.updateRequestStatusDenied(request.getRequestId());
-            } else {
-                requestRepository.saveAndFlush(request);
+            long requestID = request.getRequestId();
+            if (requestRepository.findByRequestId(requestID) == request) {
+                requestRepository.delete(requestRepository.findByRequestId(requestID));
             }
             return;
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        saveRequestInFaculty(request, faculty, date, requestRepository);
+        saveRequestInFaculty(request, faculty, date);
     }
 
     /**
@@ -58,10 +59,8 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      * @param request - Request to be saved
      * @param faculty - Faculty in which the request is saved
      * @param date - Date on which the request can be scheduled
-     * @param requestRepository - Repository that stores the requests
      */
-    abstract void saveRequestInFaculty(Request request, Faculty faculty,
-                                       LocalDate date, RequestRepository requestRepository);
+    abstract void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date);
 
 
     /**

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import sem.commons.FacultyName;
 import sem.faculty.provider.TimeProvider;
 
@@ -22,6 +23,8 @@ public class   Faculty {
     private Map<LocalDate, List<Request>> schedule;
     private Queue<Request> pendingRequests;
     private final TimeProvider timeProvider;
+    @Autowired
+    public RequestRepository requestRepository;
 
     /**
      * Constructor method.
@@ -70,6 +73,17 @@ public class   Faculty {
         while (!pendingRequests.isEmpty()) {
             pendingList.add(pendingRequests.remove());
         }
+        return pendingList;
+    }
+
+    /**
+     * Gets pending requests from the request Repository.
+     *
+     * @return the pending requests
+     */
+    public List<Request> getPendingRequestsFromRepo() {
+        List<Request> pendingList = new ArrayList<>();
+        pendingList = requestRepository.findPendingRequestsByFaculty(this.facultyName);
         return pendingList;
     }
 }

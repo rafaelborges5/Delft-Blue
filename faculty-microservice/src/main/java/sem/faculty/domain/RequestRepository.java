@@ -24,7 +24,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
     List<Request> findByNetId(String netID);
 
     @Query("SELECT r FROM Request r WHERE r.requestId = ?1")
-    List<Request> findByRequestId(long requestID);
+    Request findByRequestId(long requestID);
 
     @Query("SELECT r FROM Request r WHERE r.facultyName = ?1")
     List<Request> findByFacultyName(FacultyName facultyName);
@@ -33,7 +33,7 @@ public interface RequestRepository extends JpaRepository<Request, LocalDateTime>
      * Queries for Pending Requests.
      */
     @Query("SELECT r FROM Request r WHERE r.status = 'PENDING' AND r.requestId = ?1")
-    List<Request> findPendingByRequestId(long requestID);
+    Request findPendingByRequestId(long requestID);
 
     @Query("SELECT r FROM Request r WHERE r.status = 'PENDING'")
     List<Request> findPendingRequests();

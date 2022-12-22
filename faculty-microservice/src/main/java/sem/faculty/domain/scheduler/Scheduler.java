@@ -17,7 +17,6 @@ public interface Scheduler {
      * Schedule the request in faculty.
      * @param request - Request that will be scheduled
      * @param faculty - Faculty in which the request will be scheduled.
-     * @param requestRepository - Repository that stores the requests.
      */
-    void scheduleRequest(Request request, Faculty faculty, RequestRepository requestRepository);
+    void scheduleRequest(Request request, Faculty faculty);
 }

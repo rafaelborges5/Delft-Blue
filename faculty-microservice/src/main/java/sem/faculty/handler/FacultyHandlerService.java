@@ -38,30 +38,18 @@ public class FacultyHandlerService {
 
 
     /**
-     * Makes changes to the requestRepository if the request was dropped.
+     * Deletes the request from the repository if it was dropped or denied.
      *
-     * @param request - Request that has been dropped.
+     * @param request - Request that has to be deleted from the repository
      */
-    public void dropRequest(Request request) {
-        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
-            requestRepository.updateRequestStatusDropped(request.getRequestId());
-        } else {
-            requestRepository.saveAndFlush(request);
+    public void deleteRequest(Request request) {
+        long requestID = request.getRequestId();
+        Request requestFound = requestRepository.findByRequestId(requestID);
+        if (requestFound == request) {
+            requestRepository.delete(requestFound);
         }
     }
 
-    /**
-     * Makes changes to the requestRepository if the request was denied.
-     *
-     * @param request - Request that has been denied.
-     */
-    public void denyRequest(Request request) {
-        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
-            requestRepository.updateRequestStatusDenied(request.getRequestId());
-        } else {
-            requestRepository.saveAndFlush(request);
-        }
-    }
 
     /**
      * Makes changes to the requestRepository if the request was accepted.
@@ -69,7 +57,9 @@ public class FacultyHandlerService {
      * @param request - Request that has been accepted.
      */
     public void acceptRequest(Request request) {
-        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
+        long requestID = request.getRequestId();
+        Request requestFound = requestRepository.findByRequestId(requestID);
+        if (requestFound == request) {
             requestRepository.updateRequestStatusAccepted(request.getRequestId());
         } else {
             requestRepository.saveAndFlush(request);
