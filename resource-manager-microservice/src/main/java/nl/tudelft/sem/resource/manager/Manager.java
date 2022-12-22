@@ -5,6 +5,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
+import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
@@ -12,9 +13,11 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesReposito
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.resource.exceptions.NotEnoughResourcesException;
 import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
+import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.springframework.stereotype.Service;
+import sem.commons.Token;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +32,7 @@ public class Manager {
     private final transient FreepoolManager freepoolManager;
     private final transient DefaultResources defaultResources;
     private final transient ResourceHandler resourceHandler;
+    private final transient NodeHandler nodeHandler;
 
 
     /**
@@ -181,5 +185,23 @@ public class Manager {
                     Resource.sub(Resource.with(0), remainingFacultyResources)
             );
         }
+    }
+
+    /**
+     * This method will add a new node to the system.
+     * @param node the node to add to the system
+     * @return a string representing weather the addition was successful or not.
+     */
+    public String addNodeToCluster(ClusterNode node) {
+        return nodeHandler.addNodeToCluster(node);
+    }
+
+    /**
+     * Finds a node by the token and removes it from the cluster.
+     * @param token by which to find the node
+     * @throws NodeNotFoundException if there is no node with that token in the cluster
+     */
+    public void removeNodeFromCluster(Token token) throws NodeNotFoundException {
+        nodeHandler.removeNodeFromCluster(token);
     }
 }

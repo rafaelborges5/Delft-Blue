@@ -11,6 +11,7 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesReposito
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.resource.exceptions.NotEnoughResourcesException;
 import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
+import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,7 @@ public class ReserveResourcesTest {
     private transient DateProvider dateProvider;
     private transient NodeRepository nodeRepository;
     private transient FreepoolManager freepoolManager;
+    private transient NodeHandler nodeHandler;
 
     @BeforeEach
     void setUp() {
@@ -45,6 +47,7 @@ public class ReserveResourcesTest {
         dateProvider = mock(DateProvider.class);
         nodeRepository = mock(NodeRepository.class);
         freepoolManager = mock(FreepoolManager.class);
+        nodeHandler = mock(NodeHandler.class);
 
         sut = new Manager(
                 dateProvider,
@@ -53,7 +56,8 @@ public class ReserveResourcesTest {
                 reservedResourcesRepository,
                 freepoolManager,
                 defaultResources,
-                resourceHandler
+                resourceHandler,
+                nodeHandler
         );
     }
 

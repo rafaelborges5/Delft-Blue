@@ -8,6 +8,7 @@ import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
+import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ public class GetDateForRequestTest {
     private transient FreepoolManager freepoolManager;
     private transient DefaultResources defaultResources;
     private transient ResourceHandler resourceHandler;
+    private transient NodeHandler nodeHandler;
 
     @BeforeEach
     void setUp() {
@@ -38,6 +40,7 @@ public class GetDateForRequestTest {
         freepoolManager = mock(FreepoolManager.class);
         defaultResources = mock(DefaultResources.class);
         resourceHandler = mock(ResourceHandler.class);
+        nodeHandler = mock(NodeHandler.class);
 
         sut = new Manager(
                 dateProvider,
@@ -46,7 +49,8 @@ public class GetDateForRequestTest {
                 reservedResourcesRepository,
                 freepoolManager,
                 defaultResources,
-                resourceHandler
+                resourceHandler,
+                nodeHandler
         );
     }
 

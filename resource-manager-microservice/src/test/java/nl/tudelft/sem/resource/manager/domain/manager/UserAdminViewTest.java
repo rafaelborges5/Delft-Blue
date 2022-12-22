@@ -11,6 +11,7 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
+import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ public class UserAdminViewTest {
     private transient FreepoolManager freepoolManager;
     private transient DefaultResources defaultResources;
     private transient ResourceHandler resourceHandler;
+    private transient NodeHandler nodeHandler;
 
     @BeforeEach
     void setUp() {
@@ -43,6 +45,7 @@ public class UserAdminViewTest {
         reservedResourcesRepository = mock(ReservedResourcesRepository.class);
         dateProvider = mock(DateProvider.class);
         resourceHandler = mock(ResourceHandler.class);
+        nodeHandler = mock(NodeHandler.class);
         when(dateProvider.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
 
         defaultResources = new DefaultResources(100);
@@ -66,7 +69,8 @@ public class UserAdminViewTest {
                 reservedResourcesRepository,
                 freepoolManager,
                 defaultResources,
-                resourceHandler
+                resourceHandler,
+                nodeHandler
         );
 
         LocalDate date = LocalDate.of(2020, 1, 1);
