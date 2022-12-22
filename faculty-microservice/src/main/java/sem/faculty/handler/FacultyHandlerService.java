@@ -3,6 +3,7 @@ package sem.faculty.handler;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,5 +72,9 @@ public class FacultyHandlerService {
         //TODO: accept the requests in given faculty (also check if there requests even exist)
 
         return new StatusDTO("OK");
+    }
+
+    public SysadminScheduleDTO getScheduleForDate(LocalDate date) {
+        return new SysadminScheduleDTO(facultyHandler.getRequestForDate(date));
     }
 }

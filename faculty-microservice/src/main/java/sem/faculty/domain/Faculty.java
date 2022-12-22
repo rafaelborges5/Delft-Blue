@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import sem.commons.FacultyName;
+import sem.commons.RequestDTO;
 import sem.faculty.provider.TimeProvider;
 
 @Getter
@@ -71,5 +73,23 @@ public class   Faculty {
             pendingList.add(pendingRequests.remove());
         }
         return pendingList;
+    }
+
+
+    /**
+     * Gets requests for date.
+     *
+     * @param date the date
+     * @return the requests for date
+     */
+    public List<RequestDTO> getRequestsForDate(LocalDate date) {
+        List<Request> ret = schedule.get(date);
+        if (ret == null) {
+            return new ArrayList<>();
+        } else {
+            return ret.stream().map(x -> new RequestDTO(x.getRequestId(), x.getName(),
+                    x.getNetId(), x.getFacultyName(), x.getDescription(), x.getPreferredDate(),
+                    x.getResource())).collect(Collectors.toList());
+        }
     }
 }
