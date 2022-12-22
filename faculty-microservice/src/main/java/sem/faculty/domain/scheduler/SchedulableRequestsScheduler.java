@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import sem.commons.FacultyName;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
@@ -15,14 +16,21 @@ import java.time.LocalDate;
 @Service
 public abstract class SchedulableRequestsScheduler implements Scheduler {
     @Override
-    public void scheduleRequest(Request request, Faculty faculty) {
+    public void scheduleRequest(Request request, Faculty faculty, RequestRepository requestRepository) {
         LocalDate date = getAvailableDate(request, faculty.getFacultyName());
         if (date == null) {
             request.setStatus(RequestStatus.DENIED);
+
+            if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
+                requestRepository.updateRequestStatusDenied(request.getRequestId());
+            } else {
+                requestRepository.saveAndFlush(request);
+            }
+
             //TODO Could add some notifications here.
             return;
         }
-        saveRequestInFaculty(request, faculty, date);
+        saveRequestInFaculty(request, faculty, date, requestRepository);
     }
 
     /**
@@ -31,8 +39,9 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      * @param request - Request to be saved
      * @param faculty - Faculty in which the request is saved
      * @param date - Date on which the request can be scheduled
+     * @param requestRepository - Repository that stores the requests
      */
-    abstract void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date);
+    abstract void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date, RequestRepository requestRepository);
 
 
     /**

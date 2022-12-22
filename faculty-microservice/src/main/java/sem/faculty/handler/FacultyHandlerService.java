@@ -1,7 +1,12 @@
 package sem.faculty.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
+import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +20,60 @@ public class FacultyHandlerService {
 
 
     private transient FacultyHandler facultyHandler;
+    public final transient RequestRepository requestRepository;
 
 
     /**
      * Instantiates a new Faculty manager service.
      *
      * @param facultyHandler the faculty manager
+     * @param requestRepository - Repository that stores all the requests that belong to all the faculties.
      */
-    public FacultyHandlerService(FacultyHandler facultyHandler) {
+    @Autowired
+    public FacultyHandlerService(FacultyHandler facultyHandler,
+                                  RequestRepository requestRepository) {
         this.facultyHandler = facultyHandler;
+        this.requestRepository = requestRepository;
+    }
+
+
+    /**
+     * Makes changes to the requestRepository if the request was dropped.
+     *
+     * @param request - Request that has been dropped.
+     */
+    public void dropRequest(Request request) {
+        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
+            requestRepository.updateRequestStatusDropped(request.getRequestId());
+        } else {
+            requestRepository.saveAndFlush(request);
+        }
+    }
+
+    /**
+     * Makes changes to the requestRepository if the request was denied.
+     *
+     * @param request - Request that has been denied.
+     */
+    public void denyRequest(Request request) {
+        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
+            requestRepository.updateRequestStatusDenied(request.getRequestId());
+        } else {
+            requestRepository.saveAndFlush(request);
+        }
+    }
+
+    /**
+     * Makes changes to the requestRepository if the request was accepted.
+     *
+     * @param request - Request that has been accepted.
+     */
+    public void acceptRequest(Request request) {
+        if (requestRepository.findByRequestId(request.getRequestId()).contains(request)) {
+            requestRepository.updateRequestStatusAccepted(request.getRequestId());
+        } else {
+            requestRepository.saveAndFlush(request);
+        }
     }
 
     /**

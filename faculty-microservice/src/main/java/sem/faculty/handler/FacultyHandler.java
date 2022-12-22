@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
 import sem.faculty.domain.scheduler.Scheduler;
@@ -24,9 +25,8 @@ import java.util.Map;
 public class FacultyHandler {
     Map<FacultyName, Faculty> faculties;
     Scheduler scheduler;
-    @Autowired
     TimeProvider timeProvider;
-
+    RequestRepository requestRepository;
 
     /**
      * Constructor method.
@@ -37,7 +37,14 @@ public class FacultyHandler {
         populateFaculties();
     }
 
-
+    /**
+     * Method to set the requestRepository that is being used in the following methods.
+     *
+     * @param requestRepository the repository storing the request
+     */
+    public void setRequestRepository(RequestRepository requestRepository) {
+        this.requestRepository = requestRepository;
+    }
 
     /**
      * Create a new Faculty Handler.
@@ -55,7 +62,8 @@ public class FacultyHandler {
     private void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
-            faculties.put(fn, new Faculty(fn, timeProvider));
+            Faculty faculty = new Faculty(fn, timeProvider);
+            faculties.put(fn, faculty);
         }
     }
 
@@ -68,27 +76,28 @@ public class FacultyHandler {
             groupId = "default",
             containerFactory = "kafkaListenerContainerFactory2"
     )
-    void listener(Request request) {
-        handleIncomingRequests(request);
+    void listener(Request request, RequestRepository requestRepository) {
+        handleIncomingRequests(request, requestRepository);
     }
 
     /**
      * Choose how to handle an incoming Request and schedule it accordingly.
      *
      * @param request - Request to be scheduled.
+     * @param requestRepository - Repository that stores the requests to be scheduled.
      */
-    void handleIncomingRequests(Request request) {
+    void handleIncomingRequests(Request request, RequestRepository requestRepository) {
         LocalDate currentDate = timeProvider.getCurrentTime();
         LocalDate preferredDate = request.getPreferredDate();
 
         // if the date of the request is invalid, deny the request
+
         if (preferredDate.isBefore(currentDate)) {
             scheduler = new DenyRequestsScheduler();
         } else {
             scheduler = new PendingRequestsScheduler();
         }
-
-        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
+        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()), requestRepository);
     }
 
     /**

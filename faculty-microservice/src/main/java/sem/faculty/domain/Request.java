@@ -35,8 +35,8 @@ public class Request {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private RequestStatus status;
-    @Enumerated(EnumType.STRING)
     @Column(name = "facultyName", nullable = false)
+    @Convert(converter = FacultyNameAttributeConverter.class)
     private FacultyName facultyName;
     @Embedded
     private Resource resource;
@@ -56,6 +56,18 @@ public class Request {
     }
 
     /**
+     * Return the faculty for the request as a string.
+     *
+     * @return String with faculty
+     */
+    public String facultyString() {
+        String faculties = this.facultyName.toString();
+        faculties = faculties.replace("[", "");
+        faculties = faculties.replace("]", "");
+        return faculties;
+    }
+
+    /**
      * toString method.
      */
     @Override
@@ -67,7 +79,7 @@ public class Request {
                 + ", description='" + description + '\''
                 + ", preferredDate=" + preferredDate
                 + ", status=" + status
-                + ", faculty=" + facultyName
+                + ", faculty=" + facultyString()
                 + ", resource='" + resource.toString() + '\''
                 + '}';
     }
