@@ -5,6 +5,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RestController;
 import sem.commons.*;
+import sem.faculty.domain.Request;
+import sem.commons.*;
 import sem.faculty.handler.FacultyHandlerService;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 public class MainFacultyController {
 
     private transient FacultyHandlerService facultyHandlerService;
+    final transient String groupId = "default";
 
     /**
      * Instantiates a new Main faculty controller.
@@ -28,6 +31,19 @@ public class MainFacultyController {
     }
 
     /**
+     * Listen for incoming Requests.
+     */
+    @KafkaListener(
+            topics = "incoming-request",
+            groupId = groupId,
+            containerFactory = "kafkaListenerContainerFactoryRequestDTO"
+    )
+    void listener(RequestDTO request) {
+        //handleIncomingRequests(request);
+        facultyHandlerService.requestListener(request);
+    }
+
+    /**
      * Gets pending requests.
      *
      * @param facultyNameDTO the faculty name dto
@@ -35,7 +51,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "pendingRequestsTopic",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryFacultyName"
     )
     @SendTo
@@ -52,7 +68,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "acceptRequestsTopic",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryAcceptRequests"
     )
     @SendTo
@@ -72,7 +88,7 @@ public class MainFacultyController {
      */
     @KafkaListener(
             topics = "sysadmin-view-faculty",
-            groupId = "default",
+            groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryDateDTO"
     )
     @SendTo

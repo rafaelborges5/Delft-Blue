@@ -1,7 +1,11 @@
 package sem.faculty.domain.scheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import sem.commons.FacultyName;
 import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
@@ -12,7 +16,15 @@ import java.time.LocalDate;
 import java.time.Month;
 
 class DenyRequestsSchedulerTest {
-    DenyRequestsScheduler denyScheduler = new DenyRequestsScheduler();
+
+    DenyRequestsScheduler denyScheduler;
+    @Mock
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
+
+    @BeforeEach
+    void setup() {
+        denyScheduler = new DenyRequestsScheduler(requestRepository);
+    }
 
     @Test
     void testScheduleRequest() throws NotValidResourcesException {

@@ -28,6 +28,8 @@ class PendingRequestsSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
+    @Mock
     private ScheduleRequestController controller;
     SchedulableRequestsScheduler scheduler;
 
@@ -37,7 +39,7 @@ class PendingRequestsSchedulerTest {
     void setUp() {
         controller = mock(ScheduleRequestController.class);
         kafkaTemplate = Mockito.mock(KafkaTemplate.class);
-        scheduler = new PendingRequestsScheduler(controller, kafkaTemplate);
+        scheduler = new PendingRequestsScheduler(controller, requestRepository, kafkaTemplate);
     }
 
     @Test

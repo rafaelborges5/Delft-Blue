@@ -1,11 +1,7 @@
-package sem.faculty.domain;
+package sem.commons;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sem.commons.FacultyName;
-import sem.commons.NotValidResourcesException;
-import sem.commons.RequestDTO;
-import sem.commons.Resource;
 
 import java.time.LocalDate;
 

@@ -1,13 +1,10 @@
 package nl.tudelft.sem.resource.manager.domain.controllers;
 
-import javassist.NotFoundException;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
-import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
-import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
+import nl.tudelft.sem.resource.manager.domain.services.Manager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,10 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class NodeClusterControllerTest {
-    private transient ResourceAvailabilityService resourceAvailabilityService;
+    private transient Manager manager;
     private transient NodeClusterController nodeClusterController;
-
-    private transient NodeHandler nodeHandler;
     private transient FacultyNameDTO facultyNameDTO;
     private transient Resource resource;
     private transient RegularUserView regularUserView;
@@ -32,9 +27,8 @@ class NodeClusterControllerTest {
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
-        resourceAvailabilityService = Mockito.mock(ResourceAvailabilityService.class);
-        nodeHandler = Mockito.mock(NodeHandler.class);
-        nodeClusterController = new NodeClusterController(resourceAvailabilityService, nodeHandler);
+        manager = Mockito.mock(Manager.class);
+        nodeClusterController = new NodeClusterController(manager);
         facultyNameDTO = new FacultyNameDTO("EEMCS");
         resource = new Resource(3, 2, 1);
         regularUserView = new RegularUserView(Map.of(facultyNameDTO, resource));
@@ -46,7 +40,7 @@ class NodeClusterControllerTest {
     @Test
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void getUserViewResourcesForDate() {
-        Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Reserver.EEMCS))
+        Mockito.when(manager.seeFreeResourcesTomorrow(Reserver.EEMCS))
                 .thenReturn(new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1));
         assertThat(nodeClusterController.getUserViewResourcesForDate(
                 new ConsumerRecord<>("test", 1, 1L, "test", facultyNamePackageDTO), facultyNamePackageDTO))
@@ -62,14 +56,14 @@ class NodeClusterControllerTest {
                         clusterNodeDTO.getResources().getGpu(), clusterNodeDTO.getResources().getMemory()));
         ConsumerRecord<String, ClusterNodeDTO> record = new ConsumerRecord<>("test", 1, 1, "test", clusterNodeDTO);
         nodeClusterController.addClusterNode(record, clusterNodeDTO);
-        Mockito.verify(nodeHandler).addNodeToCluster(clusterNode);
+        Mockito.verify(manager).addNodeToCluster(clusterNode);
     }
 
     @Test
     void testRemoveClusterNodeValid() {
         Token token = new Token("test");
         try {
-            nodeHandler.removeNodeFromCluster(token);
+            manager.removeNodeFromCluster(token);
         } catch (NodeNotFoundException e) {
             fail("Shouldn't have thrown an exception");
         }
@@ -80,7 +74,7 @@ class NodeClusterControllerTest {
         Token token = new Token("test");
         NodeNotFoundException exception = new NodeNotFoundException(token);
         Mockito.doThrow(exception)
-                .when(nodeHandler)
+                .when(manager)
                 .removeNodeFromCluster(token);
         assertThat(nodeClusterController.removeClusterNode(Mockito.any(), token))
                 .isEqualTo("There are no nodes with that token!");

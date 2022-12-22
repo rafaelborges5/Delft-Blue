@@ -163,6 +163,26 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, RequestDTO> consumerFactoryRequestDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(RequestDTO.class));
+    }
+
+    /**
+     * Kafka listener container factory for RequestDTO.
+     *
+     * @return the concurrent kafka listener container factory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestDTO> kafkaListenerContainerFactoryRequestDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryRequestDTO());
+
+        return factory;
+    }
+
     /**
      * Kafka template status kafka template.
      *

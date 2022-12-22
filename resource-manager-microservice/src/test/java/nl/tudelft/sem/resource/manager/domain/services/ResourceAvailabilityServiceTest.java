@@ -125,23 +125,6 @@ class ResourceAvailabilityServiceTest {
     }
 
     @Test
-    void see_cluster_node_information_test() {
-        assertThat(sut.seeClusterNodeInformation())
-                .containsExactlyInAnyOrder(
-                        new ClusterNode(
-                                new OwnerName("name1"),
-                                new URL("url1"),
-                                new Token("token1"),
-                                new Resource(50, 50, 50)
-                        ), new ClusterNode(
-                                new OwnerName("name2"),
-                                new URL("url2"),
-                                new Token("token2"),
-                                new Resource(60, 60, 60)
-                        ));
-    }
-
-    @Test
     void see_reserved_resources_on_date_test() {
         assertThat(sut.seeReservedResourcesOnDate(LocalDate.of(2020, 1, 1)))
                 .isEqualTo(new Resource(60, 60, 60));
