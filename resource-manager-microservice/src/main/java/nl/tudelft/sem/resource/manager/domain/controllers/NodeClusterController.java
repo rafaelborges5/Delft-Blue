@@ -1,5 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.controllers;
 
+import nl.tudelft.sem.resource.manager.Manager;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
@@ -21,13 +22,13 @@ import java.util.Map;
 @Controller
 public class NodeClusterController {
 
-    private final transient ResourceAvailabilityService resourceAvailabilityService;
+    private final transient Manager manager;
 
     private final transient NodeHandler nodeHandler;
 
     @Autowired
-    public NodeClusterController(ResourceAvailabilityService resourceAvailabilityService, NodeHandler nodeHandler) {
-        this.resourceAvailabilityService = resourceAvailabilityService;
+    public NodeClusterController(Manager manager, NodeHandler nodeHandler) {
+        this.manager = manager;
         this.nodeHandler = nodeHandler;
     }
 
@@ -48,7 +49,7 @@ public class NodeClusterController {
                                                        @Payload FacultyNamePackageDTO faculties) {
         Map<FacultyNameDTO, sem.commons.Resource> map = new HashMap<>();
         faculties.getFaculties().forEach(x -> {
-            Resource resourceObject = resourceAvailabilityService
+            Resource resourceObject = manager
                     .seeFreeResourcesTomorrow(Reserver.valueOf(x.getFacultyName().toUpperCase(Locale.UK)));
 
             try {

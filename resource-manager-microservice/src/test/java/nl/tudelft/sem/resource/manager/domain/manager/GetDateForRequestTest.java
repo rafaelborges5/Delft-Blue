@@ -1,10 +1,15 @@
 package nl.tudelft.sem.resource.manager.domain.manager;
 
 import nl.tudelft.sem.resource.manager.Manager;
+import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
+import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
+import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
 import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
+import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,14 +21,33 @@ import static org.mockito.Mockito.when;
 
 public class GetDateForRequestTest {
     private transient Manager sut;
-    private transient DateProvider dateProvider;
     private transient ResourceAvailabilityService resourceAvailabilityService;
+    private transient NodeRepository nodeRepository;
+    private transient ReservedResourcesRepository reservedResourcesRepository;
+    private transient DateProvider dateProvider;
+    private transient FreepoolManager freepoolManager;
+    private transient DefaultResources defaultResources;
+    private transient ResourceHandler resourceHandler;
 
     @BeforeEach
     void setUp() {
         dateProvider = mock(DateProvider.class);
         resourceAvailabilityService = mock(ResourceAvailabilityService.class);
-        sut = new Manager(dateProvider, resourceAvailabilityService);
+        nodeRepository = mock(NodeRepository.class);
+        reservedResourcesRepository = mock(ReservedResourcesRepository.class);
+        freepoolManager = mock(FreepoolManager.class);
+        defaultResources = mock(DefaultResources.class);
+        resourceHandler = mock(ResourceHandler.class);
+
+        sut = new Manager(
+                dateProvider,
+                resourceAvailabilityService,
+                nodeRepository,
+                reservedResourcesRepository,
+                freepoolManager,
+                defaultResources,
+                resourceHandler
+        );
     }
 
     @Test

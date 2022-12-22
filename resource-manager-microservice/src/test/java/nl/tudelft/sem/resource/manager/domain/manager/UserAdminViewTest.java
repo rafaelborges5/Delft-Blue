@@ -1,5 +1,6 @@
-package nl.tudelft.sem.resource.manager.domain.services;
+package nl.tudelft.sem.resource.manager.domain.manager;
 
+import nl.tudelft.sem.resource.manager.Manager;
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
@@ -9,6 +10,9 @@ import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
+import nl.tudelft.sem.resource.manager.domain.services.FreepoolManager;
+import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
+import nl.tudelft.sem.resource.manager.domain.services.ResourceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sem.commons.OwnerName;
@@ -23,19 +27,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ResourceAvailabilityServiceTest {
-    private transient ResourceAvailabilityService sut;
+public class UserAdminViewTest {
+    private transient Manager sut;
+    private transient ResourceAvailabilityService resourceAvailabilityService;
     private transient NodeRepository nodeRepository;
     private transient ReservedResourcesRepository reservedResourcesRepository;
     private transient DateProvider dateProvider;
     private transient FreepoolManager freepoolManager;
     private transient DefaultResources defaultResources;
+    private transient ResourceHandler resourceHandler;
 
     @BeforeEach
     void setUp() {
         nodeRepository = mock(NodeRepository.class);
         reservedResourcesRepository = mock(ReservedResourcesRepository.class);
         dateProvider = mock(DateProvider.class);
+        resourceHandler = mock(ResourceHandler.class);
         when(dateProvider.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
 
         defaultResources = new DefaultResources(100);
@@ -46,12 +53,20 @@ class ResourceAvailabilityServiceTest {
                 nodeRepository
         );
 
-        sut = new ResourceAvailabilityService(
-                nodeRepository,
+        resourceAvailabilityService = new ResourceAvailabilityService(
                 reservedResourcesRepository,
-                dateProvider,
                 freepoolManager,
                 defaultResources
+        );
+
+        sut = new Manager(
+                dateProvider,
+                resourceAvailabilityService,
+                nodeRepository,
+                reservedResourcesRepository,
+                freepoolManager,
+                defaultResources,
+                resourceHandler
         );
 
         LocalDate date = LocalDate.of(2020, 1, 1);
@@ -111,6 +126,7 @@ class ResourceAvailabilityServiceTest {
         when(nodeRepository.findAll())
                 .thenReturn(List.of(node1, node2));
     }
+
 
     @Test
     void free_resources_on_date_test() {

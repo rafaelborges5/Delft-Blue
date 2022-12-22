@@ -1,6 +1,7 @@
 package nl.tudelft.sem.resource.manager.domain.controllers;
 
 import javassist.NotFoundException;
+import nl.tudelft.sem.resource.manager.Manager;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class NodeClusterControllerTest {
+    private transient Manager manager;
     private transient ResourceAvailabilityService resourceAvailabilityService;
     private transient NodeClusterController nodeClusterController;
 
@@ -34,7 +36,8 @@ class NodeClusterControllerTest {
     void setUp() throws NotValidResourcesException {
         resourceAvailabilityService = Mockito.mock(ResourceAvailabilityService.class);
         nodeHandler = Mockito.mock(NodeHandler.class);
-        nodeClusterController = new NodeClusterController(resourceAvailabilityService, nodeHandler);
+        manager = Mockito.mock(Manager.class);
+        nodeClusterController = new NodeClusterController(manager, nodeHandler);
         facultyNameDTO = new FacultyNameDTO("EEMCS");
         resource = new Resource(3, 2, 1);
         regularUserView = new RegularUserView(Map.of(facultyNameDTO, resource));
@@ -46,7 +49,7 @@ class NodeClusterControllerTest {
     @Test
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void getUserViewResourcesForDate() {
-        Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Reserver.EEMCS))
+        Mockito.when(manager.seeFreeResourcesTomorrow(Reserver.EEMCS))
                 .thenReturn(new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1));
         assertThat(nodeClusterController.getUserViewResourcesForDate(
                 new ConsumerRecord<>("test", 1, 1L, "test", facultyNamePackageDTO), facultyNamePackageDTO))
