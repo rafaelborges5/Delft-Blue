@@ -64,7 +64,7 @@ class PendingRequestsSchedulerTest {
     }
 
     @Test
-    void scheduleResonseNullRequest() throws NotValidResourcesException, ExecutionException, InterruptedException {
+    void scheduleResponseNullRequest() throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = null;
         Request request = new Request("name", "netId", "description",
                 date, RequestStatus.DROPPED,
