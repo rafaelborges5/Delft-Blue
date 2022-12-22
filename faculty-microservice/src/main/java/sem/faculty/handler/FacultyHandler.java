@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.commons.RequestDTO;
@@ -12,6 +11,7 @@ import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -32,6 +33,8 @@ public class FacultyHandler {
     Scheduler scheduler;
     @Autowired
     TimeProvider timeProvider;
+    @Autowired
+    RequestRepository requestRepository;
     @Autowired
     ScheduleRequestController scheduleRequestController = null;
 
@@ -60,21 +63,9 @@ public class FacultyHandler {
     private void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
-            faculties.put(fn, new Faculty(fn, timeProvider));
+            Faculty faculty = new Faculty(fn, timeProvider);
+            faculties.put(fn, faculty);
         }
-    }
-
-
-    /**
-     * Listen for incoming Requests.
-     */
-    @KafkaListener(
-            topics = "incoming-request",
-            groupId = "default",
-            containerFactory = "kafkaListenerContainerFactory2"
-    )
-    void listener(Request request) {
-        handleIncomingRequests(request);
     }
 
     /**
@@ -88,13 +79,12 @@ public class FacultyHandler {
 
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
-            scheduler = new DenyRequestsScheduler();
+            scheduler = new DenyRequestsScheduler(requestRepository);
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
         } else {
-            scheduler = new PendingRequestsScheduler(scheduleRequestController);
+            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository);
         }
-
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
@@ -130,7 +120,10 @@ public class FacultyHandler {
      */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        return faculty.getPendingRequests();
+        List<Request> requests = faculty.getPendingRequests().stream()
+                .map(x -> requestRepository.findByRequestId(x))
+                .collect(Collectors.toList());
+        return requests;
     }
 
     /**

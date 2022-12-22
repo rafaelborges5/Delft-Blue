@@ -23,7 +23,7 @@ public class RequestDTO {
     private Resource resource;
 
     /**
-     * secundairy constructor without requestID.
+     * secondary constructor without requestID.
      * @param name - the request name
      * @param netId - the user NetId
      * @param faculty - the faculty to send the request to
