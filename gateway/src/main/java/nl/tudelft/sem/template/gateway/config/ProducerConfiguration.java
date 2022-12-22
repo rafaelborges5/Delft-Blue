@@ -92,6 +92,12 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    //TODO: remove bean below, is for testing
+    @Bean
+    public ProducerFactory<String, String> producerFactoryString() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
     /**
      * Kafka template.
      *
@@ -125,5 +131,11 @@ public class ProducerConfiguration {
     @Bean
     public KafkaTemplate<String, Token> kafkaTemplateToken() {
         return new KafkaTemplate<>(producerFactoryToken());
+    }
+
+    //TODO: remove bean below, is for testing
+    @Bean
+    public KafkaTemplate<String, String> kafkaTemplateString() {
+        return new KafkaTemplate<>(producerFactoryString());
     }
 }

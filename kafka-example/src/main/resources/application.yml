@@ -7,6 +7,9 @@ spring:
     # kafka within the docker container running on port 9002
     bootstrap-servers: localhost:29092
 
+test:
+  topic: embedded-test-topic
+
 
 server:
   #Port where our producer application will be running
