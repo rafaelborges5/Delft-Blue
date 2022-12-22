@@ -1,12 +1,19 @@
 package sem.faculty.domain.scheduler;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import sem.commons.FacultyName;
+import sem.commons.ScheduleDateDTO;
+import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
+import sem.faculty.domain.NotEnoughResourcesLeftException;
 import sem.faculty.domain.Request;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Abstract class that has the implementation to communicate and verify the date given by the Resource Manager.
@@ -14,14 +21,29 @@ import java.time.LocalDate;
  */
 @Service
 public abstract class SchedulableRequestsScheduler implements Scheduler {
+    private final transient ScheduleRequestController controller;
+
+    @Autowired
+    SchedulableRequestsScheduler(ScheduleRequestController controller) {
+        this.controller = controller;
+    }
+
+
     @Override
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public void scheduleRequest(Request request, Faculty faculty) {
-        LocalDate date = getAvailableDate(request, faculty.getFacultyName());
-        if (date == null) {
+
+        LocalDate date = null;
+        try {
+            date = getAvailableDate(request, faculty.getFacultyName());
+        } catch (NotEnoughResourcesLeftException e) {
             request.setStatus(RequestStatus.DENIED);
             //TODO Could add some notifications here.
             return;
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
+
         saveRequestInFaculty(request, faculty, date);
     }
 
@@ -40,8 +62,16 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      * @param request - Request to be scheduled
      * @param facultyName - FacultyName of the faculty
      */
-    LocalDate getAvailableDate(Request request, FacultyName facultyName) {
+    LocalDate getAvailableDate(Request request, FacultyName facultyName)
+            throws NotEnoughResourcesLeftException, ExecutionException, InterruptedException {
         //TODO make connection to Resource Manager here and change line below.
-        return request.getPreferredDate();
+        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getResource(),
+                request.getPreferredDate(),
+                facultyName);
+        ResponseEntity<LocalDate> availableDate = controller.sendScheduleRequest(scheduleDateDTO);
+        if (availableDate.getBody() == null) {
+            throw new NotEnoughResourcesLeftException(request.getRequestId());
+        }
+        return availableDate.getBody();
     }
 }
