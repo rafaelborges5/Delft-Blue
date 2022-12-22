@@ -15,16 +15,10 @@ import sem.faculty.provider.TimeProvider;
 
 @Getter
 public class   Faculty {
-
-    //TODO: Replace ALLOCATED_RESOURCES with an actual bound after resource_manager is implemented.
-    private static final long ALLOCATED_RESOURCES = 2;
-
     private FacultyName facultyName;
     private Map<LocalDate, List<Long>> schedule;
     private Queue<Long> pendingRequests;
     private final TimeProvider timeProvider;
-    @Autowired
-    public RequestRepository requestRepository;
 
     /**
      * Constructor method.
@@ -73,17 +67,6 @@ public class   Faculty {
         while (!pendingRequests.isEmpty()) {
             pendingList.add(pendingRequests.remove());
         }
-        return pendingList;
-    }
-
-    /**
-     * Gets pending requests from the request Repository.
-     *
-     * @return the pending requests
-     */
-    public List<Request> getPendingRequestsFromRepo() {
-        List<Request> pendingList = new ArrayList<>();
-        pendingList = requestRepository.findPendingRequestsByFaculty(this.facultyName);
         return pendingList;
     }
 }

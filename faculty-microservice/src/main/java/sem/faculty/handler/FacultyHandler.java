@@ -76,7 +76,7 @@ public class FacultyHandler {
 
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
-            scheduler = new DenyRequestsScheduler();
+            scheduler = new DenyRequestsScheduler(requestRepository);
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
             scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
         } else {

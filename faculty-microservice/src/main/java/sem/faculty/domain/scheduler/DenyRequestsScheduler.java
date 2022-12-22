@@ -9,6 +9,7 @@ import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Strategy class that automatically denies requests.
@@ -16,8 +17,12 @@ import java.util.List;
 @Service
 public class DenyRequestsScheduler implements Scheduler {
 
+    private final transient RequestRepository requestRepository;
+
     @Autowired
-    public RequestRepository requestRepository;
+    public DenyRequestsScheduler(RequestRepository requestRepository) {
+        this.requestRepository = requestRepository;
+    }
 
     @Override
     public void scheduleRequest(Request request, Faculty faculty) {
@@ -25,7 +30,7 @@ public class DenyRequestsScheduler implements Scheduler {
 
         // update request repository
         long requestID = request.getRequestId();
-        if (requestRepository.findByRequestId(requestID) == request) {
+        if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
             requestRepository.delete(requestRepository.findByRequestId(requestID));
         }
         //TODO Could add some notifications here.
