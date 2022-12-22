@@ -132,4 +132,8 @@ public class FacultyHandlerService {
 
         return new StatusDTO("OK");
     }
+
+    public SysadminScheduleDTO getScheduleForDate(LocalDate date) {
+        return new SysadminScheduleDTO(facultyHandler.getRequestForDate(date));
+    }
 }

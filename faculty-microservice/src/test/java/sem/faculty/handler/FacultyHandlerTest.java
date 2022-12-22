@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import sem.commons.RequestDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
@@ -26,8 +27,10 @@ import org.junit.jupiter.api.BeforeEach;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -195,4 +198,16 @@ class FacultyHandlerTest {
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
 
+    @Test
+    void getRequestForDate() throws NotValidResourcesException {
+        LocalDate date = LocalDate.of(2015, 2, 3);
+        Request request = new Request("name", "netId", "desc", LocalDate.of(2015, 2, 4),
+                RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDTO requestDTO = new RequestDTO(request.getRequestId(), request.getName(),
+                request.getNetId(), request.getFacultyName(), request.getDescription(), request.getPreferredDate(),
+                request.getResource());
+        facultyHandler.faculties.get(FacultyName.EEMCS).getSchedule().put(date, List.of(request));
+        Map<FacultyName, List<RequestDTO>> map = facultyHandler.getRequestForDate(date);
+        assertEquals(map.get(FacultyName.EEMCS).get(0), requestDTO);
+    }
 }

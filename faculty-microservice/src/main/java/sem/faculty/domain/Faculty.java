@@ -7,16 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import sem.commons.FacultyName;
+import sem.commons.RequestDTO;
 import sem.faculty.provider.TimeProvider;
 
 @Getter
 public class   Faculty {
     private FacultyName facultyName;
-    private Map<LocalDate, List<Long>> schedule;
+    private Map<LocalDate, List<Request>> schedule;
     private Queue<Long> pendingRequests;
     private final TimeProvider timeProvider;
 
@@ -40,11 +42,11 @@ public class   Faculty {
      * @param scheduledDate - LocalDate on which the request is scheduled.
      */
     public void scheduleForDate(Request request, LocalDate scheduledDate) {
-        List<Long> list = schedule.get(scheduledDate);
+        List<Request> list = schedule.get(scheduledDate);
         if (list == null) {
             list = new ArrayList<>();
         }
-        list.add(request.getRequestId());
+        list.add(request);
         //TODO: reserveResources(request, scheduledDate); //Reserve the resources for request on the scheduledDate.
         schedule.put(scheduledDate, list);
     }
@@ -68,5 +70,23 @@ public class   Faculty {
             pendingList.add(pendingRequests.remove());
         }
         return pendingList;
+    }
+
+
+    /**
+     * Gets requests for date.
+     *
+     * @param date the date
+     * @return the requests for date
+     */
+    public List<RequestDTO> getRequestsForDate(LocalDate date) {
+        List<Request> ret = schedule.get(date);
+        if (ret == null) {
+            return new ArrayList<>();
+        } else {
+            return ret.stream().map(x -> new RequestDTO(x.getRequestId(), x.getName(),
+                    x.getNetId(), x.getFacultyName(), x.getDescription(), x.getPreferredDate(),
+                    x.getResource())).collect(Collectors.toList());
+        }
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
+import sem.commons.RequestDTO;
+import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -122,5 +124,21 @@ public class FacultyHandler {
                 .map(x -> requestRepository.findByRequestId(x))
                 .collect(Collectors.toList());
         return requests;
+    }
+
+    /**
+     * Gets request for date.
+     *
+     * @param date the date
+     * @return the request for date
+     */
+    public Map<FacultyName, List<RequestDTO>> getRequestForDate(LocalDate date) {
+        Map<FacultyName, List<RequestDTO>> map = new HashMap<>();
+
+        for (FacultyName facultyName : FacultyName.values()) {
+            map.put(facultyName, faculties.get(facultyName).getRequestsForDate(date));
+        }
+
+        return map;
     }
 }

@@ -4,8 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
-import nl.tudelft.sem.resource.manager.domain.services.NodeHandler;
-import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
+import nl.tudelft.sem.resource.manager.domain.services.Manager;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,14 +20,12 @@ import java.util.Map;
 @Controller
 public class NodeClusterController {
 
-    private final transient ResourceAvailabilityService resourceAvailabilityService;
+    private final transient Manager manager;
 
-    private final transient NodeHandler nodeHandler;
 
     @Autowired
-    public NodeClusterController(ResourceAvailabilityService resourceAvailabilityService, NodeHandler nodeHandler) {
-        this.resourceAvailabilityService = resourceAvailabilityService;
-        this.nodeHandler = nodeHandler;
+    public NodeClusterController(Manager manager) {
+        this.manager = manager;
     }
 
 
@@ -48,7 +45,7 @@ public class NodeClusterController {
                                                        @Payload FacultyNamePackageDTO faculties) {
         Map<FacultyNameDTO, sem.commons.Resource> map = new HashMap<>();
         faculties.getFaculties().forEach(x -> {
-            Resource resourceObject = resourceAvailabilityService
+            Resource resourceObject = manager
                     .seeFreeResourcesTomorrow(Reserver.valueOf(x.getFacultyName().toUpperCase(Locale.UK)));
 
             try {
@@ -75,7 +72,7 @@ public class NodeClusterController {
     )
     @SendTo
     public String addClusterNode(ConsumerRecord<String, ClusterNodeDTO> record, @Payload ClusterNodeDTO clusterNode) {
-        return nodeHandler.addNodeToCluster(new ClusterNode(clusterNode.getOwnerName(), clusterNode.getUrl(),
+        return manager.addNodeToCluster(new ClusterNode(clusterNode.getOwnerName(), clusterNode.getUrl(),
                 clusterNode.getToken(),
                 new Resource(clusterNode.getResources().getCpu(), clusterNode.getResources().getGpu(),
                         clusterNode.getResources().getMemory())));
@@ -97,7 +94,7 @@ public class NodeClusterController {
     @SendTo
     public String removeClusterNode(ConsumerRecord<String, String> record, @Payload Token token) {
         try {
-            nodeHandler.removeNodeFromCluster(token);
+            manager.removeNodeFromCluster(token);
             return "Node removed successfully";
         } catch (NodeNotFoundException e) {
             return "There are no nodes with that token!";

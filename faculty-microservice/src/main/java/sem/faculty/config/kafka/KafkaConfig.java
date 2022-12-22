@@ -141,6 +141,29 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, DateDTO> consumerFactoryDateDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(DateDTO.class));
+    }
+
+    /**
+     * Kafka listener container factory for DateDTO.
+     *
+     * @return the concurrent kafka listener container factory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, DateDTO> kafkaListenerContainerFactoryDateDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, DateDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryDateDTO());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateSysadminView());
+
+        return factory;
+    }
+
     /**
      * Kafka template status kafka template.
      *
@@ -191,5 +214,20 @@ public class KafkaConfig {
     @Bean
     public KafkaTemplate<String, ScheduleDateDTO> kafkaTemplateScheduleDateDTO() {
         return new KafkaTemplate<>(producerFactoryScheduleDateDTO());
+    }
+
+    @Bean
+    public ProducerFactory<String, SysadminScheduleDTO> producerFactorySysadminView() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    /**
+     * Kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, SysadminScheduleDTO> kafkaTemplateSysadminView() {
+        return new KafkaTemplate<>(producerFactorySysadminView());
     }
 }
