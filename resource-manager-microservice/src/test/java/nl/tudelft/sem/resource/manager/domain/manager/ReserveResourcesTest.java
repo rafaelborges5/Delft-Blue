@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,5 +105,57 @@ public class ReserveResourcesTest {
         assertThatThrownBy(() -> {
             sut.reserveResourcesOnDay(faculty, new Resource(60, 40, 50), date);
         }).isInstanceOf(NotEnoughResourcesException.class);
+    }
+
+    @Test
+    void release_resources_on_days() {
+        LocalDate day1 = LocalDate.of(2022, 1, 1);
+        LocalDate day2 = LocalDate.of(2022, 1, 2);
+        Reserver faculty = Reserver.AE;
+
+        ReservedResourceId id1 = new ReservedResourceId(day1, faculty);
+        ReservedResourceId id2 = new ReservedResourceId(day2, faculty);
+
+        when(reservedResourcesRepository.findById(id1))
+                .thenReturn(Optional.of(new ReservedResources(id1, Resource.with(10))));
+        when(reservedResourcesRepository.findById(id2))
+                .thenReturn(Optional.of(new ReservedResources(id2, Resource.with(20))));
+
+        sut.releaseResourcesOnDays(faculty, List.of(day1, day2));
+
+        ArgumentCaptor<ReservedResources> arg = ArgumentCaptor.forClass(ReservedResources.class);
+        verify(reservedResourcesRepository, times(4)).save(arg.capture());
+
+        assertThat(arg.getAllValues()).containsExactlyInAnyOrder(
+                new ReservedResources(id1, Resource.with(100)),
+                new ReservedResources(id2, Resource.with(100)),
+                new ReservedResources(new ReservedResourceId(day1, Reserver.FREEPOOL), Resource.with(-90)),
+                new ReservedResources(new ReservedResourceId(day2, Reserver.FREEPOOL), Resource.with(-80))
+        );
+    }
+
+    @Test
+    void release_resources_only_some_days() {
+        LocalDate day1 = LocalDate.of(2022, 1, 1);
+        LocalDate day2 = LocalDate.of(2022, 1, 2);
+        Reserver faculty = Reserver.AE;
+
+        ReservedResourceId id1 = new ReservedResourceId(day1, faculty);
+        ReservedResourceId id2 = new ReservedResourceId(day2, faculty);
+
+        when(reservedResourcesRepository.findById(id1))
+                .thenReturn(Optional.of(new ReservedResources(id1, Resource.with(10))));
+        when(reservedResourcesRepository.findById(id2))
+                .thenReturn(Optional.of(new ReservedResources(id2, Resource.with(20))));
+
+        sut.releaseResourcesOnDays(faculty, List.of(day1));
+
+        ArgumentCaptor<ReservedResources> arg = ArgumentCaptor.forClass(ReservedResources.class);
+        verify(reservedResourcesRepository, times(2)).save(arg.capture());
+
+        assertThat(arg.getAllValues()).containsExactlyInAnyOrder(
+                new ReservedResources(id1, Resource.with(100)),
+                new ReservedResources(new ReservedResourceId(day1, Reserver.FREEPOOL), Resource.with(-90))
+        );
     }
 }

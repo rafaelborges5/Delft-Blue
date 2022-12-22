@@ -166,6 +166,20 @@ public class Manager {
      */
     public void releaseResourcesOnDays(Reserver faculty,
                                        List<LocalDate> releasedDays) {
+        for (LocalDate day : releasedDays) {
+            ReservedResourceId id = new ReservedResourceId(day, faculty);
+            Resource remainingFacultyResources = reservedResourcesRepository
+                    .findById(id)
+                    .map(ReservedResources::getResources)
+                    .map(r -> Resource.sub(defaultResources.getInitialResources(), r))
+                    .orElse(Resource.with(0));
 
+            resourceHandler.updateReservedResources(day, faculty, remainingFacultyResources);
+            resourceHandler.updateReservedResources(
+                    day,
+                    Reserver.FREEPOOL,
+                    Resource.sub(Resource.with(0), remainingFacultyResources)
+            );
+        }
     }
 }
