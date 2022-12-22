@@ -14,6 +14,7 @@ import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -23,8 +24,7 @@ import java.util.concurrent.ExecutionException;
 @Service
 public abstract class SchedulableRequestsScheduler implements Scheduler {
     private final transient ScheduleRequestController controller;
-    @Autowired
-    private final transient RequestRepository requestRepository;
+    final transient RequestRepository requestRepository;
 
     @Autowired
     SchedulableRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
@@ -45,7 +45,7 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
             request.setStatus(RequestStatus.DENIED);
             //TODO Could add some notifications here.
             long requestID = request.getRequestId();
-            if (requestRepository.findByRequestId(requestID) == request) {
+            if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
                 requestRepository.delete(requestRepository.findByRequestId(requestID));
             }
             return;

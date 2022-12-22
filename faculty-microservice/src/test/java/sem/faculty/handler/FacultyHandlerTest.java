@@ -38,12 +38,11 @@ import static org.mockito.Mockito.when;
 
 class FacultyHandlerTest {
 
+    FacultyHandler facultyHandler;
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
     private final ScheduleRequestController scheduleRequestController = mock(ScheduleRequestController.class);
-
-    FacultyHandler facultyHandler;
     @Mock
     private final RequestRepository requestRepository = mock(RequestRepository.class);
 
@@ -52,6 +51,7 @@ class FacultyHandlerTest {
     void setUp() {
         facultyHandler = new FacultyHandler();
         facultyHandler.timeProvider = timeProvider;
+        facultyHandler.requestRepository = requestRepository;
         facultyHandler.scheduleRequestController = scheduleRequestController;
     }
 

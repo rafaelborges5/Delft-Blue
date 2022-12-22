@@ -9,16 +9,13 @@ import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * Strategy to mark requests as pending and save them in the pending queue in the faculty.
  */
 @Service
 public class PendingRequestsScheduler extends SchedulableRequestsScheduler {
-
-    @Autowired
-    public RequestRepository requestRepository;
-
     public PendingRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
         super(controller, requestRepository);
     }
@@ -29,7 +26,7 @@ public class PendingRequestsScheduler extends SchedulableRequestsScheduler {
 
         // update request repository
         long requestID = request.getRequestId();
-        if (requestRepository.findByRequestId(requestID) == request) {
+        if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
             requestRepository.updateRequestStatusPending(requestID);
         } else {
             requestRepository.saveAndFlush(request);

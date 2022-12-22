@@ -65,7 +65,7 @@ public class FacultyHandlerService {
     public void deleteRequest(Request request) {
         long requestID = request.getRequestId();
         Request requestFound = requestRepository.findByRequestId(requestID);
-        if (requestFound == request) {
+        if (requestFound.equals(request)) {
             requestRepository.delete(requestFound);
         }
     }
@@ -79,7 +79,7 @@ public class FacultyHandlerService {
     public void acceptRequest(Request request) {
         long requestID = request.getRequestId();
         Request requestFound = requestRepository.findByRequestId(requestID);
-        if (requestFound == request) {
+        if (requestFound.equals(request)) {
             requestRepository.updateRequestStatusAccepted(request.getRequestId());
         } else {
             requestRepository.saveAndFlush(request);
