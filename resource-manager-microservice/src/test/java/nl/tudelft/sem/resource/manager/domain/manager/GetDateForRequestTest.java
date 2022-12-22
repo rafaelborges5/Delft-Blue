@@ -1,8 +1,10 @@
-package nl.tudelft.sem.resource.manager.domain.services;
+package nl.tudelft.sem.resource.manager.domain.manager;
 
+import nl.tudelft.sem.resource.manager.Manager;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
+import nl.tudelft.sem.resource.manager.domain.services.ResourceAvailabilityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,8 +14,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DateSchedulingServiceTest {
-    private transient DateSchedulingService sut;
+public class GetDateForRequestTest {
+    private transient Manager sut;
     private transient DateProvider dateProvider;
     private transient ResourceAvailabilityService resourceAvailabilityService;
 
@@ -21,7 +23,7 @@ class DateSchedulingServiceTest {
     void setUp() {
         dateProvider = mock(DateProvider.class);
         resourceAvailabilityService = mock(ResourceAvailabilityService.class);
-        sut = new DateSchedulingService(dateProvider, resourceAvailabilityService);
+        sut = new Manager(dateProvider, resourceAvailabilityService);
     }
 
     @Test
