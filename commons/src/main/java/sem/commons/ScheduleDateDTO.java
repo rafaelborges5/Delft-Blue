@@ -1,5 +1,6 @@
 package sem.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,9 +11,16 @@ import java.time.LocalDate;
  * to fit a request on or before a given date.
  */
 @Data
-@AllArgsConstructor
 public class ScheduleDateDTO {
     Resource resources;
     LocalDate endDate;
     FacultyName facultyName;
+
+    public ScheduleDateDTO(@JsonProperty("resources") Resource resources,
+                           @JsonProperty("endDate") LocalDate endDate,
+                           @JsonProperty("facultyName") FacultyName facultyName) {
+        this.resources = resources;
+        this.endDate = endDate;
+        this.facultyName = facultyName;
+    }
 }
