@@ -36,7 +36,7 @@ public class MainFacultyController {
     @KafkaListener(
             topics = "incoming-request",
             groupId = groupId,
-            containerFactory = "kafkaListenerContainerFactory2"
+            containerFactory = "kafkaListenerContainerFactoryRequestDTO"
     )
     void listener(RequestDTO request) {
         //handleIncomingRequests(request);

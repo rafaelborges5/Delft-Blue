@@ -32,7 +32,6 @@ public class ExampleController {
 
     @PostMapping("user/login")
     public void authenticateUser(@RequestBody UserCredentials userCredentials) {
-        //TODO: connect to user microservice, authenticate user and return token
         System.out.println("Tried authenticating user with netId: " + userCredentials.getNetId());
     }
 

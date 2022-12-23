@@ -3,8 +3,11 @@ package sem.faculty.domain.scheduler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import sem.commons.FacultyName;
+import sem.commons.NotificationDTO;
 import sem.commons.Resource;
 import sem.commons.NotValidResourcesException;
 import sem.faculty.controllers.ScheduleRequestController;
@@ -30,10 +33,13 @@ class PendingRequestsSchedulerTest {
     private ScheduleRequestController controller;
     SchedulableRequestsScheduler scheduler;
 
+    KafkaTemplate<String, NotificationDTO> kafkaTemplate;
+
     @BeforeEach
     void setUp() {
         controller = mock(ScheduleRequestController.class);
-        scheduler = new PendingRequestsScheduler(controller, requestRepository);
+        kafkaTemplate = Mockito.mock(KafkaTemplate.class);
+        scheduler = new PendingRequestsScheduler(controller, requestRepository, kafkaTemplate);
     }
 
     @Test
@@ -124,7 +130,6 @@ class PendingRequestsSchedulerTest {
         }).isInstanceOf(RuntimeException.class);
         verify(faculty, times(1)).getFacultyName();
         verifyNoMoreInteractions(faculty);
-
     }
 
     @Test

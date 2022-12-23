@@ -1,7 +1,9 @@
 package sem.faculty.domain.scheduler;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import sem.commons.NotificationDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -17,14 +19,18 @@ import java.util.Objects;
 @Service
 public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
 
-    public AcceptRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
-        super(controller, requestRepository);
+    public AcceptRequestsScheduler(ScheduleRequestController controller,
+                                   RequestRepository requestRepository,
+                                   KafkaTemplate<String, NotificationDTO> kafkaTemplate) {
+        super(controller, requestRepository, kafkaTemplate);
     }
 
     @Override
     void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date) {
         request.setStatus(RequestStatus.ACCEPTED);
-
+        super.getKafkaTemplate().send("publish-notification", new NotificationDTO(request.getNetId(),
+                        "Your request with name  " + request.getName() +
+                                " has been accepted"));
         // update request repository
         long requestID = request.getRequestId();
         if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
@@ -32,6 +38,7 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
         } else {
             requestRepository.saveAndFlush(request);
         }
+
         //TODO: reserveResources(request, scheduledDate); //Reserve the resources for request on the scheduledDate.
         faculty.scheduleForDate(request, date);
     }

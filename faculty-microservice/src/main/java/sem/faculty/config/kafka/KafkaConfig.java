@@ -60,7 +60,6 @@ public class KafkaConfig {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "faculty-group");
         return props;
     }
 
@@ -164,6 +163,26 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, RequestDTO> consumerFactoryRequestDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(RequestDTO.class));
+    }
+
+    /**
+     * Kafka listener container factory for RequestDTO.
+     *
+     * @return the concurrent kafka listener container factory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RequestDTO> kafkaListenerContainerFactoryRequestDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, RequestDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryRequestDTO());
+
+        return factory;
+    }
+
     /**
      * Kafka template status kafka template.
      *
@@ -230,4 +249,20 @@ public class KafkaConfig {
     public KafkaTemplate<String, SysadminScheduleDTO> kafkaTemplateSysadminView() {
         return new KafkaTemplate<>(producerFactorySysadminView());
     }
+
+    @Bean
+    public ProducerFactory<String, NotificationDTO> producerFactoryNotificationDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    /**
+     * Kafka template.
+     *
+     * @return the kafka template
+     */
+    @Bean
+    public KafkaTemplate<String, NotificationDTO> kafkaTemplateNotificationDTO() {
+        return new KafkaTemplate<>(producerFactoryNotificationDTO());
+    }
+
 }
