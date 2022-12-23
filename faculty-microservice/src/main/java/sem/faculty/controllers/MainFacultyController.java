@@ -38,9 +38,9 @@ public class MainFacultyController {
             groupId = groupId,
             containerFactory = "kafkaListenerContainerFactoryRequestDTO"
     )
-    void listener(RequestDTO request) {
-        //handleIncomingRequests(request);
-        facultyHandlerService.requestListener(request);
+    @SendTo
+    public StatusDTO listener(RequestDTO request) {
+        return facultyHandlerService.requestListener(request);
     }
 
     /**

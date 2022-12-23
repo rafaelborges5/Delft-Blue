@@ -39,7 +39,7 @@ class ConverterUnitTest {
     @Test
     void convertToEntityAttribute() {
         assertThat(ownerNameConverter.convertToEntityAttribute("OwnerName(name=John Doe)")).isEqualTo(ownerName);
-        assertThat(tokenConverter.convertToEntityAttribute("Token(tokenValue=tokenValue)")).isEqualTo(token);
+        assertThat(tokenConverter.convertToEntityAttribute("tokenValue")).isEqualTo(token);
         assertThat(urlConverter.convertToEntityAttribute("URL(urlValue=urlValue)")).isEqualTo(url);
     }
 }

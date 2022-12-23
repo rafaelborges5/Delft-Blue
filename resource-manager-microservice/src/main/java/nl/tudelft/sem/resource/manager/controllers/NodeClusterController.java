@@ -13,14 +13,15 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import sem.commons.*;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class NodeClusterController {
 
     private final transient Manager manager;
+    private final transient String defaultString = "default";
 
 
     @Autowired
@@ -37,7 +38,7 @@ public class NodeClusterController {
      */
     @KafkaListener(
             topics = "user-view",
-            groupId = "default",
+            groupId = defaultString,
             containerFactory = "kafkaListenerContainerFactoryFacultyNamePackageDTO"
     )
     @SendTo
@@ -49,13 +50,68 @@ public class NodeClusterController {
                     .seeFreeResourcesTomorrow(Reserver.valueOf(x.getFacultyName().toUpperCase(Locale.UK)));
 
             try {
-                map.put(x, new sem.commons.Resource(resourceObject.getCpuResources(), resourceObject.getGpuResources(),
-                        resourceObject.getMemResources()));
+                sem.commons.Resource payload = new sem.commons.Resource(0, 0, 0);
+                payload.setCpu(resourceObject.getCpuResources());
+                payload.setGpu(resourceObject.getGpuResources());
+                payload.setMemory(resourceObject.getMemResources());
+
+                map.put(x, payload);
             } catch (NotValidResourcesException e) {
                 throw new RuntimeException(e);
             }
         });
         return new RegularUserView(map);
+    }
+
+
+    /**
+     * This method will return the resource view of the system for the complete sysadmin view of the system.
+     * @param record the consumer record
+     * @param dateDTO the date for which to return the resource view of
+     * @return the resource view
+     * @throws NotValidResourcesException if resources are invalid
+     */
+    @KafkaListener(
+            topics = "sysadmin-view",
+            groupId = defaultString,
+            containerFactory = "kafkaListenerContainerFactoryClusterDateDTO"
+    )
+    @SendTo
+    public SysadminResourceManagerView getSysadminViewResourcesForDate(ConsumerRecord<String, DateDTO> record,
+                                                       @Payload DateDTO dateDTO) throws NotValidResourcesException {
+        Map<FacultyNameDTO, sem.commons.Resource> availableResources = new HashMap<>();
+
+        EnumSet.allOf(Reserver.class)
+                .forEach(faculty -> {
+                    Resource resourceObject = manager
+                            .seeFreeResourcesTomorrow(faculty);
+
+                    try {
+                        availableResources.put(new FacultyNameDTO(faculty.toString()), new sem.commons
+                                .Resource(resourceObject.getCpuResources(), resourceObject.getGpuResources(),
+                                resourceObject.getMemResources()));
+                    } catch (NotValidResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        Resource toTransform =
+                manager.seeFreeResourcesOnDate(LocalDate.of(dateDTO.getYear(), dateDTO.getMonth(), dateDTO.getDay()));
+        sem.commons.Resource reservedResources = new sem.commons.Resource(toTransform.getCpuResources(),
+                toTransform.getGpuResources(), toTransform.getMemResources());
+
+        List<ClusterNodeDTO> clusterNodeDTOList = manager.seeClusterNodeInformation().stream().map(x -> {
+            Resource r = x.getResources();
+            try {
+                return new ClusterNodeDTO(x.getToken(), x.getOwnerName(), x.getUrl(),
+                        new sem.commons.Resource(r.getCpuResources(), r.getGpuResources(), r.getMemResources()));
+            } catch (NotValidResourcesException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
+        return new SysadminResourceManagerView(availableResources, reservedResources, clusterNodeDTOList);
+
     }
 
 
@@ -67,7 +123,7 @@ public class NodeClusterController {
      */
     @KafkaListener(
             topics = "add-node",
-            groupId = "default",
+            groupId = defaultString,
             containerFactory = "kafkaListenerContainerFactoryClusterNodeDTO"
     )
     @SendTo
@@ -88,7 +144,7 @@ public class NodeClusterController {
      */
     @KafkaListener(
             topics = "remove-node",
-            groupId = "default",
+            groupId = defaultString,
             containerFactory = "kafkaListenerContainerFactoryTokenDTO"
     )
     @SendTo
