@@ -1,4 +1,4 @@
-package nl.tudelft.sem.resource.manager.domain.controllers;
+package nl.tudelft.sem.resource.manager.controllers;
 
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
