@@ -158,6 +158,8 @@ class FacultyHandlerTest {
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
+        when(scheduleRequestController.sendReserveResources(any())).thenReturn(new StatusDTO("OK"));
+
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
@@ -193,6 +195,8 @@ class FacultyHandlerTest {
 
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
+
+        when(scheduleRequestController.sendReserveResources(any())).thenReturn(new StatusDTO("OK"));
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
