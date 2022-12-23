@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
@@ -36,7 +37,8 @@ public class ClusterNodeController {
      * @param authManager the authentication manager
      */
     @Autowired
-    public ClusterNodeController(ReplyingKafkaTemplate<String, ClusterNodeDTO, String> kafkaTemplateClusterNodeDTO,
+    public ClusterNodeController(
+                                 ReplyingKafkaTemplate<String, ClusterNodeDTO, String> kafkaTemplateClusterNodeDTO,
                                  ReplyingKafkaTemplate<String, Token, String> kafkaTemplateToken,
                                  AuthManager authManager) {
         this.kafkaTemplateClusterNodeDTO = kafkaTemplateClusterNodeDTO;

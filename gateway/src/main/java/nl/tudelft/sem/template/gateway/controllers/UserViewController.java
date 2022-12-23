@@ -11,14 +11,8 @@ import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import sem.commons.DateDTO;
-import sem.commons.FacultyNamePackageDTO;
-import sem.commons.RegularUserView;
-import sem.commons.SysadminUserView;
+import org.springframework.web.bind.annotation.*;
+import sem.commons.*;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -31,24 +25,30 @@ public class UserViewController {
     private final transient ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView>
             replyingKafkaTemplateUserView;
 
-    private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminUserView
-            getReplyingKafkaTemplateSysadminView;
+    private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminResourceManagerView>
+            replyingKafkaTemplateSysadminResourceView;
 
-    private final transient ReplyingKafkaTemplate<String, View>
-
-    private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminUserView>
-            replyingKafkaTemplateSysadminView;
-
+    private final transient ReplyingKafkaTemplate<String, DateDTO, SysadminScheduleDTO>
+            replyingKafkaTemplateSysadminScheduleDTO;
 
     private final transient AuthManager authManager;
 
+    /**
+     * This is the constructor of the controller.
+     * @param replyingKafkaTemplateUserView the kafka template for the regular user view
+     * @param replyingKafkaTemplateSysadminResourceView the kafka template for the sysadmin resource view
+     * @param replyingKafkaTemplateSysadminScheduleDTO the kafka template for the sysadmin schedule view
+     * @param authManager the auth manager
+     */
     @Autowired
     public UserViewController(
             ReplyingKafkaTemplate<String, FacultyNamePackageDTO, RegularUserView> replyingKafkaTemplateUserView,
-            ReplyingKafkaTemplate<String, DateDTO, SysadminUserView> replyingKafkaTemplateSysadminView,
+            ReplyingKafkaTemplate<String, DateDTO, SysadminResourceManagerView> replyingKafkaTemplateSysadminResourceView,
+            ReplyingKafkaTemplate<String, DateDTO, SysadminScheduleDTO> replyingKafkaTemplateSysadminScheduleDTO,
             AuthManager authManager) {
         this.replyingKafkaTemplateUserView = replyingKafkaTemplateUserView;
-        this.replyingKafkaTemplateSysadminView = replyingKafkaTemplateSysadminView;
+        this.replyingKafkaTemplateSysadminResourceView = replyingKafkaTemplateSysadminResourceView;
+        this.replyingKafkaTemplateSysadminScheduleDTO = replyingKafkaTemplateSysadminScheduleDTO;
         this.authManager = authManager;
     }
 
@@ -78,31 +78,45 @@ public class UserViewController {
         return ResponseEntity.ok(consumerRecord.value());
     }
 
+    /**
+     * The endpoint for the sysadmin view of the system.
+     * @param dateDTO the date to have the view of
+     * @return the sysadmin view
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @PostMapping("/sysadmin")
-    public ResponseEntity<SysadminUserView> getSysadminView(@Payload DateDTO dateDTO) {
-        ProducerRecord<String, DateDTO> record =
+    public ResponseEntity<SysadminUserView> getSysadminView(@RequestBody DateDTO dateDTO) {
+        ProducerRecord<String, DateDTO> recordResource =
                 new ProducerRecord<>("sysadmin-view", dateDTO);
 
-        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "sysadmin-view-reply".getBytes()));
+        recordResource.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "sysadmin-view-reply".getBytes()));
+        RequestReplyFuture<String, DateDTO, SysadminResourceManagerView> sendAndReceiveResource =
+                replyingKafkaTemplateSysadminResourceView.sendAndReceive(recordResource);
 
+        ConsumerRecord<String, SysadminResourceManagerView> consumerRecordResource;
 
+        try {
+            consumerRecordResource = sendAndReceiveResource.get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        ProducerRecord<String, DateDTO> recordFacutly =
+                new ProducerRecord<>("sysadmin-view-faculty", dateDTO);
+
+        recordFacutly.headers()
+                .add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "sysadmin-view-faculty-reply".getBytes()));
+        RequestReplyFuture<String, DateDTO, SysadminScheduleDTO> sendAndReceiveFaculty =
+                replyingKafkaTemplateSysadminScheduleDTO.sendAndReceive(recordFacutly);
+
+        ConsumerRecord<String, SysadminScheduleDTO> consumerRecordFaculty;
+
+        try {
+            consumerRecordFaculty = sendAndReceiveFaculty.get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return ResponseEntity.ok(new SysadminUserView(consumerRecordResource.value(), consumerRecordFaculty.value()));
     }
-
-    @PostMapping("/sysAdmin")
-    public ResponseEntity<SysadminUserView> getSysAdminView(@Payload DateDTO dateDTO)
-            throws ExecutionException, InterruptedException, TimeoutException {
-         ProducerRecord<String, DateDTO> record =
-                 new ProducerRecord<>("sysadmin-view", dateDTO);
-
-        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "sysadmin-view-reply".getBytes()));
-
-        RequestReplyFuture<String, DateDTO, SysadminUserView> sendAndReceive =
-                replyingKafkaTemplateSysadminView.sendAndReceive(record);
-
-        ConsumerRecord<String, SysadminUserView> consumerRecord = sendAndReceive.get(10, TimeUnit.SECONDS);
-
-        return ResponseEntity.ok(consumerRecord.value());
-    }
-
-
 }

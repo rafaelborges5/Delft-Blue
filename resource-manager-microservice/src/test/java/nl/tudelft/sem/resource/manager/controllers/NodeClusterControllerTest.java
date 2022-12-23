@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import sem.commons.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,9 @@ class NodeClusterControllerTest {
     private transient RegularUserView regularUserView;
     private transient FacultyNamePackageDTO facultyNamePackageDTO;
     private transient ClusterNodeDTO clusterNodeDTO;
+    private transient DateDTO dateDTO;
+    private transient LocalDate localDate;
+    private transient List<ClusterNodeDTO> clusterNodeDTOList;
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
@@ -35,6 +40,9 @@ class NodeClusterControllerTest {
         facultyNamePackageDTO = new FacultyNamePackageDTO(List.of(facultyNameDTO));
         clusterNodeDTO = new ClusterNodeDTO(new Token("token"), new OwnerName("name"),
                 new URL("url"), new Resource(3, 2, 1));
+        dateDTO = new DateDTO(2022, 12, 25);
+        localDate = LocalDate.of(dateDTO.getYear(), dateDTO.getMonth(), dateDTO.getDay());
+        clusterNodeDTOList = new ArrayList<>();
     }
 
     @Test

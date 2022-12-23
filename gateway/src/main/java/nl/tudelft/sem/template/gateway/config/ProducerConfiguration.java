@@ -92,6 +92,7 @@ public class ProducerConfiguration {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
+    @Bean
     public ProducerFactory<String, Token> producerFactoryToken() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }

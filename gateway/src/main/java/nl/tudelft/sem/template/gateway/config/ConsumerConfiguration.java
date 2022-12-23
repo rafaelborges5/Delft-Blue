@@ -91,11 +91,18 @@ public class ConsumerConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, SysadminUserView> consumerFactorySysadminView() {
+    public ConsumerFactory<String, SysadminResourceManagerView> consumerFactorySysadminResourceView() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
-                new StringDeserializer(), new JsonDeserializer<>(SysadminUserView.class));
+                new StringDeserializer(), new JsonDeserializer<>(SysadminResourceManagerView.class));
     }
 
+    @Bean
+    public ConsumerFactory<String, SysadminScheduleDTO> consumerFactorySysadminScheduleView() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(SysadminScheduleDTO.class));
+    }
+
+    @Bean
     public ConsumerFactory<String, String> consumerFactoryString() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
                 new StringDeserializer(), new JsonDeserializer<>(String.class));
