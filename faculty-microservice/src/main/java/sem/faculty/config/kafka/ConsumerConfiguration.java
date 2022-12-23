@@ -61,7 +61,7 @@ public class ConsumerConfiguration {
     }
 
     /**
-     * The Consumer Factory for StatusDTOs.
+     * The Consumer Factory for ScheduleDateDTOs.
      * @return the consumerFactory
      */
     @Bean

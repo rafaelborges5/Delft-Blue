@@ -75,7 +75,7 @@ public class ReplyingTemplateConfiguration {
     @Bean
     public ReplyingKafkaTemplate<String, AcceptRequestsDTO, StatusDTO> replyKafkaTemplateAcceptRequests(
             ProducerFactory<String, AcceptRequestsDTO> pf,
-            KafkaMessageListenerContainer<String, StatusDTO> container
+            @Qualifier("replyContainerAcceptRequests") KafkaMessageListenerContainer<String, StatusDTO> container
     ) {
         return new ReplyingKafkaTemplate<>(pf, container);
     }
@@ -176,6 +176,21 @@ public class ReplyingTemplateConfiguration {
     public KafkaMessageListenerContainer<String, String> replyContainerTokenString(
             ConsumerFactory<String, String> cf) {
         ContainerProperties containerProperties = new ContainerProperties("remove-node-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+    @Bean
+    public ReplyingKafkaTemplate<String, RequestDTO, StatusDTO> replyKafkaTemplateRequestStatus(
+            ProducerFactory<String, RequestDTO> pf,
+            @Qualifier("replyContainerRequestStatus") KafkaMessageListenerContainer<String, StatusDTO> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, StatusDTO> replyContainerRequestStatus(
+            ConsumerFactory<String, StatusDTO> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("incoming-request-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 

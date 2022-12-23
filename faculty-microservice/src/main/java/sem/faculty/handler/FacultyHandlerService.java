@@ -42,15 +42,27 @@ public class FacultyHandlerService {
      *
      * @param request the RequestDTO sent from the MainFacultyController
      */
-    public void requestListener(RequestDTO request) {
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public StatusDTO requestListener(RequestDTO request) {
         String requestName = request.getName();
         String requestNetId = request.getNetId();
         String requestDescription = request.getDescription();
         LocalDate requestDate = request.getPreferredDate();
         Resource requestResources = request.getResource();
+        try {
+            requestResources.checkResourceValidity(
+                requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
+        } catch (NotValidResourcesException e) {
+            return new StatusDTO(e.getMessage());
+        }
+        if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {
+            return new StatusDTO("You cannot schedule requests for today or the past!");
+        }
         Request newRequest = new Request(requestName, requestNetId, requestDescription, requestDate,
                 RequestStatus.PENDING, request.getFaculty(), requestResources);
         facultyHandler.handleIncomingRequests(newRequest);
+
+        return new StatusDTO("OK");
     }
 
 
