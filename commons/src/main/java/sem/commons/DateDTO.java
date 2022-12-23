@@ -28,5 +28,4 @@ public class DateDTO {
         this.month = month;
         this.day = day;
     }
-
 }

@@ -168,4 +168,37 @@ public class KafkaReplyingConsumerConfig {
 
         return factory;
     }
+
+    @Bean
+    public KafkaTemplate<String, SysadminResourceManagerView> kafkaTemplateSysadminView() {
+        return new KafkaTemplate<>(producerFactorySysadminView());
+    }
+
+    @Bean
+    public ProducerFactory<String, SysadminResourceManagerView> producerFactorySysadminView() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
+    public ConsumerFactory<String, DateDTO> consumerFactoryDateDTO() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(), new JsonDeserializer<>(DateDTO.class));
+    }
+
+    /**
+     * This method will return the kafkaListener so that we can listen to messages with the @KafkaListener annotation.
+     * @return the concurrentListenerFactory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, DateDTO>
+        kafkaListenerContainerFactoryClusterDateDTO() {
+        ConcurrentKafkaListenerContainerFactory<String, DateDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactoryDateDTO());
+
+        //Setup of reply template
+        factory.setReplyTemplate(kafkaTemplateString());
+
+        return factory;
+    }
 }

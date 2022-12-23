@@ -10,8 +10,6 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
 import sem.commons.*;
 
-import java.util.Map;
-
 /**
  * This class has all the configurations that allow for the consuming and replying of messages. There is some
  * duplication with the ProducerConfiguration and ConsumerConfiguration classes but this way it improves readability
@@ -149,11 +147,39 @@ public class ReplyingTemplateConfiguration {
     }
 
     @Bean
+    public ReplyingKafkaTemplate<String, DateDTO, SysadminResourceManagerView> replyKafkaTemplateSysadminView(
+            ProducerFactory<String, DateDTO> pf,
+            KafkaMessageListenerContainer<String, SysadminResourceManagerView> container)  {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public ReplyingKafkaTemplate<String, DateDTO, SysadminScheduleDTO> replyKafkaTemplateSysadminResourceView(
+            ProducerFactory<String, DateDTO> pf,
+            KafkaMessageListenerContainer<String, SysadminScheduleDTO> container)  {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
     public ReplyingKafkaTemplate<String, ClusterNodeDTO, String> replyKafkaTemplateClusterNodeDTOString(
             ProducerFactory<String, ClusterNodeDTO> pf,
             @Qualifier("replyContainerClusterNodeDTOString") KafkaMessageListenerContainer<String, String> container
     ) {
         return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, SysadminResourceManagerView> replyContainerSysadminResourceView(
+            ConsumerFactory<String, SysadminResourceManagerView> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("sysadmin-view-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
+
+    @Bean
+    public KafkaMessageListenerContainer<String, SysadminScheduleDTO> replyContainerSysadminScheduleView(
+            ConsumerFactory<String, SysadminScheduleDTO> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("sysadmin-view-faculty-reply");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
     @Bean
@@ -193,6 +219,5 @@ public class ReplyingTemplateConfiguration {
         ContainerProperties containerProperties = new ContainerProperties("incoming-request-reply");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
-
 }
 

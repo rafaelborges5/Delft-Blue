@@ -88,6 +88,11 @@ public class ProducerConfiguration {
     }
 
     @Bean
+    public ProducerFactory<String, DateDTO> producerFactoryDateDTO() {
+        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    }
+
+    @Bean
     public ProducerFactory<String, Token> producerFactoryToken() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
