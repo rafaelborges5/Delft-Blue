@@ -1,7 +1,7 @@
 package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.Resource;
-import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.providers.implementations.CurrentDateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,14 @@ import static org.mockito.Mockito.when;
 
 class DateSchedulingServiceTest {
     private transient DateSchedulingService sut;
-    private transient DateProvider dateProvider;
+    private transient CurrentDateProvider currentDateProvider;
     private transient ResourceAvailabilityService resourceAvailabilityService;
 
     @BeforeEach
     void setUp() {
-        dateProvider = mock(DateProvider.class);
+        currentDateProvider = mock(CurrentDateProvider.class);
         resourceAvailabilityService = mock(ResourceAvailabilityService.class);
-        sut = new DateSchedulingService(dateProvider, resourceAvailabilityService);
+        sut = new DateSchedulingService(currentDateProvider, resourceAvailabilityService);
     }
 
     @Test
@@ -30,7 +30,7 @@ class DateSchedulingServiceTest {
         LocalDate tomorrow = today.plusDays(1);
         LocalDate afterTomorrow = today.plusDays(2);
         Reserver faculty = Reserver.AE;
-        when(dateProvider.getCurrentDate()).thenReturn(today);
+        when(currentDateProvider.getCurrentDate()).thenReturn(today);
         when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(today, faculty))
                 .thenReturn(Resource.with(150));
         when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(tomorrow, faculty))
@@ -50,7 +50,7 @@ class DateSchedulingServiceTest {
         LocalDate tomorrow = today.plusDays(1);
         LocalDate afterTomorrow = today.plusDays(2);
         Reserver faculty = Reserver.AE;
-        when(dateProvider.getCurrentDate()).thenReturn(today);
+        when(currentDateProvider.getCurrentDate()).thenReturn(today);
         when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(today, faculty))
                 .thenReturn(Resource.with(150));
         when(resourceAvailabilityService.seeFreeResourcesByDateAndReserver(tomorrow, faculty))

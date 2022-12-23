@@ -1,8 +1,6 @@
 package sem.faculty.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
 import sem.faculty.domain.Request;
@@ -120,17 +118,28 @@ public class FacultyHandlerService {
      * @param acceptedRequests the accepted requests
      * @return the status dto
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public StatusDTO acceptRequests(String facultyName, List<Long> acceptedRequests) {
-
+        FacultyName facName;
         try {
-            FacultyName.valueOf(facultyName);
+            facName = FacultyName.valueOf(facultyName);
         } catch (IllegalArgumentException e) {
             return new StatusDTO("Wrong faculty name");
         }
 
-        //TODO: accept the requests in given faculty (also check if there requests even exist)
-
-        return new StatusDTO("OK");
+        List<Long> badRequests = new ArrayList<>();
+        for (Long id : acceptedRequests) {
+            Request request = requestRepository.findByRequestId(id);
+            if (request == null) {
+                badRequests.add(id);
+                continue;
+            }
+            facultyHandler.handleAcceptedRequests(facName, request);
+        }
+        if (badRequests.isEmpty()) {
+            return new StatusDTO("OK");
+        }
+        return new StatusDTO("Could not find the following requests: " + badRequests.toString());
     }
 
     public SysadminScheduleDTO getScheduleForDate(LocalDate date) {
