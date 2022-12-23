@@ -4,7 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
-import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.providers.implementations.CurrentDateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
@@ -27,7 +27,7 @@ class ResourceAvailabilityServiceTest {
     private transient ResourceAvailabilityService sut;
     private transient NodeRepository nodeRepository;
     private transient ReservedResourcesRepository reservedResourcesRepository;
-    private transient DateProvider dateProvider;
+    private transient CurrentDateProvider currentDateProvider;
     private transient FreepoolManager freepoolManager;
     private transient DefaultResources defaultResources;
 
@@ -35,8 +35,8 @@ class ResourceAvailabilityServiceTest {
     void setUp() {
         nodeRepository = mock(NodeRepository.class);
         reservedResourcesRepository = mock(ReservedResourcesRepository.class);
-        dateProvider = mock(DateProvider.class);
-        when(dateProvider.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
+        currentDateProvider = mock(CurrentDateProvider.class);
+        when(currentDateProvider.getCurrentDate()).thenReturn(LocalDate.of(2022, 1, 1));
 
         defaultResources = new DefaultResources(100);
 
@@ -49,7 +49,7 @@ class ResourceAvailabilityServiceTest {
         sut = new ResourceAvailabilityService(
                 nodeRepository,
                 reservedResourcesRepository,
-                dateProvider,
+                currentDateProvider,
                 freepoolManager,
                 defaultResources
         );
@@ -122,23 +122,6 @@ class ResourceAvailabilityServiceTest {
     void see_free_resources_tomorrow_test() {
         assertThat(sut.seeFreeResourcesTomorrow(Reserver.ARCH))
                 .isEqualTo(new Resource(120, 120, 120));
-    }
-
-    @Test
-    void see_cluster_node_information_test() {
-        assertThat(sut.seeClusterNodeInformation())
-                .containsExactlyInAnyOrder(
-                        new ClusterNode(
-                                new OwnerName("name1"),
-                                new URL("url1"),
-                                new Token("token1"),
-                                new Resource(50, 50, 50)
-                        ), new ClusterNode(
-                                new OwnerName("name2"),
-                                new URL("url2"),
-                                new Token("token2"),
-                                new Resource(60, 60, 60)
-                        ));
     }
 
     @Test

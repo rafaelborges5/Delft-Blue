@@ -2,6 +2,7 @@ package sem.commons;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -23,7 +24,7 @@ public class RequestDTO {
     private Resource resource;
 
     /**
-     * secundairy constructor without requestID.
+     * secondary constructor without requestID.
      * @param name - the request name
      * @param netId - the user NetId
      * @param faculty - the faculty to send the request to
@@ -31,8 +32,12 @@ public class RequestDTO {
      * @param preferredDate - the preferred date to schedule the request
      * @param resource - the resource required for the request.
      */
-    public RequestDTO(String name, String netId, FacultyName faculty, String description,
-                      LocalDate preferredDate, Resource resource) {
+    public RequestDTO(@JsonProperty("name") String name,
+                      @JsonProperty("netId") String netId,
+                      @JsonProperty("faculty") FacultyName faculty,
+                      @JsonProperty("description") String description,
+                      @JsonProperty("preferredDate") LocalDate preferredDate,
+                      @JsonProperty("resource") Resource resource) {
         this.name = name;
         this.netId = netId;
         this.faculty = faculty;

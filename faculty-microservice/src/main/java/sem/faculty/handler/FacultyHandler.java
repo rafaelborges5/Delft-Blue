@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.requestreply.ReplyingKafkaTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
+import sem.commons.NotificationDTO;
 import sem.commons.RequestDTO;
 import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
@@ -21,9 +23,8 @@ import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -33,25 +34,21 @@ public class FacultyHandler {
     @Autowired
     TimeProvider timeProvider;
     @Autowired
+    RequestRepository requestRepository;
+    @Autowired
     ScheduleRequestController scheduleRequestController = null;
+
+    private transient KafkaTemplate<String, NotificationDTO> kafkaTemplate;
 
     /**
      * Constructor method.
      */
-    public FacultyHandler() {
+    @Autowired
+    public FacultyHandler(KafkaTemplate<String, NotificationDTO> kafkaTemplate) {
         this.timeProvider = new CurrentTimeProvider();
         faculties = new HashMap<>();
         populateFaculties();
-    }
-
-    /**
-     * Create a new Faculty Handler.
-     *
-     * @return a new FacultyHandler.
-     */
-    @Bean
-    public FacultyHandler newFacultyHandler() {
-        return new FacultyHandler();
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     /**
@@ -60,21 +57,9 @@ public class FacultyHandler {
     private void populateFaculties() {
         faculties.clear();
         for (FacultyName fn : FacultyName.values()) {
-            faculties.put(fn, new Faculty(fn, timeProvider));
+            Faculty faculty = new Faculty(fn, timeProvider);
+            faculties.put(fn, faculty);
         }
-    }
-
-
-    /**
-     * Listen for incoming Requests.
-     */
-    @KafkaListener(
-            topics = "incoming-request",
-            groupId = "default",
-            containerFactory = "kafkaListenerContainerFactory2"
-    )
-    void listener(Request request) {
-        handleIncomingRequests(request);
     }
 
     /**
@@ -88,13 +73,15 @@ public class FacultyHandler {
 
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
-            scheduler = new DenyRequestsScheduler();
+            scheduler = new DenyRequestsScheduler(requestRepository);
+            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getNetId(),
+                    "Could not schedule request with name " + request.getName() +
+                            " because it came 5 minutes before the start of new day"));
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         } else {
-            scheduler = new PendingRequestsScheduler(scheduleRequestController);
+            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         }
-
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
@@ -130,7 +117,10 @@ public class FacultyHandler {
      */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        return faculty.getPendingRequests();
+        List<Request> requests = faculty.getPendingRequests().stream()
+                .map(x -> requestRepository.findByRequestId(x))
+                .collect(Collectors.toList());
+        return requests;
     }
 
     /**
@@ -147,5 +137,56 @@ public class FacultyHandler {
         }
 
         return map;
+    }
+
+    /**
+     * Schedule all pending requests for next day in all faculties.
+     */
+    public void acceptPendingRequestsForTomorrow() {
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
+
+        for (Faculty faculty : faculties.values()) {
+            List<Request> requests = getPendingRequestsForTomorrow(faculty);
+
+            for (Request request : requests) {
+                scheduler.scheduleRequest(request, faculty);
+            }
+        }
+    }
+
+    /**
+     * Get all pendingRequests for tomorrow from faculty.
+     * @param faculty - Faculty from which to get the requests
+     * @return - List of Requests
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public List<Request> getPendingRequestsForTomorrow(Faculty faculty) {
+        LocalDate tomorrow = timeProvider.getCurrentDate();
+        tomorrow = tomorrow.plusDays(1);
+
+        List<Request> tomorrowList = new ArrayList<>();
+        List<Long> pendingRequestsIDs = faculty.getPendingRequests();
+
+        for (Long id : pendingRequestsIDs) {
+            Request request = requestRepository.findByRequestId(id);
+            LocalDate date = request.getPreferredDate();
+            if (tomorrow.equals(date)) {
+                tomorrowList.add(request);
+            } else {
+                faculty.addPendingRequest(request);
+            }
+        }
+
+        return tomorrowList;
+    }
+
+    /**
+     * Handle incoming accepted request.
+     * @param facultyName - Faculty to which the request belong to.
+     * @param acceptedRequest - Request that will be handled using AcceptRequestScheduler strategy.
+     */
+    public void handleAcceptedRequests(FacultyName facultyName, Request acceptedRequest) {
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
+        scheduler.scheduleRequest(acceptedRequest, faculties.get(facultyName));
     }
 }

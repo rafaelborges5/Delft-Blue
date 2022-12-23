@@ -2,10 +2,12 @@ package sem.faculty.handler;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import sem.commons.*;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
@@ -20,21 +22,22 @@ import static org.mockito.Mockito.when;
 class FacultyHandlerServiceTest {
 
     private FacultyHandler facultyHandler;
-
     private FacultyHandlerService facultyHandlerService;
+    @Mock
+    private RequestRepository requestRepository;
 
     @BeforeEach
     void setUp() {
         facultyHandler = Mockito.mock(FacultyHandler.class);
-        facultyHandlerService = new FacultyHandlerService(facultyHandler);
+        requestRepository = Mockito.mock(RequestRepository.class);
+        facultyHandlerService = new FacultyHandlerService(facultyHandler, requestRepository);
     }
 
     @Test
     void getPendingRequestsCorrect() throws NotValidResourcesException {
-        List<Request> list = List.of(
-                new Request("name", "netId", "desc", LocalDate.of(2015, 2, 3),
-                        RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1))
-        );
+        List<Request> list = List.of(new Request("name", "netId", "desc",
+                        LocalDate.of(2015, 2, 3),
+                        RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1)));
         when(facultyHandler.getPendingRequests(FacultyName.EEMCS)).thenReturn(list);
         PendingRequestsDTO pendingRequestsDTO = facultyHandlerService.getPendingRequests("EEMCS");
         assertEquals("OK", pendingRequestsDTO.getStatus());
@@ -53,7 +56,11 @@ class FacultyHandlerServiceTest {
     }
 
     @Test
-    void acceptRequestsCorrect() {
+    void acceptRequestsCorrect() throws NotValidResourcesException {
+        Request request = new Request("name", "netId", "desc",
+                LocalDate.of(2015, 2, 3),
+                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        when(requestRepository.findByRequestId(1L)).thenReturn(request);
         StatusDTO statusDTO = facultyHandlerService.acceptRequests("EEMCS", List.of(1L));
         assertEquals("OK", statusDTO.getStatus());
     }
@@ -67,8 +74,9 @@ class FacultyHandlerServiceTest {
     @Test
     void getScheduleForDate() throws NotValidResourcesException {
         Map<FacultyName, List<RequestDTO>> map = new HashMap<>();
-        RequestDTO requestDTO = new RequestDTO(1L, "name", "netId", FacultyName.EEMCS, "desc",
-                LocalDate.of(2015, 2, 3), new Resource(1, 1, 1));
+        RequestDTO requestDTO = new RequestDTO(1L, "name", "netId", FacultyName.EEMCS,
+                "desc", LocalDate.of(2015, 2, 3),
+                new Resource(1, 1, 1));
         map.put(FacultyName.EEMCS, List.of(requestDTO));
         LocalDate date = LocalDate.of(2015, 2, 3);
         when(facultyHandler.getRequestForDate(date)).thenReturn(map);

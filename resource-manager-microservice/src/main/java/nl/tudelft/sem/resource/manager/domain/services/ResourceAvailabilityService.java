@@ -4,7 +4,7 @@ import nl.tudelft.sem.resource.manager.domain.DefaultResources;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
-import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.providers.implementations.CurrentDateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourceId;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResources;
 import nl.tudelft.sem.resource.manager.domain.resource.ReservedResourcesRepository;
@@ -18,7 +18,7 @@ import java.util.List;
 public class ResourceAvailabilityService {
     private final transient NodeRepository nodeRepository;
     private final transient ReservedResourcesRepository reservedResourcesRepository;
-    private final transient DateProvider timeProvider;
+    private final transient CurrentDateProvider timeProvider;
     private final transient FreepoolManager freepoolManager;
     private final transient DefaultResources defaultResources;
 
@@ -31,7 +31,7 @@ public class ResourceAvailabilityService {
      */
     public ResourceAvailabilityService(NodeRepository nodeRepository,
                                        ReservedResourcesRepository reservedResourcesRepository,
-                                       DateProvider timeProvider,
+                                       CurrentDateProvider timeProvider,
                                        FreepoolManager freepoolManager,
                                        DefaultResources defaultResources) {
         this.nodeRepository = nodeRepository;
@@ -67,29 +67,9 @@ public class ResourceAvailabilityService {
      * @param faculty the faculty for which to get the resources
      * @return the amount of free resources
      */
-    public Resource seeFreeResourcesTomorrow(Reserver faculty) {
+    Resource seeFreeResourcesTomorrow(Reserver faculty) {
         LocalDate tomorrow = timeProvider.getCurrentDate().plusDays(1);
         return seeFreeResourcesByDateAndReserver(tomorrow, faculty);
-    }
-
-    /**
-     * Returns the amount of free Resources available to the reserver, on the given date.
-     *
-     * @param date the date on which to get the amount of free resources
-     * @param reserver the entity for which to check the amount of free resources
-     * @return the amount of free Resources
-     */
-    public Resource seeFreeResourcesByDateAndReserver(LocalDate date, Reserver reserver) {
-        Resource initialResources = defaultResources.getInitialResources();
-        Resource usedFacultyResources = reservedResourcesRepository
-                .findById(new ReservedResourceId(date, reserver))
-                .map(ReservedResources::getResources)
-                .orElse(new Resource(0, 0, 0));
-        Resource freeFacultyResources = Resource.sub(initialResources, usedFacultyResources);
-
-        Resource freeFreepoolResources = freepoolManager.getAvailableResources(date);
-
-        return Resource.add(freeFacultyResources, freeFreepoolResources);
     }
 
     /**
@@ -112,5 +92,25 @@ public class ResourceAvailabilityService {
                 .stream()
                 .map(ReservedResources::getResources)
                 .reduce(new Resource(), Resource::add);
+    }
+
+    /**
+     * Returns the amount of free Resources available to the reserver, on the given date.
+     *
+     * @param date the date on which to get the amount of free resources
+     * @param reserver the entity for which to check the amount of free resources
+     * @return the amount of free Resources
+     */
+    public Resource seeFreeResourcesByDateAndReserver(LocalDate date, Reserver reserver) {
+        Resource initialResources = defaultResources.getInitialResources();
+        Resource usedFacultyResources = reservedResourcesRepository
+                .findById(new ReservedResourceId(date, reserver))
+                .map(ReservedResources::getResources)
+                .orElse(new Resource(0, 0, 0));
+        Resource freeFacultyResources = Resource.sub(initialResources, usedFacultyResources);
+
+        Resource freeFreepoolResources = freepoolManager.getAvailableResources(date);
+
+        return Resource.add(freeFacultyResources, freeFreepoolResources);
     }
 }

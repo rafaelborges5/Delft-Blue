@@ -11,6 +11,7 @@ import org.springframework.kafka.requestreply.RequestReplyFuture;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.stereotype.Controller;
 import sem.commons.ScheduleDateDTO;
+import sem.commons.StatusDTO;
 
 import java.time.LocalDate;
 import java.util.concurrent.ExecutionException;
@@ -20,11 +21,18 @@ import java.util.concurrent.TimeoutException;
 @Controller
 public class ScheduleRequestController {
     private final transient ReplyingKafkaTemplate<String, ScheduleDateDTO, LocalDate>
-            replyingKafkaTemplate;
+            replyingKafkaScheduleRequest;
+
+    private final transient ReplyingKafkaTemplate<String, ScheduleDateDTO, StatusDTO>
+            replyingKafkaReserveResources;
 
     @Autowired
-    public ScheduleRequestController(ReplyingKafkaTemplate<String, ScheduleDateDTO, LocalDate> replyingKafkaTemplate) {
-        this.replyingKafkaTemplate = replyingKafkaTemplate;
+    public ScheduleRequestController(ReplyingKafkaTemplate<String,
+                                             ScheduleDateDTO, LocalDate> replyingKafkaScheduleRequest,
+                                     ReplyingKafkaTemplate<String,
+                                             ScheduleDateDTO, StatusDTO> replyingKafkaReserveResources) {
+        this.replyingKafkaScheduleRequest = replyingKafkaScheduleRequest;
+        this.replyingKafkaReserveResources = replyingKafkaReserveResources;
     }
 
     /**
@@ -42,7 +50,7 @@ public class ScheduleRequestController {
         record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "schedule-date-reply".getBytes()));
 
         RequestReplyFuture<String, ScheduleDateDTO, LocalDate> sendAndReceive =
-                replyingKafkaTemplate.sendAndReceive(record);
+                replyingKafkaScheduleRequest.sendAndReceive(record);
 
         ConsumerRecord<String, LocalDate> consumerRecord;
         try {
@@ -52,5 +60,30 @@ public class ScheduleRequestController {
         }
 
         return ResponseEntity.ok(consumerRecord.value());
+    }
+
+    /**
+     * Send a reserve message to `reserve-resources` topic.
+     * @param scheduleDateDTO - ScheduleDateDTO for which the reserve message applies
+     * @return a statusDTO with OK if reserve is succesfull and other message if not
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public StatusDTO sendReserveResources(ScheduleDateDTO scheduleDateDTO) {
+        ProducerRecord<String, ScheduleDateDTO> record =
+                new ProducerRecord<>("reserve-resources", scheduleDateDTO);
+
+        record.headers().add(new RecordHeader(KafkaHeaders.REPLY_TOPIC, "reserve-resources-reply".getBytes()));
+
+        RequestReplyFuture<String, ScheduleDateDTO, StatusDTO> sendAndReceive =
+                replyingKafkaReserveResources.sendAndReceive(record);
+
+        ConsumerRecord<String, StatusDTO> consumerRecord;
+        try {
+            consumerRecord = sendAndReceive.get(20, TimeUnit.SECONDS);
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
+            return new StatusDTO(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        }
+
+        return consumerRecord.value();
     }
 }
