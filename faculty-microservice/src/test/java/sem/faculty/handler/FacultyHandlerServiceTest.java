@@ -56,7 +56,11 @@ class FacultyHandlerServiceTest {
     }
 
     @Test
-    void acceptRequestsCorrect() {
+    void acceptRequestsCorrect() throws NotValidResourcesException {
+        Request request = new Request("name", "netId", "desc",
+                LocalDate.of(2015, 2, 3),
+                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        when(requestRepository.findByRequestId(1L)).thenReturn(request);
         StatusDTO statusDTO = facultyHandlerService.acceptRequests("EEMCS", List.of(1L));
         assertEquals("OK", statusDTO.getStatus());
     }
@@ -70,8 +74,9 @@ class FacultyHandlerServiceTest {
     @Test
     void getScheduleForDate() throws NotValidResourcesException {
         Map<FacultyName, List<RequestDTO>> map = new HashMap<>();
-        RequestDTO requestDTO = new RequestDTO(1L, "name", "netId", FacultyName.EEMCS, "desc",
-                LocalDate.of(2015, 2, 3), new Resource(1, 1, 1));
+        RequestDTO requestDTO = new RequestDTO(1L, "name", "netId", FacultyName.EEMCS,
+                "desc", LocalDate.of(2015, 2, 3),
+                new Resource(1, 1, 1));
         map.put(FacultyName.EEMCS, List.of(requestDTO));
         LocalDate date = LocalDate.of(2015, 2, 3);
         when(facultyHandler.getRequestForDate(date)).thenReturn(map);

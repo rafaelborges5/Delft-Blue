@@ -1,15 +1,11 @@
 package sem.faculty.handler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
 import sem.faculty.domain.Request;
 import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
-import sem.faculty.domain.Request;
-import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -122,6 +118,7 @@ public class FacultyHandlerService {
      * @param acceptedRequests the accepted requests
      * @return the status dto
      */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public StatusDTO acceptRequests(String facultyName, List<Long> acceptedRequests) {
         FacultyName facName;
         try {
@@ -130,19 +127,16 @@ public class FacultyHandlerService {
             return new StatusDTO("Wrong faculty name");
         }
 
-        //TODO: accept the requests in given faculty
-
         List<Long> badRequests = new ArrayList<>();
-        for(Long id: acceptedRequests) {
-            var request = requestRepository.findById(id);
-            if (request.isEmpty()) {
+        for (Long id : acceptedRequests) {
+            Request request = requestRepository.findByRequestId(id);
+            if (request == null) {
                 badRequests.add(id);
                 continue;
             }
-            Request acceptedRequest = request.get();
-            facultyHandler.handleAcceptedRequests(facName, acceptedRequest);
+            facultyHandler.handleAcceptedRequests(facName, request);
         }
-        if(badRequests.isEmpty()) {
+        if (badRequests.isEmpty()) {
             return new StatusDTO("OK");
         }
         return new StatusDTO("Could not find the following requests: " + badRequests.toString());

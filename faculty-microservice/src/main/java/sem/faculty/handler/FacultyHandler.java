@@ -3,11 +3,9 @@ package sem.faculty.handler;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.commons.RequestDTO;
-import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -149,7 +147,7 @@ public class FacultyHandler {
      * @param acceptedRequest - Request that will be handled using AcceptRequestScheduler strategy.
      */
     public void handleAcceptedRequests(FacultyName facultyName, Request acceptedRequest) {
-        scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
         scheduler.scheduleRequest(acceptedRequest, faculties.get(facultyName));
     }
 }
