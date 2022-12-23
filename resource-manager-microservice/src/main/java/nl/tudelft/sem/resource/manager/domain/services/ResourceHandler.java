@@ -52,7 +52,7 @@ public class ResourceHandler {
         Resource freeFacultyResources = reservedResourcesRepository
                 .findById(new ReservedResourceId(date, faculty))
                 .map(r -> Resource.sub(defaultResources.getInitialResources(), r.getResources()))
-                .orElse(Resource.with(0));
+                .orElse(defaultResources.getInitialResources());
 
         updateReservedResources(date, faculty, new Resource(
                 Math.min(freeFacultyResources.getCpuResources(), requestedResources.getCpuResources()),
