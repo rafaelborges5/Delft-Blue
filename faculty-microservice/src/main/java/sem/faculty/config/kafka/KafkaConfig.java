@@ -56,7 +56,7 @@ public class KafkaConfig {
      * @return the map
      */
     @Bean
-    public Map<String, Object> consumerConfigs() {
+    public Map<String, Object> consumerConfigsKafka() {
         Map<String, Object> props = new HashMap<>(kafkaProperties.buildConsumerProperties());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
@@ -70,7 +70,7 @@ public class KafkaConfig {
      */
     @Bean
     public ConsumerFactory<String, FacultyNameDTO> consumerFactoryFacultyName() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsKafka(),
                 new StringDeserializer(), new JsonDeserializer<>(FacultyNameDTO.class));
     }
 
@@ -119,7 +119,7 @@ public class KafkaConfig {
      */
     @Bean
     public ConsumerFactory<String, AcceptRequestsDTO> consumerFactoryAcceptRequests() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsKafka(),
                 new StringDeserializer(), new JsonDeserializer<>(AcceptRequestsDTO.class));
     }
 
@@ -142,7 +142,7 @@ public class KafkaConfig {
 
     @Bean
     public ConsumerFactory<String, DateDTO> consumerFactoryDateDTO() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsKafka(),
                 new StringDeserializer(), new JsonDeserializer<>(DateDTO.class));
     }
 
@@ -165,7 +165,7 @@ public class KafkaConfig {
 
     @Bean
     public ConsumerFactory<String, RequestDTO> consumerFactoryRequestDTO() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsKafka(),
                 new StringDeserializer(), new JsonDeserializer<>(RequestDTO.class));
     }
 
@@ -210,7 +210,7 @@ public class KafkaConfig {
      */
     @Bean
     public ConsumerFactory<String, LocalDate> consumerFactoryDate() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+        return new DefaultKafkaConsumerFactory<>(consumerConfigsKafka(),
                 new StringDeserializer(), new JsonDeserializer<>(LocalDate.class));
     }
 
