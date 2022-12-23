@@ -16,6 +16,12 @@ public class ScheduleDateDTO {
     LocalDate endDate;
     FacultyName facultyName;
 
+    /**
+     * Constructor with JsonProperties.
+     * @param resources - resources
+     * @param endDate - endDate
+     * @param facultyName - facultyName
+     */
     public ScheduleDateDTO(@JsonProperty("resources") Resource resources,
                            @JsonProperty("endDate") LocalDate endDate,
                            @JsonProperty("facultyName") FacultyName facultyName) {
