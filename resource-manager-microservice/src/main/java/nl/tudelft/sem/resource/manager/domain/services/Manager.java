@@ -104,11 +104,28 @@ public class Manager {
         return resourceAvailabilityService.seeReservedResourcesOnDate(date);
     }
 
+    /**
+     * Adds the node to the cluster.
+     * @param node the node to add to the cluster
+     * @return a message indicating whether a node with the same token already exists or not
+     */
     public String addNodeToCluster(ClusterNode node) {
-        return ("NotImplemented");
+        if (nodeRepository.existsByToken(node.getToken())) {
+            return "Node with token " + node.getToken() + " already exists!";
+        }
+        nodeRepository.save(node);
+        return "OK";
     }
 
+    /**
+     * Removes a node from the cluster.
+     * @param token the token by which to find the node
+     * @throws NodeNotFoundException if there is no node with that token in the cluster
+     */
     public void removeNodeFromCluster(Token token) throws NodeNotFoundException {
-
+        if (!nodeRepository.existsByToken(token)) {
+            throw new NodeNotFoundException(token);
+        }
+        nodeRepository.removeByToken(token);
     }
 }
