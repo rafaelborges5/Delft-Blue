@@ -1,7 +1,9 @@
 package sem.faculty.domain.scheduler;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import sem.commons.NotificationDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -16,8 +18,11 @@ import java.util.Objects;
  */
 @Service
 public class PendingRequestsScheduler extends SchedulableRequestsScheduler {
-    public PendingRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
-        super(controller, requestRepository);
+
+    public PendingRequestsScheduler(ScheduleRequestController controller,
+                                    RequestRepository requestRepository,
+                                    KafkaTemplate<String, NotificationDTO> kafkaTemplate) {
+        super(controller, requestRepository, kafkaTemplate);
     }
 
     @Override

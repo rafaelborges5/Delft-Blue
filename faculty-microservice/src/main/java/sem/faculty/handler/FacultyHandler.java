@@ -3,9 +3,11 @@ package sem.faculty.handler;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.commons.RequestDTO;
+import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -36,23 +38,17 @@ public class FacultyHandler {
     @Autowired
     ScheduleRequestController scheduleRequestController = null;
 
+    private transient KafkaTemplate<String, NotificationDTO> kafkaTemplate;
+
     /**
      * Constructor method.
      */
-    public FacultyHandler() {
+    @Autowired
+    public FacultyHandler(KafkaTemplate<String, NotificationDTO> kafkaTemplate) {
         this.timeProvider = new CurrentTimeProvider();
         faculties = new HashMap<>();
         populateFaculties();
-    }
-
-    /**
-     * Create a new Faculty Handler.
-     *
-     * @return a new FacultyHandler.
-     */
-    @Bean
-    public FacultyHandler newFacultyHandler() {
-        return new FacultyHandler();
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     /**
@@ -78,12 +74,14 @@ public class FacultyHandler {
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler(requestRepository);
+            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getNetId(),
+                    "Could not schedule request with name " + request.getName() +
+                            " because it came 5 minutes before the start of new day"));
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         } else {
-            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository);
+            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         }
-
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
