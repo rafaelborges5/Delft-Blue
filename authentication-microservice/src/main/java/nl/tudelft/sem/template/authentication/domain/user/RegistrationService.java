@@ -36,7 +36,6 @@ public class RegistrationService {
     public AppUser registerUser(NetId netId, Password password, Role role, List<FacultyName> faculty)
             throws NetIdAlreadyInUseException {
 
-        //TODO: add other checks (for example password cannot be empty)
         if (checkNetIdIsUnique(netId)) {
             // Hash password
             HashedPassword hashedPassword = passwordHashingService.hash(password);

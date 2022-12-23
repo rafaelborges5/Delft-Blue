@@ -7,7 +7,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import sem.commons.RequestDTO;
+import org.springframework.kafka.core.KafkaTemplate;
+import sem.commons.*;
+import sem.commons.NotValidResourcesException;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
@@ -15,9 +17,6 @@ import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
-import sem.commons.FacultyName;
-import sem.commons.Resource;
-import sem.commons.NotValidResourcesException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,10 +48,13 @@ class FacultyHandlerTest {
     @Mock
     private final RequestRepository requestRepository = mock(RequestRepository.class);
 
+    @Mock
+    private transient KafkaTemplate<String, NotificationDTO> kafkaTemplate = mock(KafkaTemplate.class);
+
 
     @BeforeEach
     void setUp() {
-        facultyHandler = new FacultyHandler();
+        facultyHandler = new FacultyHandler(kafkaTemplate);
         facultyHandler.timeProvider = timeProvider;
         facultyHandler.requestRepository = requestRepository;
         facultyHandler.scheduleRequestController = scheduleRequestController;
@@ -60,7 +62,7 @@ class FacultyHandlerTest {
 
     @Test
     void newFacultyHandler() {
-        FacultyHandler facultyHandler1 = facultyHandler.newFacultyHandler();
+        FacultyHandler facultyHandler1 = new FacultyHandler(kafkaTemplate);
         Map<FacultyName, Faculty> faculties = facultyHandler1.faculties;
 
         for (FacultyName fn : FacultyName.values()) {

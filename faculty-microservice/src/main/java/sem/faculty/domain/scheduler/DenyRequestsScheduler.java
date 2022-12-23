@@ -27,12 +27,10 @@ public class DenyRequestsScheduler implements Scheduler {
     @Override
     public void scheduleRequest(Request request, Faculty faculty) {
         request.setStatus(RequestStatus.DENIED);
-
         // update request repository
         long requestID = request.getRequestId();
         if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
             requestRepository.delete(requestRepository.findByRequestId(requestID));
         }
-        //TODO Could add some notifications here.
     }
 }
