@@ -33,7 +33,7 @@ public class Manager {
      * @return a LocalDate that represents when the reservation can be made, or null
      *          if there is no opening by that date
      */
-    LocalDate getDateForRequest(Resource resources, LocalDate date, Reserver facultyName) {
+    public LocalDate getDateForRequest(Resource resources, LocalDate date, Reserver facultyName) {
         return dateSchedulingService.getDateForRequest(resources, date, facultyName);
     }
 
@@ -44,7 +44,7 @@ public class Manager {
      * @param faculty the faculty that has frees its resources
      * @param releasedDays the days on which to release the resources
      */
-    void releaseResourcesOnDays(Reserver faculty, List<LocalDate> releasedDays) {
+    public void releaseResourcesOnDays(Reserver faculty, List<LocalDate> releasedDays) {
         resourceHandler.releaseResourcesOnDays(faculty, releasedDays);
     }
 
