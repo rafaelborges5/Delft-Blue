@@ -23,6 +23,7 @@ import sem.faculty.provider.TimeProvider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
@@ -143,7 +144,7 @@ public class FacultyHandler {
      * Schedule all pending requests for next day in all faculties.
      */
     public void acceptPendingRequestsForTomorrow() {
-        scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
 
         for (Faculty faculty : faculties.values()) {
             List<Request> requests = getPendingRequestsForTomorrow(faculty);
@@ -165,9 +166,10 @@ public class FacultyHandler {
         tomorrow = tomorrow.plusDays(1);
 
         List<Request> tomorrowList = new ArrayList<>();
-        List<Request> pendingRequests = faculty.getPendingRequests();
+        List<Long> pendingRequestsIDs = faculty.getPendingRequests();
 
-        for (Request request : pendingRequests) {
+        for (Long id : pendingRequestsIDs) {
+            Request request = requestRepository.findByRequestId(id);
             LocalDate date = request.getPreferredDate();
             if (tomorrow.equals(date)) {
                 tomorrowList.add(request);

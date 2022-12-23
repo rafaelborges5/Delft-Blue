@@ -5,6 +5,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import sem.faculty.handler.FacultyHandlerService;
 
+/**
+ * Class that holds @Scheduled methods, which allows these methods to be run at scheduled intervals.
+ */
 @Service
 public class TimerService {
 
@@ -16,7 +19,7 @@ public class TimerService {
     }
 
     /**
-     * Schedule all pending requests for next day in the facultyHandlerService each day at 18:00PM.
+     * Schedule all pending requests for next day in the facultyHandlerService each day at 18:00.
      */
     @Scheduled(cron = "0 0 18 * * ?")
     public void acceptPendingRequestsForTomorrow() {

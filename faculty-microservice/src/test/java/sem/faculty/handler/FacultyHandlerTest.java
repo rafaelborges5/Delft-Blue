@@ -217,16 +217,19 @@ class FacultyHandlerTest {
         LocalDate date = LocalDate.of(2015, 2, 4);
         Request request1 = new Request("name", "netId", "desc", tomorrow,
                 RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        request1.setRequestId(1L);
         Request request2 = new Request("name", "netId", "desc", date,
                 RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        request2.setRequestId(2L);
         Faculty faculty = facultyHandler.faculties.get(FacultyName.EEMCS);
         faculty.addPendingRequest(request1);
         faculty.addPendingRequest(request2);
 
         when(timeProvider.getCurrentDate()).thenReturn(tomorrow.minusDays(1));
-
+        when(requestRepository.findByRequestId(1L)).thenReturn(request1);
+        when(requestRepository.findByRequestId(2L)).thenReturn(request2);
         List<Request> list = facultyHandler.getPendingRequestsForTomorrow(faculty);
         assertThat(list).isEqualTo(List.of(request1));
-        assertThat(faculty.getPendingRequests()).isEqualTo(List.of(request2));
+        assertThat(faculty.getPendingRequests()).isEqualTo(List.of(2L));
     }
 }
