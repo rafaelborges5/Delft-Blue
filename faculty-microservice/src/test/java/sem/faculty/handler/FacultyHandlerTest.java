@@ -158,6 +158,8 @@ class FacultyHandlerTest {
 
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
+        when(scheduleRequestController.sendReserveResources(any())).thenReturn(new StatusDTO("OK"));
+
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(AcceptRequestsScheduler.class);
     }
@@ -194,6 +196,8 @@ class FacultyHandlerTest {
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 
+        when(scheduleRequestController.sendReserveResources(any())).thenReturn(new StatusDTO("OK"));
+
         when(scheduleRequestController.sendScheduleRequest(any()))
                 .thenReturn(ResponseEntity.ok(todayDate));
         facultyHandler.handleIncomingRequests(request);
@@ -211,5 +215,27 @@ class FacultyHandlerTest {
         facultyHandler.faculties.get(FacultyName.EEMCS).getSchedule().put(date, List.of(request));
         Map<FacultyName, List<RequestDTO>> map = facultyHandler.getRequestForDate(date);
         assertEquals(map.get(FacultyName.EEMCS).get(0), requestDTO);
+    }
+
+    @Test
+    void getPendingRequestsForTomorrow() throws NotValidResourcesException {
+        LocalDate tomorrow = LocalDate.of(2015, 2, 3);
+        LocalDate date = LocalDate.of(2015, 2, 4);
+        Request request1 = new Request("name", "netId", "desc", tomorrow,
+                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        request1.setRequestId(1L);
+        Request request2 = new Request("name", "netId", "desc", date,
+                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        request2.setRequestId(2L);
+        Faculty faculty = facultyHandler.faculties.get(FacultyName.EEMCS);
+        faculty.addPendingRequest(request1);
+        faculty.addPendingRequest(request2);
+
+        when(timeProvider.getCurrentDate()).thenReturn(tomorrow.minusDays(1));
+        when(requestRepository.findByRequestId(1L)).thenReturn(request1);
+        when(requestRepository.findByRequestId(2L)).thenReturn(request2);
+        List<Request> list = facultyHandler.getPendingRequestsForTomorrow(faculty);
+        assertThat(list).isEqualTo(List.of(request1));
+        assertThat(faculty.getPendingRequests()).isEqualTo(List.of(2L));
     }
 }

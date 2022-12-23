@@ -80,7 +80,6 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      */
     LocalDate getAvailableDate(Request request, FacultyName facultyName)
             throws NotEnoughResourcesLeftException, ExecutionException, InterruptedException {
-        //TODO make connection to Resource Manager here and change line below.
         ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getResource(),
                 request.getPreferredDate(),
                 facultyName);
@@ -93,5 +92,9 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
 
     public KafkaTemplate<String, NotificationDTO> getKafkaTemplate() {
         return kafkaTemplate;
+    }
+
+    public ScheduleRequestController getController() {
+        return controller;
     }
 }

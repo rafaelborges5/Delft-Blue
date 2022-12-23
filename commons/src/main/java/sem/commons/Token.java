@@ -3,6 +3,8 @@ package sem.commons;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.Objects;
+
 /**
  * A DTO representing the Token required to access the Node.
  */

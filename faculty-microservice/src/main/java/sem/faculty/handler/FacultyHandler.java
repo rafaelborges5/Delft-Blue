@@ -2,11 +2,14 @@ package sem.faculty.handler;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import sem.commons.FacultyName;
 import sem.commons.NotificationDTO;
 import sem.commons.RequestDTO;
+import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -20,9 +23,7 @@ import sem.faculty.provider.TimeProvider;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -136,5 +137,56 @@ public class FacultyHandler {
         }
 
         return map;
+    }
+
+    /**
+     * Schedule all pending requests for next day in all faculties.
+     */
+    public void acceptPendingRequestsForTomorrow() {
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
+
+        for (Faculty faculty : faculties.values()) {
+            List<Request> requests = getPendingRequestsForTomorrow(faculty);
+
+            for (Request request : requests) {
+                scheduler.scheduleRequest(request, faculty);
+            }
+        }
+    }
+
+    /**
+     * Get all pendingRequests for tomorrow from faculty.
+     * @param faculty - Faculty from which to get the requests
+     * @return - List of Requests
+     */
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
+    public List<Request> getPendingRequestsForTomorrow(Faculty faculty) {
+        LocalDate tomorrow = timeProvider.getCurrentDate();
+        tomorrow = tomorrow.plusDays(1);
+
+        List<Request> tomorrowList = new ArrayList<>();
+        List<Long> pendingRequestsIDs = faculty.getPendingRequests();
+
+        for (Long id : pendingRequestsIDs) {
+            Request request = requestRepository.findByRequestId(id);
+            LocalDate date = request.getPreferredDate();
+            if (tomorrow.equals(date)) {
+                tomorrowList.add(request);
+            } else {
+                faculty.addPendingRequest(request);
+            }
+        }
+
+        return tomorrowList;
+    }
+
+    /**
+     * Handle incoming accepted request.
+     * @param facultyName - Faculty to which the request belong to.
+     * @param acceptedRequest - Request that will be handled using AcceptRequestScheduler strategy.
+     */
+    public void handleAcceptedRequests(FacultyName facultyName, Request acceptedRequest) {
+        scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
+        scheduler.scheduleRequest(acceptedRequest, faculties.get(facultyName));
     }
 }

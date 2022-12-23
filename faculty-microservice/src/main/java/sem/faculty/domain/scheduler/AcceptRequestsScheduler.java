@@ -3,7 +3,10 @@ package sem.faculty.domain.scheduler;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import sem.commons.FacultyName;
 import sem.commons.NotificationDTO;
+import sem.commons.ScheduleDateDTO;
+import sem.commons.StatusDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
@@ -27,19 +30,52 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
 
     @Override
     void saveRequestInFaculty(Request request, Faculty faculty, LocalDate date) {
+        long requestID = request.getRequestId();
+
+        boolean reserved = reserveResource(request, date, faculty.getFacultyName());
+        if (!reserved) {
+            request.setStatus(RequestStatus.DENIED);
+            if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
+                requestRepository.delete(requestRepository.findByRequestId(requestID));
+            }
+            return;
+        }
+
         request.setStatus(RequestStatus.ACCEPTED);
         super.getKafkaTemplate().send("publish-notification", new NotificationDTO(request.getNetId(),
                         "Your request with name  " + request.getName() +
                                 " has been accepted"));
         // update request repository
-        long requestID = request.getRequestId();
         if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
             requestRepository.updateRequestStatusAccepted(requestID);
         } else {
             requestRepository.saveAndFlush(request);
         }
 
-        //TODO: reserveResources(request, scheduledDate); //Reserve the resources for request on the scheduledDate.
         faculty.scheduleForDate(request, date);
+
+    }
+
+    /**
+     * Reserve resources in Resource Manager.
+     * @param request - Request for which to reserve the resources
+     * @param date - LocalDate on which to reserve the resources
+     * @param facultyName - FacultyName to which the request belongs
+     * @return true iff the resources have been reserved successfully.
+     */
+    private boolean reserveResource(Request request, LocalDate date, FacultyName facultyName) {
+        ScheduleRequestController controller = this.getController();
+
+        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getResource(), date, facultyName);
+
+        StatusDTO response = controller.sendReserveResources(scheduleDateDTO);
+        if (response.getStatus().equals("OK")) {
+            return true;
+        }
+
+        getKafkaTemplate().send("publish-notification", new NotificationDTO(request.getNetId(),
+                "Could not schedule request with name " + request.getName() +
+                        " because " + response.getStatus()));
+        return false;
     }
 }
