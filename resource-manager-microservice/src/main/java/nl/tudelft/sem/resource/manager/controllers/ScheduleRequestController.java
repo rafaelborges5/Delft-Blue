@@ -62,6 +62,7 @@ public class ScheduleRequestController {
             groupId = "default",
             containerFactory = "kafkaListenerContainerFactoryScheduleDate"
     )
+    @SendTo
     public StatusDTO reserveResourcesForRequest(
             ConsumerRecord<String, ScheduleDateDTO> record,
             @Payload ScheduleDateDTO scheduleDate
