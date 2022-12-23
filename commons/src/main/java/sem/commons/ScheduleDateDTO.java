@@ -1,7 +1,6 @@
 package sem.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -17,14 +16,15 @@ public class ScheduleDateDTO {
     FacultyName facultyName;
 
     /**
-     * Constructor with JsonProperties.
-     * @param resources - resources
-     * @param endDate - endDate
-     * @param facultyName - facultyName
+     * Basic constructor.
+     * @param resources the resources
+     * @param endDate the endDate
+     * @param facultyName the faculty name
      */
-    public ScheduleDateDTO(@JsonProperty("resources") Resource resources,
-                           @JsonProperty("endDate") LocalDate endDate,
-                           @JsonProperty("facultyName") FacultyName facultyName) {
+    public ScheduleDateDTO(
+            @JsonProperty("resources") Resource resources,
+            @JsonProperty("endDate") LocalDate endDate,
+            @JsonProperty("facultyName") FacultyName facultyName) {
         this.resources = resources;
         this.endDate = endDate;
         this.facultyName = facultyName;
