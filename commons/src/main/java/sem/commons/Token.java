@@ -2,6 +2,7 @@ package sem.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 @Data
 public class Token {
-    public final transient String tokenValue;
+    @EqualsAndHashCode.Include public final transient String tokenValue;
 
     public Token(
             @JsonProperty("tokenValue") String tokenValue

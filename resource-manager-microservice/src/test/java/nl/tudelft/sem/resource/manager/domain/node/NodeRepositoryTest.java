@@ -38,12 +38,33 @@ public class NodeRepositoryTest {
                 new Token("token2"),
                 new Resource(20, 20, 20)
         );
+    }
 
+    @Test
+    void exists_by_token_test() {
         nodeRepository.saveAll(List.of(node1));
+
+        assertThat(nodeRepository.existsByToken(node1.getToken())).isTrue();
+        assertThat(nodeRepository.existsByToken(node2.getToken())).isFalse();
+    }
+
+    @Test
+    void remove_by_token_test() {
+        nodeRepository.saveAll(List.of(node1));
+
+        assertThat(nodeRepository.existsByToken(node1.getToken())).isTrue();
+        assertThat(nodeRepository.existsByToken(node2.getToken())).isFalse();
+
+        nodeRepository.removeByToken(node1.getToken());
+
+        assertThat(nodeRepository.existsByToken(node1.getToken())).isFalse();
+        assertThat(nodeRepository.existsByToken(node2.getToken())).isFalse();
     }
 
     @Test
     void get_all_test() {
+        nodeRepository.saveAll(List.of(node1));
+
         assertThat(nodeRepository.findAll())
                 .contains(node1)
                 .doesNotContain(node2);
