@@ -1,9 +1,6 @@
 package nl.tudelft.sem.resource.manager.domain.resource;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 
 import javax.persistence.*;
@@ -19,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @ToString
 public class ReservedResources {
     @EmbeddedId
