@@ -2,14 +2,13 @@ package sem.commons;
 
 //import javax.persistence.Column;
 //import javax.persistence.Embeddable;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 //@Embeddable
-@Getter
-@ToString
-@EqualsAndHashCode
+@Data
 public class Resource {
 
     private int cpu;

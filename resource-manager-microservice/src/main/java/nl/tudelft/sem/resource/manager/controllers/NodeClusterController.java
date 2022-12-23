@@ -49,8 +49,12 @@ public class NodeClusterController {
                     .seeFreeResourcesTomorrow(Reserver.valueOf(x.getFacultyName().toUpperCase(Locale.UK)));
 
             try {
-                map.put(x, new sem.commons.Resource(resourceObject.getCpuResources(), resourceObject.getGpuResources(),
-                        resourceObject.getMemResources()));
+                sem.commons.Resource payload = new sem.commons.Resource(0, 0, 0);
+                payload.setCpu(resourceObject.getCpuResources());
+                payload.setGpu(resourceObject.getGpuResources());
+                payload.setMemory(resourceObject.getMemResources());
+
+                map.put(x, payload);
             } catch (NotValidResourcesException e) {
                 throw new RuntimeException(e);
             }
