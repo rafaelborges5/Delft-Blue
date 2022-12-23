@@ -10,9 +10,11 @@ import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.NotEnoughResourcesLeftException;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -22,11 +24,14 @@ import java.util.concurrent.ExecutionException;
 @Service
 public abstract class SchedulableRequestsScheduler implements Scheduler {
     private final transient ScheduleRequestController controller;
+    final transient RequestRepository requestRepository;
 
     @Autowired
-    SchedulableRequestsScheduler(ScheduleRequestController controller) {
+    SchedulableRequestsScheduler(ScheduleRequestController controller, RequestRepository requestRepository) {
         this.controller = controller;
+        this.requestRepository = requestRepository;
     }
+
 
 
     @Override
@@ -39,11 +44,14 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
         } catch (NotEnoughResourcesLeftException e) {
             request.setStatus(RequestStatus.DENIED);
             //TODO Could add some notifications here.
+            long requestID = request.getRequestId();
+            if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
+                requestRepository.delete(requestRepository.findByRequestId(requestID));
+            }
             return;
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
         saveRequestInFaculty(request, faculty, date);
     }
 

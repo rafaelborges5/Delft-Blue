@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 
 import java.time.LocalDate;
 

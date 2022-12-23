@@ -12,6 +12,7 @@ import sem.commons.ScheduleDateDTO;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.Faculty;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
@@ -30,6 +31,8 @@ public class FacultyHandler {
     Scheduler scheduler;
     @Autowired
     TimeProvider timeProvider;
+    @Autowired
+    RequestRepository requestRepository;
     @Autowired
     ScheduleRequestController scheduleRequestController = null;
 
@@ -62,19 +65,6 @@ public class FacultyHandler {
         }
     }
 
-
-    /**
-     * Listen for incoming Requests.
-     */
-    @KafkaListener(
-            topics = "incoming-request",
-            groupId = "default",
-            containerFactory = "kafkaListenerContainerFactory2"
-    )
-    void listener(Request request) {
-        handleIncomingRequests(request);
-    }
-
     /**
      * Choose how to handle an incoming Request and schedule it accordingly.
      *
@@ -86,13 +76,12 @@ public class FacultyHandler {
 
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
-            scheduler = new DenyRequestsScheduler();
+            scheduler = new DenyRequestsScheduler(requestRepository);
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
-            scheduler = new AcceptRequestsScheduler(scheduleRequestController);
+            scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository);
         } else {
-            scheduler = new PendingRequestsScheduler(scheduleRequestController);
+            scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository);
         }
-
         scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
     }
 
@@ -128,7 +117,10 @@ public class FacultyHandler {
      */
     public List<Request> getPendingRequests(FacultyName facultyName) {
         Faculty faculty = faculties.get(facultyName);
-        return faculty.getPendingRequests();
+        List<Request> requests = faculty.getPendingRequests().stream()
+                .map(x -> requestRepository.findByRequestId(x))
+                .collect(Collectors.toList());
+        return requests;
     }
 
     /**

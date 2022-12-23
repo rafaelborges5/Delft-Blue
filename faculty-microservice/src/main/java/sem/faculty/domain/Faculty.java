@@ -7,23 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import sem.commons.FacultyName;
 import sem.commons.RequestDTO;
 import sem.faculty.provider.TimeProvider;
 
 @Getter
-public class Faculty {
-
-    //TODO: Replace ALLOCATED_RESOURCES with an actual bound after resource_manager is implemented.
-    private static final long ALLOCATED_RESOURCES = 2;
-
+public class   Faculty {
     private FacultyName facultyName;
     private Map<LocalDate, List<Request>> schedule;
-    private Queue<Request> pendingRequests;
+    private Queue<Long> pendingRequests;
     private final TimeProvider timeProvider;
 
     /**
@@ -60,7 +56,7 @@ public class Faculty {
      * @param request - Request that will be added.
      */
     public void addPendingRequest(Request request) {
-        pendingRequests.add(request);
+        pendingRequests.add(request.getRequestId());
     }
 
     /**
@@ -68,8 +64,8 @@ public class Faculty {
      *
      * @return the pending requests
      */
-    public List<Request> getPendingRequests() {
-        List<Request> pendingList = new ArrayList<>();
+    public List<Long> getPendingRequests() {
+        List<Long> pendingList = new ArrayList<>();
         while (!pendingRequests.isEmpty()) {
             pendingList.add(pendingRequests.remove());
         }
@@ -93,6 +89,4 @@ public class Faculty {
                     x.getResource())).collect(Collectors.toList());
         }
     }
-
-
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import sem.commons.RequestDTO;
 import sem.faculty.controllers.ScheduleRequestController;
@@ -40,18 +41,20 @@ import static org.mockito.Mockito.when;
 
 class FacultyHandlerTest {
 
+    FacultyHandler facultyHandler;
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
     private final ScheduleRequestController scheduleRequestController = mock(ScheduleRequestController.class);
-
-    FacultyHandler facultyHandler;
+    @Mock
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
 
 
     @BeforeEach
     void setUp() {
         facultyHandler = new FacultyHandler();
         facultyHandler.timeProvider = timeProvider;
+        facultyHandler.requestRepository = requestRepository;
         facultyHandler.scheduleRequestController = scheduleRequestController;
     }
 
@@ -86,7 +89,7 @@ class FacultyHandlerTest {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 15);
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
-
+        facultyHandler.requestRepository.save(request);
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
 

@@ -25,13 +25,15 @@ class PendingRequestsSchedulerTest {
     @Mock
     private final TimeProvider timeProvider = mock(CurrentTimeProvider.class);
     @Mock
+    private final RequestRepository requestRepository = mock(RequestRepository.class);
+    @Mock
     private ScheduleRequestController controller;
     SchedulableRequestsScheduler scheduler;
 
     @BeforeEach
     void setUp() {
         controller = mock(ScheduleRequestController.class);
-        scheduler = new PendingRequestsScheduler(controller);
+        scheduler = new PendingRequestsScheduler(controller, requestRepository);
     }
 
     @Test
