@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 /**
  * An abstract time provider to make services testable.
- * The DateProvider interface can be mocked in order to provide a predetermined current time and
+ * The CurrentDateProvider interface can be mocked in order to provide a predetermined current time and
  * make tests independent of the actual current time.
  */
 @Component

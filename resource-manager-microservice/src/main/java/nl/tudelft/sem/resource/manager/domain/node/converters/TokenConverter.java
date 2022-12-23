@@ -4,8 +4,9 @@ import sem.commons.Token;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Convert;
+import javax.persistence.Converter;
 
-@Convert
+@Converter
 public class TokenConverter implements AttributeConverter<Token, String> {
     @Override
     public String convertToDatabaseColumn(Token attribute) {

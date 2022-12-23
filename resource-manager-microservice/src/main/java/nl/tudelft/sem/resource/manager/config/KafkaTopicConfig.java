@@ -56,4 +56,16 @@ public class KafkaTopicConfig {
         return TopicBuilder.name("remove-node")
                 .build();
     }
+
+    @Bean
+    public NewTopic getScheduleDate() {
+        return TopicBuilder.name("schedule-date")
+                .build();
+    }
+
+    @Bean
+    public NewTopic getReserveResources() {
+        return TopicBuilder.name("reserve-resources")
+                .build();
+    }
 }

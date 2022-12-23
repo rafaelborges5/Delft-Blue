@@ -44,8 +44,38 @@ public class ReplyingTemplateConfiguration {
     public KafkaMessageListenerContainer<String, LocalDate> replyContainerScheduleDateDTO(
             ConsumerFactory<String, LocalDate> cf) {
         ContainerProperties containerProperties = new ContainerProperties("schedule-date-reply");
+        containerProperties.setGroupId("default");
         return new KafkaMessageListenerContainer<>(cf, containerProperties);
     }
 
+
+    /**
+     * This method will set up the kafkaTemplate for Consuming and Replying to messages.
+     *
+     * @param pf        the producerFactory to reply
+     * @param container the listener container
+     * @return the kafkaTemplate
+     */
+    @Bean
+    public ReplyingKafkaTemplate<String, ScheduleDateDTO, StatusDTO> replyKafkaTemplateReserveResources(
+            ProducerFactory<String, ScheduleDateDTO> pf,
+            KafkaMessageListenerContainer<String, StatusDTO> container
+    ) {
+        return new ReplyingKafkaTemplate<>(pf, container);
+    }
+
+    /**
+     * This method will return the container used in replyKafkaTemplatePendingRequests.
+     *
+     * @param cf the consumer factory
+     * @return the listenerContainer
+     */
+    @Bean
+    public KafkaMessageListenerContainer<String, StatusDTO> replyContainerReserveResources(
+            ConsumerFactory<String, StatusDTO> cf) {
+        ContainerProperties containerProperties = new ContainerProperties("reserve-resources-reply");
+        containerProperties.setGroupId("default");
+        return new KafkaMessageListenerContainer<>(cf, containerProperties);
+    }
 }
 

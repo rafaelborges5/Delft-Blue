@@ -12,10 +12,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import sem.commons.ClusterNodeDTO;
-import sem.commons.FacultyNamePackageDTO;
-import sem.commons.RegularUserView;
-import sem.commons.TokenDTO;
+import sem.commons.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -148,6 +145,26 @@ public class KafkaReplyingConsumerConfig {
 
         //Setup of reply template
         factory.setReplyTemplate(kafkaTemplateString());
+
+        return factory;
+    }
+
+    /**
+     * kafkaListener for ScheduleDateDTO.
+     * @return the ConcurrentKafkaListenerContainerFactory
+     */
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ScheduleDateDTO> kafkaListenerContainerFactoryScheduleDate() {
+        ConcurrentKafkaListenerContainerFactory<String, ScheduleDateDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+
+        factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(
+                consumerConfigs(),
+                new StringDeserializer(),
+                new JsonDeserializer<>(ScheduleDateDTO.class))
+        );
+
+        factory.setReplyTemplate(new KafkaTemplate<>(new DefaultKafkaProducerFactory<>(producerConfigs())));
 
         return factory;
     }

@@ -2,7 +2,7 @@ package nl.tudelft.sem.resource.manager.domain.services;
 
 import lombok.AllArgsConstructor;
 import nl.tudelft.sem.resource.manager.domain.Resource;
-import nl.tudelft.sem.resource.manager.domain.providers.DateProvider;
+import nl.tudelft.sem.resource.manager.domain.providers.implementations.CurrentDateProvider;
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Service
 @AllArgsConstructor
 public class DateSchedulingService {
-    private final transient DateProvider dateProvider;
+    private final transient CurrentDateProvider currentDateProvider;
     private final transient ResourceAvailabilityService resourceAvailabilityService;
 
     /**
@@ -30,7 +30,7 @@ public class DateSchedulingService {
             Resource resources,
             LocalDate date,
             Reserver facultyName) {
-        LocalDate today = dateProvider.getCurrentDate();
+        LocalDate today = currentDateProvider.getCurrentDate();
 
         while (date.isAfter(today)) {
             Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, facultyName);
