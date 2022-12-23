@@ -180,6 +180,8 @@ public class KafkaConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactoryRequestDTO());
 
+        factory.setReplyTemplate(kafkaTemplateStatus());
+
         return factory;
     }
 
