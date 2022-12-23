@@ -71,11 +71,11 @@ public class ClusterNode {
             return false;
         }
         ClusterNode that = (ClusterNode) o;
-        return token.tokenValue.equals(that.token.tokenValue);
+        return token.equals(that.token);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(token.tokenValue);
+        return Objects.hash(token);
     }
 }
