@@ -44,13 +44,12 @@ public class Request {
     /**
      * Constructor method.
      */
-    public Request(String name, String netId, String description,
-                   LocalDate preferredDate, RequestStatus status, FacultyName facultyName, Resource resource) {
-        this.name = name;
+    public Request(RequestDetails requestDetails, String netId, FacultyName facultyName, Resource resource) {
+        this.name = requestDetails.getName();
+        this.description = requestDetails.getDescription();
+        this.preferredDate = requestDetails.getPreferredDate();
+        this.status = requestDetails.getStatus();
         this.netId = netId;
-        this.description = description;
-        this.preferredDate = preferredDate;
-        this.status = status;
         this.facultyName = facultyName;
         this.resource = resource;
     }
