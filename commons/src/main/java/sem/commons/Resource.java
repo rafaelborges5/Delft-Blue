@@ -44,13 +44,37 @@ public class Resource {
      * @throws NotValidResourcesException - when either negative values are found or other constraints are broken
      */
     public void checkResourceValidity(int cpu, int gpu, int memory) throws NotValidResourcesException {
-        if (cpu < 0 || gpu < 0 || memory < 0) {
+        if (checkResourcesNonNegative(cpu, gpu, memory)) {
             throw new NotValidResourcesException("Resource cannot have negative values");
         }
 
         //The business logic for issue #23
-        if (cpu < memory || cpu < gpu) {
+        if (checkResourcesRelationalConstraint(cpu, gpu, memory)) {
             throw new NotValidResourcesException("The cpu resources should be equal to at least max(memory, gpu)");
         }
     }
+
+    /**
+     * This method will check the constraint that all the values for the resources are positive.
+     * @param cpu the cpu value
+     * @param gpu the gpu value
+     * @param memory the memory value
+     * @return a boolean representing if the check was passed or no
+     */
+    public boolean checkResourcesNonNegative(int cpu, int gpu, int memory) {
+        return (cpu < 0 || gpu < 0 || memory < 0);
+    }
+
+    /**
+     * This method will check the relational constraints between the resources values. These are that cpu < memory and
+     * that cpu < gpu.
+     * @param cpu the cpu value
+     * @param gpu the gpu value
+     * @param memory the memory value
+     * @return a boolean representing if the check was passed or no
+     */
+    public boolean checkResourcesRelationalConstraint(int cpu, int gpu, int memory) {
+        return (cpu < memory || cpu < gpu);
+    }
+
 }
