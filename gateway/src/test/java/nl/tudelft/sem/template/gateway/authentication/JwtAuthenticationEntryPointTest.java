@@ -39,8 +39,8 @@ class JwtAuthenticationEntryPointTest {
 
         // Assert
         verifyNoInteractions(mockRequest);
-        verify(mockResponse).addHeader(JwtRequestFilter.WWW_AUTHENTICATE_HEADER,
-                JwtRequestFilter.AUTHORIZATION_AUTH_SCHEME);
+        verify(mockResponse).addHeader(AuthorizationInformation.WWW_AUTHENTICATE_HEADER,
+                AuthorizationInformation.AUTHORIZATION_AUTH_SCHEME);
         verify(mockResponse).sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         verifyNoMoreInteractions(mockResponse);
     }

@@ -27,11 +27,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String WWW_AUTHENTICATE_HEADER = "WWW-Authenticate";
-    public static final String AUTHORIZATION_AUTH_SCHEME = "Bearer";
-
     private final transient JwtTokenVerifier jwtTokenVerifier;
 
     @Autowired
@@ -53,14 +48,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // Get authorization header
-        String authorizationHeader = request.getHeader(AUTHORIZATION_HEADER);
+        String authorizationHeader = request.getHeader(AuthorizationInformation.AUTHORIZATION_HEADER);
 
         // Check if an authorization header is set
         if (authorizationHeader != null) {
             String[] directives = authorizationHeader.split(" ");
 
             // Check for the correct auth scheme
-            if (directives.length == 2 && directives[0].equals(AUTHORIZATION_AUTH_SCHEME)) {
+            if (directives.length == 2 && directives[0].equals(AuthorizationInformation.AUTHORIZATION_AUTH_SCHEME)) {
                 String token = directives[1];
 
                 try {
