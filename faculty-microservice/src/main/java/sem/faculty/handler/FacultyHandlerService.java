@@ -45,11 +45,11 @@ public class FacultyHandlerService {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public StatusDTO requestListener(RequestDTO request) {
-        String requestName = request.getName();
-        String requestNetId = request.getNetId();
-        String requestDescription = request.getDescription();
-        LocalDate requestDate = request.getPreferredDate();
-        Resource requestResources = request.getResource();
+        String requestName = request.getRequestResourceManagerInformation().getName();
+        String requestNetId = request.getRequestFacultyInformation().getNetId();
+        String requestDescription = request.getRequestResourceManagerInformation().getDescription();
+        LocalDate requestDate = request.getRequestFacultyInformation().getPreferredDate();
+        Resource requestResources = request.getRequestResourceManagerInformation().getResource();
         try {
             requestResources.checkResourceValidity(
                 requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
