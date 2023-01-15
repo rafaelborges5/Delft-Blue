@@ -60,7 +60,8 @@ public class FacultyHandlerService {
             return new StatusDTO("You cannot schedule requests for today or the past!");
         }
         RequestDetails reqDet = new RequestDetails(requestName, requestDescription, requestDate, RequestStatus.PENDING);
-        Request newRequest = new Request(reqDet, requestNetId, request.getFaculty(), requestResources);
+        Request newRequest = new Request(reqDet, requestNetId,
+                request.getRequestFacultyInformation().getFaculty(), requestResources);
         facultyHandler.handleIncomingRequests(newRequest);
 
         return new StatusDTO("OK");
