@@ -34,7 +34,12 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
 
         boolean reserved = reserveResource(request, date, faculty.getFacultyName());
         if (!reserved) {
-            request.setStatus(RequestStatus.DENIED);
+            request = new Request(request.getRequestResourceManagerInformation().getName(),
+                    request.getRequestFacultyInformation().getNetId(),
+                    request.getRequestResourceManagerInformation().getDescription(),
+                    request.getRequestFacultyInformation().getPreferredDate(),
+                    RequestStatus.DENIED, request.getRequestFacultyInformation().getFaculty(),
+                    request.getRequestResourceManagerInformation().getResource());
             if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
                 requestRepository.delete(requestRepository.findByRequestId(requestID));
             }
@@ -42,8 +47,9 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
         }
 
         request.setStatus(RequestStatus.ACCEPTED);
-        super.getKafkaTemplate().send("publish-notification", new NotificationDTO(request.getNetId(),
-                        "Your request with name  " + request.getName() +
+        super.getKafkaTemplate().send("publish-notification",
+                new NotificationDTO(request.getRequestFacultyInformation().getNetId(),
+                        "Your request with name  " + request.getRequestResourceManagerInformation().getName() +
                                 " has been accepted"));
         // update request repository
         if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
@@ -66,15 +72,18 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
     private boolean reserveResource(Request request, LocalDate date, FacultyName facultyName) {
         ScheduleRequestController controller = this.getController();
 
-        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getResource(), date, facultyName);
+        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(
+                request.getRequestResourceManagerInformation().getResource(), date, facultyName);
 
         StatusDTO response = controller.sendReserveResources(scheduleDateDTO);
         if (response.getStatus().equals("OK")) {
             return true;
         }
 
-        getKafkaTemplate().send("publish-notification", new NotificationDTO(request.getNetId(),
-                "Could not schedule request with name " + request.getName() +
+        getKafkaTemplate().send("publish-notification", new NotificationDTO(
+                request.getRequestFacultyInformation().getNetId(),
+                "Could not schedule request with name " +
+                        request.getRequestResourceManagerInformation().getName() +
                         " because " + response.getStatus()));
         return false;
     }

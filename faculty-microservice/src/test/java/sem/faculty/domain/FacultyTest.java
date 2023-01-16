@@ -81,9 +81,13 @@ class FacultyTest {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
         Request request = new Request("Name1", "NetID", "Desription",
                 date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
-        RequestDTO requestDTO = new RequestDTO(request.getRequestId(), request.getName(),
-                request.getNetId(), request.getFacultyName(), request.getDescription(), request.getPreferredDate(),
-                request.getResource());
+        RequestDTO requestDTO = new RequestDTO(request.getRequestId(),
+                request.getRequestResourceManagerInformation().getName(),
+                request.getRequestFacultyInformation().getNetId(),
+                request.getRequestFacultyInformation().getFaculty(),
+                request.getRequestResourceManagerInformation().getDescription(),
+                request.getRequestFacultyInformation().getPreferredDate(),
+                request.getRequestResourceManagerInformation().getResource());
 
         faculty.getSchedule().put(date, List.of(request));
 

@@ -209,9 +209,13 @@ class FacultyHandlerTest {
         LocalDate date = LocalDate.of(2015, 2, 3);
         Request request = new Request("name", "netId", "desc", LocalDate.of(2015, 2, 4),
                 RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
-        RequestDTO requestDTO = new RequestDTO(request.getRequestId(), request.getName(),
-                request.getNetId(), request.getFacultyName(), request.getDescription(), request.getPreferredDate(),
-                request.getResource());
+        RequestDTO requestDTO = new RequestDTO(request.getRequestId(),
+                request.getRequestResourceManagerInformation().getName(),
+                request.getRequestFacultyInformation().getNetId(),
+                request.getRequestFacultyInformation().getFaculty(),
+                request.getRequestResourceManagerInformation().getDescription(),
+                request.getRequestFacultyInformation().getPreferredDate(),
+                request.getRequestResourceManagerInformation().getResource());
         facultyHandler.faculties.get(FacultyName.EEMCS).getSchedule().put(date, List.of(request));
         Map<FacultyName, List<RequestDTO>> map = facultyHandler.getRequestForDate(date);
         assertEquals(map.get(FacultyName.EEMCS).get(0), requestDTO);

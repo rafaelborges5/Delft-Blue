@@ -84,9 +84,15 @@ public class   Faculty {
         if (ret == null) {
             return new ArrayList<>();
         } else {
-            return ret.stream().map(x -> new RequestDTO(x.getRequestId(), x.getName(),
-                    x.getNetId(), x.getFacultyName(), x.getDescription(), x.getPreferredDate(),
-                    x.getResource())).collect(Collectors.toList());
+            return ret.stream().map(x -> new RequestDTO(
+                    x.getRequestId(),
+                    x.getRequestResourceManagerInformation().getName(),
+                    x.getRequestFacultyInformation().getNetId(),
+                    x.getRequestFacultyInformation().getFaculty(),
+                    x.getRequestResourceManagerInformation().getDescription(),
+                    x.getRequestFacultyInformation().getPreferredDate(),
+                    x.getRequestResourceManagerInformation().getResource()))
+                    .collect(Collectors.toList());
         }
     }
 }

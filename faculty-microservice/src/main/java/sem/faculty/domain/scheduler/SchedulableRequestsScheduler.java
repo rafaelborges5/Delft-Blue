@@ -49,8 +49,8 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
             date = getAvailableDate(request, faculty.getFacultyName());
         } catch (NotEnoughResourcesLeftException e) {
             request.setStatus(RequestStatus.DENIED);
-            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getNetId(),
-                    "Could not schedule request with name " + request.getName() +
+            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getRequestFacultyInformation().getNetId(),
+                    "Could not schedule request with name " + request.getRequestResourceManagerInformation().getName() +
                             " because there was not enough resources"));
             long requestID = request.getRequestId();
             if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
@@ -80,8 +80,8 @@ public abstract class SchedulableRequestsScheduler implements Scheduler {
      */
     LocalDate getAvailableDate(Request request, FacultyName facultyName)
             throws NotEnoughResourcesLeftException, ExecutionException, InterruptedException {
-        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getResource(),
-                request.getPreferredDate(),
+        ScheduleDateDTO scheduleDateDTO = new ScheduleDateDTO(request.getRequestResourceManagerInformation().getResource(),
+                request.getRequestFacultyInformation().getPreferredDate(),
                 facultyName);
         ResponseEntity<LocalDate> availableDate = controller.sendScheduleRequest(scheduleDateDTO);
         if (availableDate.getBody() == null) {

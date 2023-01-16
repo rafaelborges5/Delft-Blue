@@ -60,7 +60,7 @@ public class MainUserController {
     )
     @SendTo
     public StatusDTO addNewUser(UserDTO userDTO) {
-        StatusDTO result = checkForEmptyFields(userDTO);
+        StatusDTO result = checkStatusDTOValidity(userDTO);
         if (result != null) {
             return result;
         }
@@ -87,11 +87,11 @@ public class MainUserController {
     }
 
     /**
-     * Checks if the inputted UserDTO doesn't have any empty fields
+     * Checks if the inputted UserDTO doesn't have any empty fields.
      * @param userDTO - the userDTO to check
      * @return null if everything is fine and a statusDTO with the error otherwise.
      */
-    public StatusDTO checkForEmptyFields(UserDTO userDTO) {
+    public StatusDTO checkStatusDTOValidity(UserDTO userDTO) {
         if (userDTO.getNetId().equals("")) {
             return new StatusDTO("NetId cannot be empty!");
         }
@@ -106,6 +106,12 @@ public class MainUserController {
         return null;
     }
 
+    /**
+     * This method fills the faculties List with the actual faculties.
+     * @param facultiesStrings - the faculties to be added to the list
+     * @param faculties - empty list of faculties that will be filled
+     * @return null if everything is fine, and a statusDTO with error message if something is not right
+     */
     public StatusDTO fillFaculties(List<String> facultiesStrings, List faculties) {
         for (String name : facultiesStrings) {
             try {
