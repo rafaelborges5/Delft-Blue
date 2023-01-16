@@ -140,7 +140,11 @@ public class FacultyHandlerService {
         } catch (IllegalArgumentException e) {
             return new StatusDTO("Wrong faculty name");
         }
+        List<Long> badRequests = acceptRequestsHelper(facName, acceptedRequests);
+        return acceptRequestsOutput(badRequests);
+    }
 
+    public List<Long> acceptRequestsHelper(FacultyName facName, List<Long> acceptedRequests){
         List<Long> badRequests = new ArrayList<>();
         for (Long id : acceptedRequests) {
             Request request = requestRepository.findByRequestId(id);
@@ -150,6 +154,10 @@ public class FacultyHandlerService {
             }
             facultyHandler.handleAcceptedRequests(facName, request);
         }
+        return badRequests;
+    }
+
+    public StatusDTO acceptRequestsOutput(List<Long> badRequests){
         if (badRequests.isEmpty()) {
             return new StatusDTO("OK");
         }
