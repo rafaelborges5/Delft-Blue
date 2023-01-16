@@ -49,10 +49,12 @@ public class FacultyHandlerService {
         String requestDescription = request.getRequestResourceManagerInformation().getDescription();
         LocalDate requestDate = request.getRequestFacultyInformation().getPreferredDate();
         Resource requestResources = request.getRequestResourceManagerInformation().getResource();
+
         try {
             requestResources.checkResourceValidity(
                 requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
         } catch (NotValidResourcesException e) {
+            System.out.println("BREAK: REQUESTLISTENER");
             return new StatusDTO(e.getMessage());
         }
         if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {
