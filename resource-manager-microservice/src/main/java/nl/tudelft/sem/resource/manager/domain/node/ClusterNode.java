@@ -2,8 +2,6 @@ package nl.tudelft.sem.resource.manager.domain.node;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.converters.OwnerNameConverter;
 import nl.tudelft.sem.resource.manager.domain.node.converters.TokenConverter;
@@ -24,8 +22,6 @@ import java.util.Objects;
 @Table(name = "cluster_nodes")
 @NoArgsConstructor
 @Getter
-@Setter
-@ToString
 public class ClusterNode {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -36,7 +32,7 @@ public class ClusterNode {
     @Convert(converter = TokenConverter.class)
     private Token token;
 
-    @Column(name = "owner_name", nullable = false, unique = false)
+    @Column(name = "owner_name", nullable = false)
     @Convert(converter = OwnerNameConverter.class)
     private OwnerName ownerName;
 
