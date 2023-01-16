@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import sem.commons.*;
-import sem.faculty.domain.Faculty;
-import sem.faculty.domain.Request;
-import sem.faculty.domain.RequestRepository;
-import sem.faculty.domain.RequestStatus;
+import sem.commons.NotValidResourcesException;
+import sem.faculty.domain.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,9 +33,11 @@ class FacultyHandlerServiceTest {
 
     @Test
     void getPendingRequestsCorrect() throws NotValidResourcesException {
-        List<Request> list = List.of(new Request("name", "netId", "desc",
-                        LocalDate.of(2015, 2, 3),
-                        RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1)));
+        RequestDetails rd = new RequestDetails("name", "desc",
+                LocalDate.of(2015, 2, 3), RequestStatus.PENDING);
+        Request request = new Request(rd, "netId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
+        List<Request> list = List.of(request);
         when(facultyHandler.getPendingRequests(FacultyName.EEMCS)).thenReturn(list);
         PendingRequestsDTO pendingRequestsDTO = facultyHandlerService.getPendingRequests("EEMCS");
         assertEquals("OK", pendingRequestsDTO.getStatus());
@@ -57,9 +57,10 @@ class FacultyHandlerServiceTest {
 
     @Test
     void acceptRequestsCorrect() throws NotValidResourcesException {
-        Request request = new Request("name", "netId", "desc",
-                LocalDate.of(2015, 2, 3),
-                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "desc",
+                LocalDate.of(2015, 2, 3), RequestStatus.PENDING);
+        Request request = new Request(rd, "netId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         when(requestRepository.findByRequestId(1L)).thenReturn(request);
         StatusDTO statusDTO = facultyHandlerService.acceptRequests("EEMCS", List.of(1L));
         assertEquals("OK", statusDTO.getStatus());

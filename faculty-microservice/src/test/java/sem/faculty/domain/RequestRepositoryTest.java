@@ -37,18 +37,16 @@ class RequestRepositoryTest {
     void setUp() throws NotValidResourcesException {
         resources = new Resource(1, 1, 1);
         time = LocalDate.of(2022, 12, 20);
-        request1 = new Request(
-                "name1", "user1", "description1",
-                time, RequestStatus.PENDING, FacultyName.EEMCS, resources);
-        request2 = new Request(
-                "name2", "user1", "description3",
-                time, RequestStatus.DROPPED, FacultyName.EEMCS, resources);
-        request3 = new Request(
-                "name3", "user3", "description3",
-                time, RequestStatus.DENIED, FacultyName.ARCH, resources);
-        request4 = new Request(
-                "name4", "user4", "description4",
-                time, RequestStatus.ACCEPTED, FacultyName.ARCH, resources);
+        RequestDetails rd1 = new RequestDetails("Name1", "Desription1", time, RequestStatus.PENDING);
+        RequestDetails rd2 = new RequestDetails("Name2", "Desription2", time, RequestStatus.DROPPED);
+        RequestDetails rd3 = new RequestDetails("Name3", "Desription3", time, RequestStatus.DENIED);
+        RequestDetails rd4 = new RequestDetails("Name4", "Desription4", time, RequestStatus.ACCEPTED);
+
+        request1 = new Request(rd1, "user1", FacultyName.EEMCS, resources);
+
+        request2 = new Request(rd2, "user1", FacultyName.EEMCS, resources);
+        request3 = new Request(rd3, "user3", FacultyName.ARCH, resources);
+        request4 = new Request(rd4, "user4", FacultyName.ARCH, resources);
         requestRepository.deleteAll();
         requestRepository.save(request1);
         requestRepository.save(request2);

@@ -24,7 +24,8 @@ class RequestTest {
         descr = "Description";
         date = LocalDate.of(2022, 12, 5);
         resource = new Resource(1, 1, 1);
-        request = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd = new RequestDetails(name, descr, date, RequestStatus.PENDING);
+        request = new Request(rd, netId, FacultyName.EEMCS, resource);
     }
 
     @Test
@@ -66,7 +67,8 @@ class RequestTest {
 
     @Test
     void testEquals() {
-        Request r1 = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd = new RequestDetails(name, descr, date, RequestStatus.PENDING);
+        Request r1 = new Request(rd, netId, FacultyName.EEMCS, resource);
         r1.setRequestId(0);
         assertThat(r1).isEqualTo(request);
         assertThat(request).isEqualTo(request);
@@ -74,30 +76,33 @@ class RequestTest {
 
     @Test
     void testNotEquals() throws NotValidResourcesException {
-        Request r1 = new Request("Other", netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd = new RequestDetails("Other", descr, date, RequestStatus.PENDING);
+        Request r1 = new Request(rd, netId, FacultyName.EEMCS, resource);
         assertThat(request).isNotEqualTo(r1);
 
-        Request r2 = new Request(name, "Other", descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        Request r2 = new Request(rd, "Other", FacultyName.EEMCS, resource);
         assertThat(request).isNotEqualTo(r2);
 
-        Request r3 = new Request(name, netId, "Other", date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd3 = new RequestDetails(name, "Other", date, RequestStatus.PENDING);
+        Request r3 = new Request(rd3, netId, FacultyName.EEMCS, resource);
         assertThat(request).isNotEqualTo(r3);
 
         LocalDate notDate = LocalDate.of(1990, 10, 1);
-        Request r4 = new Request(name, netId, descr, notDate, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd4 = new RequestDetails(name, descr, notDate, RequestStatus.PENDING);
+        Request r4 = new Request(rd4, netId, FacultyName.EEMCS, resource);
         assertThat(request).isNotEqualTo(r4);
 
-        Request r5 = new Request(name, netId, descr, date, RequestStatus.ACCEPTED, FacultyName.EEMCS, resource);
+        RequestDetails rd5 = new RequestDetails(name, descr, notDate, RequestStatus.ACCEPTED);
+        Request r5 = new Request(rd5, netId, FacultyName.EEMCS, resource);
         assertThat(request).isNotEqualTo(r5);
 
-        Request r6 = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.ARCH, resource);
+        Request r6 = new Request(rd5, netId, FacultyName.ARCH, resource);
         assertThat(request).isNotEqualTo(r6);
 
-        Request r7 = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS,
-                new Resource(5, 1, 1));
+        Request r7 = new Request(rd5, netId, FacultyName.ARCH, new Resource(5, 1, 1));
         assertThat(request).isNotEqualTo(r7);
 
-        Request r8 = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        Request r8 = new Request(rd5, netId, FacultyName.ARCH, resource);
         r8.setRequestId(5);
         assertThat(request).isNotEqualTo(r8);
     }
@@ -110,7 +115,9 @@ class RequestTest {
 
     @Test
     public void equalsHashCode() {
-        Request r = new Request(name, netId, descr, date, RequestStatus.PENDING, FacultyName.EEMCS, resource);
+        RequestDetails rd = new RequestDetails(name, descr, date, RequestStatus.PENDING);
+        Request r = new Request(rd, netId, FacultyName.EEMCS, resource);
+
         assertThat(request).isEqualTo(r);
         assertThat(r.hashCode()).isEqualTo(request.hashCode());
     }
