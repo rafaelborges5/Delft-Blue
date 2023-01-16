@@ -42,9 +42,9 @@ class FacultyHandlerServiceTest {
         PendingRequestsDTO pendingRequestsDTO = facultyHandlerService.getPendingRequests("EEMCS");
         assertEquals("OK", pendingRequestsDTO.getStatus());
         RequestDTO requestDTO = pendingRequestsDTO.getRequests().get(0);
-        assertEquals("name", requestDTO.getName());
-        assertEquals(FacultyName.EEMCS, requestDTO.getFaculty());
-        assertEquals("netId", requestDTO.getNetId());
+        assertEquals("name", requestDTO.getRequestResourceManagerInformation().getName());
+        assertEquals(FacultyName.EEMCS, requestDTO.getRequestFacultyInformation().getFaculty());
+        assertEquals("netId", requestDTO.getRequestFacultyInformation().getNetId());
     }
 
     @Test
