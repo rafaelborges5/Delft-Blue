@@ -54,7 +54,6 @@ public class FacultyHandlerService {
             requestResources.checkResourceValidity(
                 requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
         } catch (NotValidResourcesException e) {
-            System.out.println("BREAK: REQUESTLISTENER");
             return new StatusDTO(e.getMessage());
         }
         if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {

@@ -40,7 +40,6 @@ public class MainFacultyController {
     )
     @SendTo
     public StatusDTO listener(RequestDTO request) {
-        System.out.println("TEST 1");
         return facultyHandlerService.requestListener(request);
     }
 
