@@ -144,7 +144,14 @@ public class FacultyHandlerService {
         return acceptRequestsOutput(badRequests);
     }
 
-    public List<Long> acceptRequestsHelper(FacultyName facName, List<Long> acceptedRequests){
+    /**
+     * Helper method for Accept requests status dto.
+     *
+     * @param facName          the faculty name
+     * @param acceptedRequests the accepted requests
+     * @return the list of bad requests
+     */
+    public List<Long> acceptRequestsHelper(FacultyName facName, List<Long> acceptedRequests) {
         List<Long> badRequests = new ArrayList<>();
         for (Long id : acceptedRequests) {
             Request request = requestRepository.findByRequestId(id);
@@ -157,7 +164,13 @@ public class FacultyHandlerService {
         return badRequests;
     }
 
-    public StatusDTO acceptRequestsOutput(List<Long> badRequests){
+    /**
+     * Helps acceptRequests decide on the returned StatusDTO.
+     *
+     * @param badRequests the accepted requests
+     * @return the StatusDTO to be sent
+     */
+    public StatusDTO acceptRequestsOutput(List<Long> badRequests) {
         if (badRequests.isEmpty()) {
             return new StatusDTO("OK");
         }
