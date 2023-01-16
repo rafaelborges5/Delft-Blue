@@ -35,9 +35,7 @@ public class DateSchedulingService {
         while (date.isAfter(today)) {
             Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, facultyName);
 
-            if (freeResources.getCpuResources() >= resources.getCpuResources() &&
-                freeResources.getGpuResources() >= resources.getGpuResources() &&
-                freeResources.getMemResources() >= resources.getMemResources()) {
+            if (enoughResourcesAvailable(freeResources, resources)) {
 
                 return date;
             }
@@ -45,5 +43,11 @@ public class DateSchedulingService {
         }
 
         return null;
+    }
+
+    private boolean enoughResourcesAvailable(Resource freeResources, Resource neededResources) {
+        return  freeResources.getCpuResources() >= neededResources.getCpuResources() &&
+                freeResources.getGpuResources() >= neededResources.getGpuResources() &&
+                freeResources.getMemResources() >= neededResources.getMemResources();
     }
 }
