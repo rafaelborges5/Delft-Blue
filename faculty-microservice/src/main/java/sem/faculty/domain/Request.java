@@ -39,23 +39,6 @@ public class Request {
     @Embedded
     protected RequestResourceManagerInformation requestResourceManagerInformation;
 
-    //    @Column(name = "name", nullable = false)
-    //    private String name;
-    //    @Column(name = "netId", nullable = false)
-    //    private String netId;
-    //    @Column(name = "description", nullable = false)
-    //    private String description;
-    //    @Column(name = "preferredDate", nullable = false)
-    //    private LocalDate preferredDate;
-    //    @Enumerated(EnumType.STRING)
-    //    @Column(name = "status", nullable = false)
-    //    private RequestStatus status;
-    //    @Column(name = "facultyName", nullable = false)
-    //    @Convert(converter = FacultyNameAttributeConverter.class)
-    //    private FacultyName facultyName;
-    //    @Embedded
-    //    private Resource resource;
-
     /**
      * Constructor method.
      */
