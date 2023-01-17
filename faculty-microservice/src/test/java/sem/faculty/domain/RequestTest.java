@@ -156,9 +156,12 @@ class RequestTest {
     @Test
     void setNetId() {
         assertThat(request.getRequestFacultyInformation().getNetId()).isEqualTo(netId);
-        request = new Request(request.getRequestResourceManagerInformation().getName(), "NEW NETID",
+        RequestDetails requestDetails = new RequestDetails(
+                request.getRequestResourceManagerInformation().getName(),
                 request.getRequestResourceManagerInformation().getDescription(),
-                request.getRequestFacultyInformation().getPreferredDate(), request.getStatus(),
+                request.getRequestFacultyInformation().getPreferredDate(),
+                request.getStatus());
+        request = new Request(requestDetails, "NEW NETID",
                 request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getRequestFacultyInformation().getNetId()).isEqualTo("NEW NETID");
@@ -167,9 +170,12 @@ class RequestTest {
     @Test
     void setName() {
         assertThat(request.getRequestResourceManagerInformation().getName()).isEqualTo(name);
-        request = new Request("NEW NAME", request.getRequestFacultyInformation().getNetId(),
+        RequestDetails requestDetails = new RequestDetails(
+                "NEW NAME",
                 request.getRequestResourceManagerInformation().getDescription(),
-                request.getRequestFacultyInformation().getPreferredDate(), request.getStatus(),
+                request.getRequestFacultyInformation().getPreferredDate(),
+                request.getStatus());
+        request = new Request(requestDetails, request.getRequestFacultyInformation().getNetId(),
                 request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getRequestResourceManagerInformation().getName()).isEqualTo("NEW NAME");
@@ -178,9 +184,13 @@ class RequestTest {
     @Test
     void setDescription() {
         assertThat(request.getRequestResourceManagerInformation().getDescription()).isEqualTo(descr);
-        request = new Request(request.getRequestResourceManagerInformation().getName(),
-                request.getRequestFacultyInformation().getNetId(), "NEW DESCRIPTION",
-                request.getRequestFacultyInformation().getPreferredDate(), request.getStatus(),
+        RequestDetails requestDetails = new RequestDetails(
+                request.getRequestResourceManagerInformation().getName(),
+                "NEW DESCRIPTION",
+                request.getRequestFacultyInformation().getPreferredDate(),
+                request.getStatus());
+        request = new Request(requestDetails,
+                request.getRequestFacultyInformation().getNetId(),
                 request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getRequestResourceManagerInformation().getDescription()).isEqualTo("NEW DESCRIPTION");
@@ -190,10 +200,14 @@ class RequestTest {
     void setPreferredDate() {
         assertThat(request.getRequestFacultyInformation().getPreferredDate()).isEqualTo(date);
         LocalDate newDate = LocalDate.of(2022, 12, 6);
-        request = new Request(request.getRequestResourceManagerInformation().getName(),
-                request.getRequestFacultyInformation().getNetId(),
+        RequestDetails requestDetails = new RequestDetails(
+                request.getRequestResourceManagerInformation().getName(),
                 request.getRequestResourceManagerInformation().getDescription(),
-                newDate, request.getStatus(), request.getRequestFacultyInformation().getFaculty(),
+                newDate,
+                request.getStatus());
+        request = new Request(requestDetails,
+                request.getRequestFacultyInformation().getNetId(),
+                request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getRequestFacultyInformation().getPreferredDate()).isEqualTo(newDate);
     }
@@ -201,11 +215,14 @@ class RequestTest {
     @Test
     void setStatus() {
         assertThat(request.getStatus()).isEqualTo(RequestStatus.PENDING);
-        request = new Request(request.getRequestResourceManagerInformation().getName(),
-                request.getRequestFacultyInformation().getNetId(),
+        RequestDetails requestDetails = new RequestDetails(
+                request.getRequestResourceManagerInformation().getName(),
                 request.getRequestResourceManagerInformation().getDescription(),
                 request.getRequestFacultyInformation().getPreferredDate(),
-                RequestStatus.DENIED, request.getRequestFacultyInformation().getFaculty(),
+                RequestStatus.DENIED);
+        request = new Request(requestDetails,
+                request.getRequestFacultyInformation().getNetId(),
+                request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getStatus()).isEqualTo(RequestStatus.DENIED);
     }

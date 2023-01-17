@@ -42,17 +42,15 @@ public class Request {
     /**
      * Constructor method.
      */
-    public Request(@JsonProperty("requestDetails") String name,
+    public Request(@JsonProperty("requestDetails") RequestDetails requestDetails,
                    @JsonProperty("nedId") String netId,
-                   @JsonProperty("description") String description,
-                   @JsonProperty("preferredDate") LocalDate preferredDate,
-                   @JsonProperty("status") RequestStatus status,
                    @JsonProperty("facultyName") FacultyName facultyName,
                    @JsonProperty("resource") Resource resource) {
-        this.status = requestDetails.getStatus();;
+        this.status = requestDetails.getStatus();
         this.requestResourceManagerInformation = new RequestResourceManagerInformation(
             requestDetails.getName(), requestDetails.getDescription(), resource);
-        this.requestFacultyInformation = new RequestFacultyInformation(requestDetails.getPreferredDate(), facultyName, netId);
+        this.requestFacultyInformation = new RequestFacultyInformation(
+                requestDetails.getPreferredDate(), facultyName, netId);
     }
 
     /**
