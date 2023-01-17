@@ -37,8 +37,8 @@ class FacultyTest {
     @Test
     void scheduleDate_creates_new_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
-        Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Desription", date, RequestStatus.ACCEPTED);
+        Request request1 = new Request(rd, "NetID", FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1));
@@ -50,10 +50,11 @@ class FacultyTest {
     @Test
     void scheduleDate_add_to_list() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
-        Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
-        Request request2 = new Request("Name2", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Desription", date, RequestStatus.ACCEPTED);
+        Request request1 = new Request(rd, "NetID", FacultyName.EEMCS, new Resource(1, 1, 1));
+
+        RequestDetails rd2 = new RequestDetails("Name2", "Desription", date, RequestStatus.ACCEPTED);
+        Request request2 = new Request(rd2, "NetID", FacultyName.EEMCS, new Resource(1, 1, 1));
 
         Map<LocalDate, List<Request>> expected = new HashMap<>();
         expected.put(date, List.of(request1, request2));
@@ -66,8 +67,8 @@ class FacultyTest {
     @Test
     void addPendingRequest() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
-        Request request1 = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Desription", date, RequestStatus.ACCEPTED);
+        Request request1 = new Request(rd, "NetID", FacultyName.EEMCS, new Resource(1, 1, 1));
 
         assertThat(faculty.getPendingRequests()).isEmpty();
         faculty.addPendingRequest(request1);
@@ -79,8 +80,8 @@ class FacultyTest {
     @Test
     void getRequestsForDate() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 7);
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Desription", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetID", FacultyName.EEMCS, new Resource(1, 1, 1));
         RequestDTO requestDTO = new RequestDTO(request.getRequestId(),
                 request.getRequestResourceManagerInformation().getName(),
                 request.getRequestFacultyInformation().getNetId(),
@@ -88,7 +89,7 @@ class FacultyTest {
                 request.getRequestResourceManagerInformation().getDescription(),
                 request.getRequestFacultyInformation().getPreferredDate(),
                 request.getRequestResourceManagerInformation().getResource());
-
+            
         faculty.getSchedule().put(date, List.of(request));
 
         List<RequestDTO> list = faculty.getRequestsForDate(date);

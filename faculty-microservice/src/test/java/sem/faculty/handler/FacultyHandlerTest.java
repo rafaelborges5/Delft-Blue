@@ -74,23 +74,24 @@ class FacultyHandlerTest {
     void handleIncomingRequestsDenyScheduler() throws NotValidResourcesException {
         LocalDate today = LocalDate.of(2022, Month.DECEMBER, 15);
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 14);
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         when(timeProvider.getCurrentDate()).thenReturn(today);
         facultyHandler.handleIncomingRequests(request);
         assertThat(facultyHandler.scheduler.getClass()).isEqualTo(DenyRequestsScheduler.class);
     }
 
     @Test
-
     void handleIncomingRequestsPendingScheduler()
             throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 14);
         LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 14, 12, 0);
 
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 15);
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         facultyHandler.requestRepository.save(request);
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
@@ -116,8 +117,9 @@ class FacultyHandlerTest {
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
 
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13);
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
 
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
@@ -132,8 +134,9 @@ class FacultyHandlerTest {
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
 
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13);
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
 
         when(timeProvider.getCurrentDate()).thenReturn(todayDate);
         when(timeProvider.getCurrentDateTime()).thenReturn(todayDateTime);
@@ -147,8 +150,9 @@ class FacultyHandlerTest {
     void handleIncomingRequestsSixHoursBeforePreferredDate() throws NotValidResourcesException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
 
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
         LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12, 18, 0);
@@ -168,8 +172,9 @@ class FacultyHandlerTest {
     void handleIncomingRequestsSevenHoursBeforePreferredDate() throws NotValidResourcesException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
         LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12, 17, 59);
 
@@ -187,8 +192,9 @@ class FacultyHandlerTest {
     void handleIncomingRequestsOneHourBeforePreferredDate() throws NotValidResourcesException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 13); //Preferred LocalDate for the request
-        Request request = new Request("Name1", "NetID", "Desription",
-                date, RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         LocalDate todayDate = LocalDate.of(2022, Month.DECEMBER, 12);
         LocalDateTime todayDateTime = LocalDateTime.of(2022, Month.DECEMBER, 12,
                 23, 54, 59);
@@ -207,8 +213,10 @@ class FacultyHandlerTest {
     @Test
     void getRequestForDate() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2015, 2, 3);
-        Request request = new Request("name", "netId", "desc", LocalDate.of(2015, 2, 4),
-                RequestStatus.ACCEPTED, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd = new RequestDetails("Name1", "Description",
+                LocalDate.of(2015, 2, 4), RequestStatus.ACCEPTED);
+        Request request = new Request(rd, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         RequestDTO requestDTO = new RequestDTO(request.getRequestId(),
                 request.getRequestResourceManagerInformation().getName(),
                 request.getRequestFacultyInformation().getNetId(),
@@ -216,6 +224,7 @@ class FacultyHandlerTest {
                 request.getRequestResourceManagerInformation().getDescription(),
                 request.getRequestFacultyInformation().getPreferredDate(),
                 request.getRequestResourceManagerInformation().getResource());
+
         facultyHandler.faculties.get(FacultyName.EEMCS).getSchedule().put(date, List.of(request));
         Map<FacultyName, List<RequestDTO>> map = facultyHandler.getRequestForDate(date);
         assertEquals(map.get(FacultyName.EEMCS).get(0), requestDTO);
@@ -225,11 +234,13 @@ class FacultyHandlerTest {
     void getPendingRequestsForTomorrow() throws NotValidResourcesException {
         LocalDate tomorrow = LocalDate.of(2015, 2, 3);
         LocalDate date = LocalDate.of(2015, 2, 4);
-        Request request1 = new Request("name", "netId", "desc", tomorrow,
-                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd1 = new RequestDetails("Name1", "Description", tomorrow, RequestStatus.ACCEPTED);
+        Request request1 = new Request(rd1, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         request1.setRequestId(1L);
-        Request request2 = new Request("name", "netId", "desc", date,
-                RequestStatus.PENDING, FacultyName.EEMCS, new Resource(1, 1, 1));
+        RequestDetails rd2 = new RequestDetails("Name1", "Description", date, RequestStatus.ACCEPTED);
+        Request request2 = new Request(rd2, "NetId", FacultyName.EEMCS, new Resource(1, 1, 1));
+
         request2.setRequestId(2L);
         Faculty faculty = facultyHandler.faculties.get(FacultyName.EEMCS);
         faculty.addPendingRequest(request1);

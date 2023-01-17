@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestDetails;
 import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
@@ -59,8 +60,9 @@ public class FacultyHandlerService {
         if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {
             return new StatusDTO("You cannot schedule requests for today or the past!");
         }
-        Request newRequest = new Request(requestName, requestNetId, requestDescription, requestDate,
-                RequestStatus.PENDING, request.getRequestFacultyInformation().getFaculty(), requestResources);
+        RequestDetails reqDet = new RequestDetails(requestName, requestDescription, requestDate, RequestStatus.PENDING);
+        Request newRequest = new Request(reqDet, requestNetId,
+                request.getRequestFacultyInformation().getFaculty(), requestResources);
         facultyHandler.handleIncomingRequests(newRequest);
 
         return new StatusDTO("OK");
