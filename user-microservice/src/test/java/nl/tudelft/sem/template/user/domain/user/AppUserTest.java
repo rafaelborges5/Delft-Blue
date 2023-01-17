@@ -73,54 +73,6 @@ class AppUserTest {
     }
 
     @Test
-    void setNetId() {
-        assertThat(user.getNetId()).isEqualTo(testNetID);
-        NetId newNetID = new NetId("newUser");
-        user.setNetId(newNetID);
-        assertThat(user.getNetId()).isEqualTo(newNetID);
-    }
-
-    @Test
-    void setPassword() {
-        assertThat(user.getPassword()).isEqualTo(testPassword);
-        HashedPassword newPassword = new HashedPassword("newpassword123");
-        user.setPassword(newPassword);
-        assertThat(user.getPassword()).isEqualTo(newPassword);
-    }
-
-    @Test
-    void setRole() {
-        assertThat(user.getRole()).isEqualTo(testRole);
-        Role newRole = Role.FACULTY_REVIEWER;
-        user.setRole(newRole);
-        assertThat(user.getRole()).isEqualTo(newRole);
-    }
-
-    @Test
-    void setFaculty() {
-        assertThat(user.getFaculty()).isEqualTo(testFaculty);
-        List<FacultyName> newFaculty = new ArrayList<>();
-        newFaculty.add(FacultyName.ARCH);
-        newFaculty.add(FacultyName.MMME);
-        user.setFaculty(newFaculty);
-        assertThat(user.getFaculty()).isEqualTo(newFaculty);
-    }
-
-    @Test
-    void testAddFaculty() {
-        assertThat(user.getFaculty()).isEqualTo(testFaculty);
-        user.addFaculty(FacultyName.AE);
-        testFaculty.add(FacultyName.AE);
-        assertThat(user.getFaculty()).isEqualTo(testFaculty);
-    }
-
-    @Test
-    void testFacultyString() {
-        String facultyDetails = "EEMCS, CEG";
-        assertThat(user.facultyString()).isEqualTo(facultyDetails);
-    }
-
-    @Test
     void testToString() {
         String userDetails = "AppUser{" +
                 "NetId = SomeUser" +
@@ -160,19 +112,4 @@ class AppUserTest {
         Object o = new NetId("test");
         assertNotEquals(user, o);
     }
-
-    @Test
-    void changePassword() {
-        HashedPassword pas = new HashedPassword("somePas");
-        user.changePassword(pas);
-        assertEquals(user.getPassword(), pas);
-    }
-
-    @Test
-    void testEqualsHashCode() {
-        AppUser newUser = new AppUser(testNetID, testPassword, testRole, testFaculty);
-        newUser.setId(0);
-        assertThat(newUser.hashCode()).isEqualTo(user.hashCode());
-    }
-
 }

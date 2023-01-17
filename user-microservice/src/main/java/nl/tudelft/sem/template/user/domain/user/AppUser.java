@@ -16,7 +16,6 @@ import nl.tudelft.sem.template.user.domain.HasEvents;
 @Table(name = "users")
 @NoArgsConstructor
 @Getter
-@Setter
 public class AppUser extends HasEvents {
     /**
      * Identifier for the application user.
@@ -58,39 +57,20 @@ public class AppUser extends HasEvents {
         this.recordThat(new UserWasCreatedEvent(netId));
     }
 
-    public void changePassword(HashedPassword password) {
-        this.password = password;
-        this.recordThat(new PasswordWasChangedEvent(this));
-    }
-
-    /**
-     * Assigns a user a new faculty alongside their existing ones.
-     *
-     * @param newFaculty  A new faculty the user also belongs to
-     */
-    public void addFaculty(FacultyName newFaculty) {
-        this.faculty.add(newFaculty);
-    }
-
-    /**
-     * Return the list of faculties the user belongs to as a string.
-     *
-     * @return String with faculties
-     */
-    public String facultyString() {
-        String faculties = this.faculty.toString();
-        faculties = faculties.replace("[", "");
-        faculties = faculties.replace("]", "");
-        return faculties;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
+        String faculties = this.faculty.toString();
+        faculties = faculties.replace("[", "");
+        faculties = faculties.replace("]", "");
         return "AppUser{" +
                 "NetId = " + netId.toString() +
                 ", password = " + password.toString() +
                 ", role = " + role.name() +
-                ", faculties = " + facultyString() +
+                ", faculties = " + faculties +
                 "}";
     }
 
@@ -107,10 +87,5 @@ public class AppUser extends HasEvents {
         }
         AppUser appUser = (AppUser) o;
         return id == (appUser.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(netId);
     }
 }
