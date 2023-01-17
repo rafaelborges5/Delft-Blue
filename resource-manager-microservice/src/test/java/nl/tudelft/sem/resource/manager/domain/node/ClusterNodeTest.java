@@ -8,7 +8,6 @@ import sem.commons.Token;
 import sem.commons.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ClusterNodeTest {
 
@@ -34,8 +33,14 @@ class ClusterNodeTest {
 
     @Test
     void test_equals() {
-        node2.setToken(new Token("token1"));
-        assertThat(node1).isEqualTo(node2);
+        ClusterNode node3 = new ClusterNode(
+                new OwnerName("name3"),
+                new URL("url3"),
+                new Token("token1"),
+                Resource.with(300)
+        );
+
+        assertThat(node1).isEqualTo(node3);
     }
 
     @Test
@@ -45,7 +50,7 @@ class ClusterNodeTest {
 
     @Test
     void test_equals_wrong_object() {
-        assertThat(node1).isNotEqualTo(new String("a"));
+        assertThat(node1).isNotEqualTo("a");
     }
 
     @Test
