@@ -34,12 +34,7 @@ public class AcceptRequestsScheduler extends SchedulableRequestsScheduler {
 
         boolean reserved = reserveResource(request, date, faculty.getFacultyName());
         if (!reserved) {
-            request = new Request(request.getRequestResourceManagerInformation().getName(),
-                    request.getRequestFacultyInformation().getNetId(),
-                    request.getRequestResourceManagerInformation().getDescription(),
-                    request.getRequestFacultyInformation().getPreferredDate(),
-                    RequestStatus.DENIED, request.getRequestFacultyInformation().getFaculty(),
-                    request.getRequestResourceManagerInformation().getResource());
+            request.setStatus(RequestStatus.DENIED);
             if (Objects.equals(requestRepository.findByRequestId(requestID), request)) {
                 requestRepository.delete(requestRepository.findByRequestId(requestID));
             }
