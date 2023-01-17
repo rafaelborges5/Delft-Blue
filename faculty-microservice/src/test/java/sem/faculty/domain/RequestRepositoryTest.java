@@ -3,7 +3,6 @@ package sem.faculty.domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -16,15 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 class RequestRepositoryTest {
 
-    @Mock
     @Autowired
-    private final RequestRepository requestRepository = mock(RequestRepository.class);
+    private RequestRepository requestRepository;
     private Request request1;
     private Request request2;
     private Request request3;
@@ -103,7 +100,7 @@ class RequestRepositoryTest {
     @Test
     void findPendingByFacultyName() {
         assertThat(request1.getStatus().name()).isEqualTo("PENDING");
-        assertThat(request1.getFacultyName().name()).isEqualTo("EEMCS");
+        assertThat(request1.getRequestFacultyInformation().getFaculty().name()).isEqualTo("EEMCS");
         List<Request> toCheck = List.of(request1);
         List<Request> result = requestRepository.findPendingRequestsByFaculty(FacultyName.EEMCS);
         assertThat(toCheck).isEqualTo(result);
@@ -134,7 +131,7 @@ class RequestRepositoryTest {
     @Test
     void findDroppedByFacultyName() {
         assertThat(request2.getStatus().name()).isEqualTo("DROPPED");
-        assertThat(request2.getFacultyName().name()).isEqualTo("EEMCS");
+        assertThat(request2.getRequestFacultyInformation().getFaculty().name()).isEqualTo("EEMCS");
         List<Request> toCheck = List.of(request2);
         List<Request> result = requestRepository.findDroppedRequestsByFaculty(FacultyName.EEMCS);
         assertThat(toCheck).isEqualTo(result);
@@ -164,7 +161,7 @@ class RequestRepositoryTest {
     @Test
     void findDeniedByFacultyName() {
         assertThat(request3.getStatus().name()).isEqualTo("DENIED");
-        assertThat(request3.getFacultyName().name()).isEqualTo("ARCH");
+        assertThat(request3.getRequestFacultyInformation().getFaculty().name()).isEqualTo("ARCH");
         List<Request> toCheck = List.of(request3);
         List<Request> result = requestRepository.findDeniedRequestsByFaculty(FacultyName.ARCH);
         assertThat(toCheck).isEqualTo(result);
@@ -194,7 +191,7 @@ class RequestRepositoryTest {
     @Test
     void findAcceptedByFacultyName() {
         assertThat(request4.getStatus().name()).isEqualTo("ACCEPTED");
-        assertThat(request4.getFacultyName().name()).isEqualTo("ARCH");
+        assertThat(request4.getRequestFacultyInformation().getFaculty().name()).isEqualTo("ARCH");
         List<Request> toCheck = List.of(request4);
         List<Request> result = requestRepository.findAcceptedRequestsByFaculty(FacultyName.ARCH);
         assertThat(toCheck).isEqualTo(result);

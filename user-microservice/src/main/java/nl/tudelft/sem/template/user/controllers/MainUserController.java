@@ -60,34 +60,24 @@ public class MainUserController {
     )
     @SendTo
     public StatusDTO addNewUser(UserDTO userDTO) {
+        StatusDTO result = checkStatusDTOValidity(userDTO);
+        if (result != null) {
+            return result;
+        }
+
+        NetId netId = new NetId(userDTO.getNetId());
+        Password password = new Password(userDTO.getPassword());
+        Role role = Role.valueOf(userDTO.getRole());
+
+        List<String> facultiesStrings = userDTO.getFaculties();
+        List<nl.tudelft.sem.template.user.domain.user.FacultyName> faculties = new ArrayList<>();
+
+        result = fillFaculties(facultiesStrings, faculties);
+        if (result != null) {
+            return result;
+        }
+
         try {
-            if (userDTO.getNetId().equals("")) {
-                return new StatusDTO("NetId cannot be empty!");
-            }
-            if (userDTO.getPassword().equals("")) {
-                return new StatusDTO("Password cannot be empty!");
-            }
-
-            NetId netId = new NetId(userDTO.getNetId());
-            Password password = new Password(userDTO.getPassword());
-            Role role;
-            try {
-                role = Role.valueOf(userDTO.getRole());
-            } catch (IllegalArgumentException e) {
-                return new StatusDTO("Provided role does not exist!");
-            }
-            List<String> facultiesStrings = userDTO.getFaculties();
-
-            List<nl.tudelft.sem.template.user.domain.user.FacultyName> faculties = new ArrayList<>();
-
-            for (String name : facultiesStrings) {
-                try {
-                    faculties.add(FacultyName.valueOf(name));
-                } catch (IllegalArgumentException e) {
-                    return new StatusDTO("Wrong faculty name");
-                }
-            }
-
             registrationService.registerUser(netId, password, role, faculties);
         } catch (NetIdAlreadyInUseException e) {
             return new StatusDTO("User with netID: " + e.getMessage() + " already exists");
@@ -95,6 +85,44 @@ public class MainUserController {
 
         return new StatusDTO("OK");
     }
+
+    /**
+     * Checks if the inputted UserDTO doesn't have any empty fields.
+     * @param userDTO - the userDTO to check
+     * @return null if everything is fine and a statusDTO with the error otherwise.
+     */
+    public StatusDTO checkStatusDTOValidity(UserDTO userDTO) {
+        if (userDTO.getNetId().equals("")) {
+            return new StatusDTO("NetId cannot be empty!");
+        }
+        if (userDTO.getPassword().equals("")) {
+            return new StatusDTO("Password cannot be empty!");
+        }
+        try {
+            Role unused = Role.valueOf(userDTO.getRole());
+        } catch (IllegalArgumentException e) {
+            return new StatusDTO("Provided role does not exist!");
+        }
+        return null;
+    }
+
+    /**
+     * This method fills the faculties List with the actual faculties.
+     * @param facultiesStrings - the faculties to be added to the list
+     * @param faculties - empty list of faculties that will be filled
+     * @return null if everything is fine, and a statusDTO with error message if something is not right
+     */
+    public StatusDTO fillFaculties(List<String> facultiesStrings, List faculties) {
+        for (String name : facultiesStrings) {
+            try {
+                faculties.add(FacultyName.valueOf(name));
+            } catch (IllegalArgumentException e) {
+                return new StatusDTO("Wrong faculty name");
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Authenticate user token dto.

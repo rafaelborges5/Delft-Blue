@@ -3,14 +3,22 @@ package sem.commons;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Embeddable;
 import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
+@Embeddable
 public class RequestFacultyInformation {
 
+    @Column(name = "preferredDate", nullable = false)
     private LocalDate preferredDate;
+    @Convert(converter = FacultyNameAttributeConverter.class)
+    @Column(name = "facultyName", nullable = false)
     private FacultyName faculty;
+    @Column(name = "netId", nullable = false)
     private String netId;
 
     /**

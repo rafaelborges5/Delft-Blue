@@ -50,6 +50,7 @@ public class FacultyHandlerService {
         String requestDescription = request.getRequestResourceManagerInformation().getDescription();
         LocalDate requestDate = request.getRequestFacultyInformation().getPreferredDate();
         Resource requestResources = request.getRequestResourceManagerInformation().getResource();
+
         try {
             requestResources.checkResourceValidity(
                 requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
@@ -115,12 +116,12 @@ public class FacultyHandlerService {
                 facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
                         .map(x -> new RequestDTO(
                                 x.getRequestId(),
-                                x.getName(),
-                                x.getNetId(),
-                                x.getFacultyName(),
-                                x.getDescription(),
-                                x.getPreferredDate(),
-                                x.getResource()))
+                                x.getRequestResourceManagerInformation().getName(),
+                                x.getRequestFacultyInformation().getNetId(),
+                                x.getRequestFacultyInformation().getFaculty(),
+                                x.getRequestResourceManagerInformation().getDescription(),
+                                x.getRequestFacultyInformation().getPreferredDate(),
+                                x.getRequestResourceManagerInformation().getResource()))
                         .collect(Collectors.toList()));
 
     }
