@@ -35,9 +35,7 @@ public class DateSchedulingService {
         while (date.isAfter(today)) {
             Resource freeResources = resourceAvailabilityService.seeFreeResourcesByDateAndReserver(date, facultyName);
 
-            if (freeResources.getCpuResources() >= resources.getCpuResources() &&
-                freeResources.getGpuResources() >= resources.getGpuResources() &&
-                freeResources.getMemResources() >= resources.getMemResources()) {
+            if (enoughResourcesAvailable(freeResources, resources)) {
 
                 return date;
             }
@@ -45,5 +43,20 @@ public class DateSchedulingService {
         }
 
         return null;
+    }
+
+    /**
+     * Checks if there are enough free resources for a request. This is done by ensuring that
+     * all 3 resource types are available in greater or equal quantities, compared to the requested
+     * resources.
+     *
+     * @param freeResources the resources available in the cluster
+     * @param neededResources the resources needed by the request
+     * @return true if there are enough free resources, false otherwise
+     */
+    private boolean enoughResourcesAvailable(Resource freeResources, Resource neededResources) {
+        return  freeResources.getCpuResources() >= neededResources.getCpuResources() &&
+                freeResources.getGpuResources() >= neededResources.getGpuResources() &&
+                freeResources.getMemResources() >= neededResources.getMemResources();
     }
 }
