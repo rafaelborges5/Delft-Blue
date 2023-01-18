@@ -44,9 +44,9 @@ class AcceptRequestsSchedulerTest {
     @Test
     void saveRequestInFaculty() throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = mock(Faculty.class);
         when(controller.sendReserveResources(any())).thenReturn(new StatusDTO("OK"));
 

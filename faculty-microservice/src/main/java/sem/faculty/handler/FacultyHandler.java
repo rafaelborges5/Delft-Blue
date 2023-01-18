@@ -69,20 +69,20 @@ public class FacultyHandler {
      */
     void handleIncomingRequests(Request request) {
         LocalDate currentDate = timeProvider.getCurrentDate();
-        LocalDate preferredDate = request.getPreferredDate();
+        LocalDate preferredDate = request.getRequestFacultyInformation().getPreferredDate();
 
         // if the date of the request is invalid, deny the request
         if (preferredDate.isBefore(currentDate) || isInfiveMinutesBeforePreferredDay(preferredDate)) {
             scheduler = new DenyRequestsScheduler(requestRepository);
-            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getNetId(),
-                    "Could not schedule request with name " + request.getName() +
+            kafkaTemplate.send("publish-notification", new NotificationDTO(request.getRequestFacultyInformation().getNetId(),
+                    "Could not schedule request with name " + request.getRequestResourceManagerInformation().getName() +
                             " because it came 5 minutes before the start of new day"));
         } else if (isInSixHoursBeforePreferredDay(preferredDate)) {
             scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         } else {
             scheduler = new PendingRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         }
-        scheduler.scheduleRequest(request, faculties.get(request.getFacultyName()));
+        scheduler.scheduleRequest(request, faculties.get(request.getRequestFacultyInformation().getFaculty()));
     }
 
     /**
@@ -169,7 +169,7 @@ public class FacultyHandler {
 
         for (Long id : pendingRequestsIDs) {
             Request request = requestRepository.findByRequestId(id);
-            LocalDate date = request.getPreferredDate();
+            LocalDate date = request.getRequestFacultyInformation().getPreferredDate();
             if (tomorrow.equals(date)) {
                 tomorrowList.add(request);
             } else {

@@ -1,6 +1,7 @@
 package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
+import nl.tudelft.sem.resource.manager.domain.RepositoriesGroup;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
@@ -24,18 +25,18 @@ public class ResourceAvailabilityService {
 
     /**
      * Injects dependencies.
-     * @param reservedResourcesRepository ResourcesRepository
-     * @param timeProvider TimeProvider
-     * @param freepoolManager FreepoolManager
-     * @param defaultResources DefaultResources
+     *
+     * @param repositoriesGroup the repositories group
+     * @param timeProvider      TimeProvider
+     * @param freepoolManager   FreepoolManager
+     * @param defaultResources  DefaultResources
      */
-    public ResourceAvailabilityService(NodeRepository nodeRepository,
-                                       ReservedResourcesRepository reservedResourcesRepository,
+    public ResourceAvailabilityService(RepositoriesGroup repositoriesGroup,
                                        CurrentDateProvider timeProvider,
                                        FreepoolManager freepoolManager,
                                        DefaultResources defaultResources) {
-        this.nodeRepository = nodeRepository;
-        this.reservedResourcesRepository = reservedResourcesRepository;
+        this.nodeRepository = repositoriesGroup.getNodeRepository();
+        this.reservedResourcesRepository = repositoriesGroup.getReservedResourcesRepository();
         this.timeProvider = timeProvider;
         this.freepoolManager = freepoolManager;
         this.defaultResources = defaultResources;

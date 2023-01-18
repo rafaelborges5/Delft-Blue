@@ -1,6 +1,4 @@
-package sem.faculty.domain;
-
-import sem.commons.FacultyName;
+package sem.commons;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

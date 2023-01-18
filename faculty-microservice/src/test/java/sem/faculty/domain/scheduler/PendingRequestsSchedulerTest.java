@@ -45,9 +45,10 @@ class PendingRequestsSchedulerTest {
     @Test
     void saveRequestInFaculty() throws NotValidResourcesException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = mock(Faculty.class);
 
         scheduler.saveRequestInFaculty(request, faculty, date);
@@ -60,9 +61,9 @@ class PendingRequestsSchedulerTest {
     @Test
     void schedulePendingRequest() throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
 
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(date));
@@ -74,9 +75,9 @@ class PendingRequestsSchedulerTest {
     @Test
     void scheduleResponseNullRequest() throws NotValidResourcesException, ExecutionException, InterruptedException {
         LocalDate date = null;
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(null));
         scheduler.scheduleRequest(request, faculty);
@@ -88,9 +89,9 @@ class PendingRequestsSchedulerTest {
             throws NotValidResourcesException, NotEnoughResourcesLeftException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(date));
 
@@ -103,9 +104,9 @@ class PendingRequestsSchedulerTest {
             throws NotValidResourcesException, NotEnoughResourcesLeftException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = new Faculty(FacultyName.ARCH, timeProvider);
         when(controller.sendScheduleRequest(any())).thenReturn(ResponseEntity.ok(null));
 
@@ -119,9 +120,9 @@ class PendingRequestsSchedulerTest {
             throws NotValidResourcesException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = mock(Faculty.class);
         when(controller.sendScheduleRequest(any())).thenThrow(ExecutionException.class);
 
@@ -137,9 +138,9 @@ class PendingRequestsSchedulerTest {
             throws NotValidResourcesException,
             ExecutionException, InterruptedException {
         LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
-        Request request = new Request("name", "netId", "description",
-                date, RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
         Faculty faculty = mock(Faculty.class);
         when(controller.sendScheduleRequest(any())).thenThrow(InterruptedException.class);
 

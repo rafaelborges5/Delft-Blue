@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.*;
 
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sem.commons.FacultyName;
+import sem.commons.RequestFacultyInformation;
+import sem.commons.RequestResourceManagerInformation;
 import sem.commons.Resource;
 
 /**
@@ -18,41 +20,37 @@ import sem.commons.Resource;
 @Table(name = "requests")
 @NoArgsConstructor
 @Getter
-@Setter
 public class Request {
+
     @Id
+    @Setter
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "requestId", nullable = false)
     private long requestId;
-    @Column(name = "name", nullable = false)
-    private String name;
-    @Column(name = "netId", nullable = false)
-    private String netId;
-    @Column(name = "description", nullable = false)
-    private String description;
-    @Column(name = "preferredDate", nullable = false)
-    private LocalDate preferredDate;
+
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private RequestStatus status;
-    @Column(name = "facultyName", nullable = false)
-    @Convert(converter = FacultyNameAttributeConverter.class)
-    private FacultyName facultyName;
+
     @Embedded
-    private Resource resource;
+    protected RequestFacultyInformation requestFacultyInformation;
+
+    @Embedded
+    protected RequestResourceManagerInformation requestResourceManagerInformation;
 
     /**
      * Constructor method.
      */
-    public Request(String name, String netId, String description,
-                   LocalDate preferredDate, RequestStatus status, FacultyName facultyName, Resource resource) {
-        this.name = name;
-        this.netId = netId;
-        this.description = description;
-        this.preferredDate = preferredDate;
-        this.status = status;
-        this.facultyName = facultyName;
-        this.resource = resource;
+    public Request(@JsonProperty("requestDetails") RequestDetails requestDetails,
+                   @JsonProperty("nedId") String netId,
+                   @JsonProperty("facultyName") FacultyName facultyName,
+                   @JsonProperty("resource") Resource resource) {
+        this.status = requestDetails.getStatus();
+        this.requestResourceManagerInformation = new RequestResourceManagerInformation(
+            requestDetails.getName(), requestDetails.getDescription(), resource);
+        this.requestFacultyInformation = new RequestFacultyInformation(
+                requestDetails.getPreferredDate(), facultyName, netId);
     }
 
     /**
@@ -61,51 +59,44 @@ public class Request {
      * @return String with faculty
      */
     public String facultyString() {
-        String faculties = this.facultyName.toString();
+        String faculties = this.requestFacultyInformation.getFaculty().toString();
         faculties = faculties.replace("[", "");
         faculties = faculties.replace("]", "");
         return faculties;
     }
 
-    /**
-     * toString method.
-     */
     @Override
     public String toString() {
-        return "Request{"
-                + "requestId=" + requestId
-                + ", netId='" + netId + '\''
-                + ", name='" + name + '\''
-                + ", description='" + description + '\''
-                + ", preferredDate=" + preferredDate
-                + ", status=" + status
-                + ", faculty=" + facultyString()
-                + ", resource='" + resource.toString() + '\''
-                + '}';
+        return "Request{" +
+                "requestId=" + requestId +
+                ", status=" + status +
+                ", netId='" + requestFacultyInformation.getNetId() +
+                "', name='" + requestResourceManagerInformation.getName() +
+                "', description='" + requestResourceManagerInformation.getDescription() +
+                "', preferredDate=" + requestFacultyInformation.getPreferredDate() +
+                ", faculty=" + requestFacultyInformation.getFaculty() +
+                ", resource='" + requestResourceManagerInformation.getResource() +
+                "'}";
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Request)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Request request = (Request) o;
         return requestId == request.requestId
-                && Objects.equals(netId, request.netId)
-                && Objects.equals(name, request.name)
-                && Objects.equals(description, request.description)
-                && Objects.equals(preferredDate, request.preferredDate)
                 && status == request.status
-                && facultyName == request.facultyName
-                && Objects.equals(resource, request.resource);
+                && requestFacultyInformation.equals(request.requestFacultyInformation)
+                && requestResourceManagerInformation.equals(request.requestResourceManagerInformation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, netId, name, description, preferredDate, status, facultyName, resource);
+        return Objects.hash(requestId, status, requestFacultyInformation, requestResourceManagerInformation);
     }
+
 }

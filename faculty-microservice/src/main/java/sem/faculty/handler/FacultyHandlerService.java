@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sem.commons.*;
 import sem.faculty.domain.Request;
+import sem.faculty.domain.RequestDetails;
 import sem.faculty.domain.RequestRepository;
 import sem.faculty.domain.RequestStatus;
 
@@ -44,11 +45,12 @@ public class FacultyHandlerService {
      */
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public StatusDTO requestListener(RequestDTO request) {
-        String requestName = request.getName();
-        String requestNetId = request.getNetId();
-        String requestDescription = request.getDescription();
-        LocalDate requestDate = request.getPreferredDate();
-        Resource requestResources = request.getResource();
+        String requestName = request.getRequestResourceManagerInformation().getName();
+        String requestNetId = request.getRequestFacultyInformation().getNetId();
+        String requestDescription = request.getRequestResourceManagerInformation().getDescription();
+        LocalDate requestDate = request.getRequestFacultyInformation().getPreferredDate();
+        Resource requestResources = request.getRequestResourceManagerInformation().getResource();
+
         try {
             requestResources.checkResourceValidity(
                 requestResources.getCpu(), requestResources.getGpu(), requestResources.getMemory());
@@ -58,8 +60,9 @@ public class FacultyHandlerService {
         if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {
             return new StatusDTO("You cannot schedule requests for today or the past!");
         }
-        Request newRequest = new Request(requestName, requestNetId, requestDescription, requestDate,
-                RequestStatus.PENDING, request.getFaculty(), requestResources);
+        RequestDetails reqDet = new RequestDetails(requestName, requestDescription, requestDate, RequestStatus.PENDING);
+        Request newRequest = new Request(reqDet, requestNetId,
+                request.getRequestFacultyInformation().getFaculty(), requestResources);
         facultyHandler.handleIncomingRequests(newRequest);
 
         return new StatusDTO("OK");
@@ -113,12 +116,12 @@ public class FacultyHandlerService {
                 facultyHandler.getPendingRequests(FacultyName.valueOf(facultyName)).stream()
                         .map(x -> new RequestDTO(
                                 x.getRequestId(),
-                                x.getName(),
-                                x.getNetId(),
-                                x.getFacultyName(),
-                                x.getDescription(),
-                                x.getPreferredDate(),
-                                x.getResource()))
+                                x.getRequestResourceManagerInformation().getName(),
+                                x.getRequestFacultyInformation().getNetId(),
+                                x.getRequestFacultyInformation().getFaculty(),
+                                x.getRequestResourceManagerInformation().getDescription(),
+                                x.getRequestFacultyInformation().getPreferredDate(),
+                                x.getRequestResourceManagerInformation().getResource()))
                         .collect(Collectors.toList()));
 
     }
@@ -138,7 +141,18 @@ public class FacultyHandlerService {
         } catch (IllegalArgumentException e) {
             return new StatusDTO("Wrong faculty name");
         }
+        List<Long> badRequests = acceptRequestsHelper(facName, acceptedRequests);
+        return acceptRequestsOutput(badRequests);
+    }
 
+    /**
+     * Helper method for Accept requests status dto.
+     *
+     * @param facName          the faculty name
+     * @param acceptedRequests the accepted requests
+     * @return the list of bad requests
+     */
+    public List<Long> acceptRequestsHelper(FacultyName facName, List<Long> acceptedRequests) {
         List<Long> badRequests = new ArrayList<>();
         for (Long id : acceptedRequests) {
             Request request = requestRepository.findByRequestId(id);
@@ -148,6 +162,16 @@ public class FacultyHandlerService {
             }
             facultyHandler.handleAcceptedRequests(facName, request);
         }
+        return badRequests;
+    }
+
+    /**
+     * Helps acceptRequests decide on the returned StatusDTO.
+     *
+     * @param badRequests the accepted requests
+     * @return the StatusDTO to be sent
+     */
+    public StatusDTO acceptRequestsOutput(List<Long> badRequests) {
         if (badRequests.isEmpty()) {
             return new StatusDTO("OK");
         }

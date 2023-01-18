@@ -63,9 +63,12 @@ class PendingRequestsDTOTest {
 
     @Test
     void testToString() {
+        System.out.println(this.toString());
         assertEquals("PendingRequestsDTO(status=OK, requests=[RequestDTO(requestId=1, " +
-                        "name=name, netId=netId, faculty=EEMCS, description=desc, " +
-                        "preferredDate=2015-02-03, resource=Resource(cpu=1, gpu=1, memory=1))])",
+                        "requestFacultyInformation=RequestFacultyInformation(preferredDate=2015-02-03, " +
+                        "faculty=EEMCS, netId=netId), requestResourceManagerInformation=" +
+                        "RequestResourceManagerInformation(name=name, description=desc, " +
+                        "resource=Resource(cpu=1, gpu=1, memory=1)))])",
                 pendingRequestsDTO.toString());
     }
 }

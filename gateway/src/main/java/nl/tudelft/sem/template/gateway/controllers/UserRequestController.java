@@ -45,12 +45,11 @@ public class UserRequestController {
     @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     @PostMapping("request/new")
     public ResponseEntity<StatusDTO> sendUserRequest(@RequestBody RequestDTO requestDTO) {
-
-        if (!authManager.getFaculties().contains(requestDTO.getFaculty().toString())) {
+        if (!authManager.getFaculties().contains(requestDTO.getRequestFacultyInformation().getFaculty().toString())) {
             return ResponseEntity.status(401).body(
                     new StatusDTO("You can only make requests to your own faculty!"));
         }
-        if (!authManager.getNetId().equals(requestDTO.getNetId())) {
+        if (!authManager.getNetId().equals(requestDTO.getRequestFacultyInformation().getNetId())) {
             return ResponseEntity.status(401).body(
                     new StatusDTO("You cannot make requests for someone else!"));
         }

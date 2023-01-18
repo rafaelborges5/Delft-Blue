@@ -1,6 +1,7 @@
 package nl.tudelft.sem.resource.manager.domain.services;
 
 import nl.tudelft.sem.resource.manager.domain.DefaultResources;
+import nl.tudelft.sem.resource.manager.domain.RepositoriesGroup;
 import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
@@ -47,8 +48,7 @@ class ResourceAvailabilityServiceTest {
         );
 
         sut = new ResourceAvailabilityService(
-                nodeRepository,
-                reservedResourcesRepository,
+                new RepositoriesGroup(nodeRepository, reservedResourcesRepository),
                 currentDateProvider,
                 freepoolManager,
                 defaultResources

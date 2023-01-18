@@ -28,9 +28,9 @@ class DenyRequestsSchedulerTest {
 
     @Test
     void testScheduleRequest() throws NotValidResourcesException {
-        Request request = new Request("name", "netId", "description",
-                LocalDate.of(2022, Month.DECEMBER, 15), RequestStatus.DROPPED,
-                FacultyName.ARCH, new Resource(5, 1, 1));
+        RequestDetails rd = new RequestDetails("name", "description",
+                LocalDate.of(2022, Month.DECEMBER, 15), RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.EEMCS, new Resource(5, 1, 1));
 
         denyScheduler.scheduleRequest(request,
                 new Faculty(FacultyName.ARCH, new CurrentTimeProvider()));
