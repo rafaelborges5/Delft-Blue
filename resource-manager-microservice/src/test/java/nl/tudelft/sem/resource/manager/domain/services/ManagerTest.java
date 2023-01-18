@@ -4,15 +4,20 @@ import nl.tudelft.sem.resource.manager.domain.Resource;
 import nl.tudelft.sem.resource.manager.domain.node.ClusterNode;
 import nl.tudelft.sem.resource.manager.domain.node.NodeRepository;
 import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundException;
+import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
+import nl.tudelft.sem.resource.manager.domain.resource.exceptions.NotEnoughResourcesException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sem.commons.OwnerName;
 import sem.commons.Token;
 import sem.commons.URL;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -29,6 +34,8 @@ class ManagerTest {
 
     private transient ClusterNode node1;
     private transient ClusterNode node2;
+    private transient Resource resource;
+    private transient LocalDate localDate;
 
 
     @BeforeEach
@@ -48,6 +55,9 @@ class ManagerTest {
                 new Token("token2"),
                 Resource.with(60)
         );
+
+        resource = new Resource(3, 2, 1);
+        localDate = LocalDate.now();
     }
 
     @Test
@@ -65,6 +75,13 @@ class ManagerTest {
         assertThat(sut.addNodeToCluster(node1)).isEqualTo("OK");
 
         verify(nodeRepository, times(1)).save(node1);
+    }
+
+    @Test
+    void addNodeToClusterTokenExists() {
+        Mockito.when(nodeRepository.existsByToken(new Token("token1"))).thenReturn(true);
+        assertThat(sut.addNodeToCluster(node1)).isEqualTo("Node with token Token(tokenValue=token1) already exists!");
+        Mockito.verify(nodeRepository, times(0)).save(node1);
     }
 
     @Test
@@ -95,4 +112,45 @@ class ManagerTest {
 
         verify(nodeRepository, times(0)).removeByToken(node1.getToken());
     }
+
+    @Test
+    void getDateForRequestTest() {
+        Mockito.when(dateSchedulingService.getDateForRequest(resource, localDate, Reserver.AE)).thenReturn(localDate);
+        LocalDate date = sut.getDateForRequest(resource, localDate, Reserver.AE);
+        assertThat(date).isEqualTo(localDate);
+        Mockito.verify(dateSchedulingService).getDateForRequest(resource, localDate, Reserver.AE);
+    }
+
+    @Test
+    void seeFreeResourceOnDateTest() {
+        Mockito.when(resourceAvailabilityService.seeFreeResourcesOnDate(localDate)).thenReturn(resource);
+        Resource returnedResource = sut.seeFreeResourcesOnDate(localDate);
+        assertThat(returnedResource).isEqualTo(resource);
+        Mockito.verify(resourceAvailabilityService).seeFreeResourcesOnDate(localDate);
+    }
+
+    @Test
+    void releaseResourceOnDaysTest() {
+        sut.releaseResourcesOnDays(Reserver.ARCH, List.of(localDate));
+        Mockito.verify(resourceHandler).releaseResourcesOnDays(Reserver.ARCH, List.of(localDate));
+    }
+
+    @Test
+    void reserveResourcesOnDayTest() throws NotEnoughResourcesException {
+        sut.reserveResourcesOnDay(Reserver.AE, resource, localDate);
+        Mockito.verify(resourceHandler).reserveResourcesOnDay(Reserver.AE, resource, localDate);
+    }
+
+    @Test
+    void seeFreeResourcesTomorrowTest() {
+        sut.seeFreeResourcesTomorrow(Reserver.AE);
+        Mockito.verify(resourceAvailabilityService).seeFreeResourcesTomorrow(Reserver.AE);
+    }
+
+    @Test
+    void seeReservedResourcesOnDateTest() {
+        sut.seeReservedResourcesOnDate(localDate);
+        Mockito.verify(resourceAvailabilityService).seeReservedResourcesOnDate(localDate);
+    }
+
 }
