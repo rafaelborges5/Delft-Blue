@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import sem.commons.*;
 import sem.commons.NotValidResourcesException;
 import sem.faculty.domain.*;
+import sem.faculty.provider.CurrentTimeProvider;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class FacultyHandlerServiceTest {
@@ -29,6 +31,18 @@ class FacultyHandlerServiceTest {
         facultyHandler = Mockito.mock(FacultyHandler.class);
         requestRepository = Mockito.mock(RequestRepository.class);
         facultyHandlerService = new FacultyHandlerService(facultyHandler, requestRepository);
+    }
+
+
+    @Test
+    void requestListenerCatchMutant() throws NotValidResourcesException {
+        RequestDTO requestDTO = new RequestDTO("name", "netId", FacultyName.EEMCS, "desc",
+                LocalDate.of(2015, 2, 3), new Resource(1, 1, 1));
+
+        when(facultyHandler.getCurrentDate()).thenReturn(LocalDate.of(2023, 1, 18));
+
+        StatusDTO statusDTO = facultyHandlerService.requestListener(requestDTO);
+        assertEquals("You cannot schedule requests for today or the past!", statusDTO.getStatus());
     }
 
     @Test
