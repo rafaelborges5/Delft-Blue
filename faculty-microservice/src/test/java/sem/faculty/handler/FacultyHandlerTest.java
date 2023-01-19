@@ -1,14 +1,12 @@
 package sem.faculty.handler;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.mockito.Mock;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
-import sem.commons.*;
 import sem.commons.NotValidResourcesException;
+import sem.commons.*;
 import sem.faculty.controllers.ScheduleRequestController;
 import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
@@ -21,19 +19,13 @@ import sem.faculty.provider.TimeProvider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-
-import org.junit.jupiter.api.BeforeEach;
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -118,6 +110,28 @@ class FacultyHandlerTest {
         facultyHandler.faculties.put(FacultyName.EEMCS, faculty);
 
         assertEquals(facultyHandler.getPendingRequests(FacultyName.EEMCS), new ArrayList<>());
+    }
+
+    @Test
+    void getPendingRequestsEmptyListReturned() throws NotValidResourcesException {
+        Faculty faculty = new Faculty(FacultyName.EEMCS, new CurrentTimeProvider());
+        Request facultyRequest = new Request(
+                new RequestDetails(
+                        "name1",
+                        "desc1",
+                        LocalDate.of(2022, 1, 1),
+                        RequestStatus.PENDING
+                ),
+                "netId1",
+                FacultyName.EEMCS,
+                new Resource(100, 80, 80)
+        );
+        faculty.addPendingRequest(facultyRequest);
+        when(requestRepository.findByRequestId(0)).thenReturn(facultyRequest);
+
+        facultyHandler.faculties.put(FacultyName.EEMCS, faculty);
+
+        assertThat(facultyHandler.getPendingRequests(FacultyName.EEMCS)).isEqualTo(List.of(facultyRequest));
     }
 
     //Tests for not accepting anymore 5 minutes before the preferred day starts.
