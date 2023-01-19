@@ -110,6 +110,28 @@ class FacultyHandlerTest {
         assertEquals(facultyHandler.getPendingRequests(FacultyName.EEMCS), new ArrayList<>());
     }
 
+    @Test
+    void getPendingRequestsEmptyListReturned() throws NotValidResourcesException{
+        Faculty faculty = new Faculty(FacultyName.EEMCS, new CurrentTimeProvider());
+        Request facultyRequest = new Request(
+                new RequestDetails(
+                        "name1",
+                        "desc1",
+                        LocalDate.of(2022, 1, 1),
+                        RequestStatus.PENDING
+                ),
+                "netId1",
+                FacultyName.EEMCS,
+                new Resource(100, 80, 80)
+        );
+        faculty.addPendingRequest(facultyRequest);
+        when(requestRepository.findByRequestId(0)).thenReturn(facultyRequest);
+
+        facultyHandler.faculties.put(FacultyName.EEMCS, faculty);
+
+        assertThat(facultyHandler.getPendingRequests(FacultyName.EEMCS)).isEqualTo(List.of(facultyRequest));
+    }
+
     //Tests for not accepting anymore 5 minutes before the preferred day starts.
     @Test
     void handleIncomingRequestsTwoMinutesBeforePreferredDate() throws NotValidResourcesException {
