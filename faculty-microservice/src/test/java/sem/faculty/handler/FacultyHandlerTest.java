@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import sem.commons.*;
@@ -15,6 +14,7 @@ import sem.faculty.domain.*;
 import sem.faculty.domain.scheduler.AcceptRequestsScheduler;
 import sem.faculty.domain.scheduler.DenyRequestsScheduler;
 import sem.faculty.domain.scheduler.PendingRequestsScheduler;
+import sem.faculty.domain.scheduler.Scheduler;
 import sem.faculty.provider.CurrentTimeProvider;
 import sem.faculty.provider.TimeProvider;
 
@@ -26,17 +26,16 @@ import org.junit.jupiter.api.BeforeEach;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FacultyHandlerTest {
 
@@ -68,6 +67,17 @@ class FacultyHandlerTest {
         for (FacultyName fn : FacultyName.values()) {
             assertNotNull(faculties.get(fn));
         }
+    }
+
+    @Test
+    void newFacultyHandlerAllArgsConstructor() {
+        Map<FacultyName, Faculty> map = new HashMap<>();
+        Scheduler scheduler = new AcceptRequestsScheduler(
+                scheduleRequestController, requestRepository, kafkaTemplate);
+        FacultyHandler facultyHandler1 = new FacultyHandler(
+                map, scheduler, timeProvider, requestRepository, scheduleRequestController, kafkaTemplate);
+        Map<FacultyName, Faculty> faculties = facultyHandler1.faculties;
+        assertNotNull(facultyHandler1);
     }
 
     @Test
@@ -231,6 +241,11 @@ class FacultyHandlerTest {
     }
 
     @Test
+    void acceptPendingRequestsForTomorrow() {
+
+    }
+
+    @Test
     void getPendingRequestsForTomorrow() throws NotValidResourcesException {
         LocalDate tomorrow = LocalDate.of(2015, 2, 3);
         LocalDate date = LocalDate.of(2015, 2, 4);
@@ -252,5 +267,13 @@ class FacultyHandlerTest {
         List<Request> list = facultyHandler.getPendingRequestsForTomorrow(faculty);
         assertThat(list).isEqualTo(List.of(request1));
         assertThat(faculty.getPendingRequests()).isEqualTo(List.of(2L));
+    }
+
+    @Test
+    void getCurrentDate() {
+        when(facultyHandler.getCurrentDate()).thenReturn(LocalDate.of(2015, 2, 3));
+        LocalDate ret = facultyHandler.getCurrentDate();
+        verify(timeProvider, times(1)).getCurrentDate();
+        assertEquals(ret, LocalDate.of(2015, 2, 3));
     }
 }
