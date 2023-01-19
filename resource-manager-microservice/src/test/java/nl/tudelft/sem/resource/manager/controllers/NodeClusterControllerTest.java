@@ -29,6 +29,8 @@ class NodeClusterControllerTest {
     private transient DateDTO dateDTO;
     private transient LocalDate localDate;
     private transient List<ClusterNodeDTO> clusterNodeDTOList;
+    private transient sem.commons.Resource commonsResource;
+    private transient List<ClusterNode> clusterNodeList;
 
     @BeforeEach
     void setUp() throws NotValidResourcesException {
@@ -43,6 +45,10 @@ class NodeClusterControllerTest {
         dateDTO = new DateDTO(2022, 12, 25);
         localDate = LocalDate.of(dateDTO.getYear(), dateDTO.getMonth(), dateDTO.getDay());
         clusterNodeDTOList = new ArrayList<>();
+        commonsResource = new Resource(3, 2, 1);
+        clusterNodeList = List.of(new ClusterNode(new OwnerName("name"),
+                new URL("url"), new Token("token"),
+                new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1)));
     }
 
     @Test
@@ -56,6 +62,21 @@ class NodeClusterControllerTest {
     }
 
     @Test
+    void getSysadminUserViewTest() throws NotValidResourcesException {
+        clusterNodeDTOList.add(clusterNodeDTO);
+        Mockito.when(manager.getAvailableResourcesForAllFacultiesOnDate())
+                .thenReturn(Map.of(facultyNameDTO, commonsResource));
+        Mockito.doReturn(new nl.tudelft.sem.resource.manager.domain.Resource(3, 2, 1))
+                .when(manager).seeFreeResourcesOnDate(localDate);
+        Mockito.doReturn(clusterNodeList).when(manager).seeClusterNodeInformation();
+        SysadminResourceManagerView returnedView =
+                nodeClusterController.getSysadminViewResourcesForDate(Mockito.mock(ConsumerRecord.class), dateDTO);
+        SysadminResourceManagerView view = new SysadminResourceManagerView(Map.of(facultyNameDTO, commonsResource),
+                commonsResource, clusterNodeDTOList);
+        assertThat(returnedView).isEqualTo(view);
+    }
+
+    @Test
     @SuppressWarnings("PMD.AvoidDuplicateLiterals")
     void testAddClusterNode() {
         ClusterNode clusterNode = new ClusterNode(clusterNodeDTO.getOwnerName(), clusterNodeDTO.getUrl(),
@@ -63,18 +84,17 @@ class NodeClusterControllerTest {
                 new nl.tudelft.sem.resource.manager.domain.Resource(clusterNodeDTO.getResources().getCpu(),
                         clusterNodeDTO.getResources().getGpu(), clusterNodeDTO.getResources().getMemory()));
         ConsumerRecord<String, ClusterNodeDTO> record = new ConsumerRecord<>("test", 1, 1, "test", clusterNodeDTO);
-        nodeClusterController.addClusterNode(record, clusterNodeDTO);
+        Mockito.when(manager.addNodeToCluster(clusterNode)).thenReturn("Tested successfully");
+        String result = nodeClusterController.addClusterNode(record, clusterNodeDTO);
+        assertThat(result).isEqualTo("Tested successfully");
         Mockito.verify(manager).addNodeToCluster(clusterNode);
     }
 
     @Test
     void testRemoveClusterNodeValid() {
         Token token = new Token("test");
-        try {
-            manager.removeNodeFromCluster(token);
-        } catch (NodeNotFoundException e) {
-            fail("Shouldn't have thrown an exception");
-        }
+        assertThat(nodeClusterController.removeClusterNode(Mockito.mock(ConsumerRecord.class), token))
+                .isEqualTo("Node removed successfully");
     }
 
     @Test

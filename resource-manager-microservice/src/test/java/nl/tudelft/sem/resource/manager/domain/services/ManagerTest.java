@@ -12,13 +12,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sem.commons.OwnerName;
-import sem.commons.Token;
-import sem.commons.URL;
+import sem.commons.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -36,10 +36,11 @@ class ManagerTest {
     private transient ClusterNode node2;
     private transient Resource resource;
     private transient LocalDate localDate;
+    private transient sem.commons.Resource commonsResource;
 
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NotValidResourcesException {
         sut = new Manager(dateSchedulingService, resourceHandler, resourceAvailabilityService, nodeRepository);
 
         node1 = new ClusterNode(
@@ -58,6 +59,7 @@ class ManagerTest {
 
         resource = new Resource(3, 2, 1);
         localDate = LocalDate.now();
+        commonsResource = new sem.commons.Resource(3, 2, 1);
     }
 
     @Test
@@ -151,6 +153,19 @@ class ManagerTest {
     void seeReservedResourcesOnDateTest() {
         sut.seeReservedResourcesOnDate(localDate);
         Mockito.verify(resourceAvailabilityService).seeReservedResourcesOnDate(localDate);
+    }
+
+    @Test
+    void testAvailableResourcesForAllFacultiesTest() {
+        Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Mockito.any(Reserver.class)))
+                .thenReturn(resource);
+        Map<FacultyNameDTO, sem.commons.Resource> availableResources = new HashMap<>();
+        for(Reserver r : Reserver.values()) {
+           availableResources.put(new FacultyNameDTO(r.toString()), commonsResource);
+        }
+        Map<FacultyNameDTO, sem.commons.Resource> returnedAvailableResources =
+                sut.getAvailableResourcesForAllFacultiesOnDate();
+        assertThat(returnedAvailableResources).isEqualTo(availableResources);
     }
 
 }

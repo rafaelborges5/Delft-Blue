@@ -79,21 +79,8 @@ public class NodeClusterController {
     @SendTo
     public SysadminResourceManagerView getSysadminViewResourcesForDate(ConsumerRecord<String, DateDTO> record,
                                                        @Payload DateDTO dateDTO) throws NotValidResourcesException {
-        Map<FacultyNameDTO, sem.commons.Resource> availableResources = new HashMap<>();
-
-        EnumSet.allOf(Reserver.class)
-                .forEach(faculty -> {
-                    Resource resourceObject = manager
-                            .seeFreeResourcesTomorrow(faculty);
-
-                    try {
-                        availableResources.put(new FacultyNameDTO(faculty.toString()), new sem.commons
-                                .Resource(resourceObject.getCpuResources(), resourceObject.getGpuResources(),
-                                resourceObject.getMemResources()));
-                    } catch (NotValidResourcesException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+        Map<FacultyNameDTO, sem.commons.Resource> availableResources =
+                manager.getAvailableResourcesForAllFacultiesOnDate();
 
         Resource toTransform =
                 manager.seeFreeResourcesOnDate(LocalDate.of(dateDTO.getYear(), dateDTO.getMonth(), dateDTO.getDay()));
