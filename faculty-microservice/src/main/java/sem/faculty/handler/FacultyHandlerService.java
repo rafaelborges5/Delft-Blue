@@ -57,7 +57,7 @@ public class FacultyHandlerService {
         } catch (NotValidResourcesException e) {
             return new StatusDTO(e.getMessage());
         }
-        if (!requestDate.isAfter(facultyHandler.timeProvider.getCurrentDate())) {
+        if (!requestDate.isAfter(facultyHandler.getCurrentDate())) {
             return new StatusDTO("You cannot schedule requests for today or the past!");
         }
         RequestDetails reqDet = new RequestDetails(requestName, requestDescription, requestDate, RequestStatus.PENDING);
