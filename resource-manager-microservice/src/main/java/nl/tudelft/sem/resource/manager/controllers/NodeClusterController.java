@@ -77,6 +77,7 @@ public class NodeClusterController {
             containerFactory = "kafkaListenerContainerFactoryClusterDateDTO"
     )
     @SendTo
+    @SuppressWarnings("PMD.DataflowAnomalyAnalysis")
     public SysadminResourceManagerView getSysadminViewResourcesForDate(ConsumerRecord<String, DateDTO> record,
                                                        @Payload DateDTO dateDTO) throws NotValidResourcesException {
         Map<FacultyNameDTO, sem.commons.Resource> availableResources =
@@ -94,7 +95,7 @@ public class NodeClusterController {
                         new sem.commons.Resource(r.getCpuResources(), r.getGpuResources(), r.getMemResources()));
             } catch (NotValidResourcesException e) {
                 throw new RuntimeException(e);
-            }
+            } 
         }).collect(Collectors.toList());
 
         return new SysadminResourceManagerView(availableResources, reservedResources, clusterNodeDTOList);

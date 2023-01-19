@@ -160,8 +160,8 @@ class ManagerTest {
         Mockito.when(resourceAvailabilityService.seeFreeResourcesTomorrow(Mockito.any(Reserver.class)))
                 .thenReturn(resource);
         Map<FacultyNameDTO, sem.commons.Resource> availableResources = new HashMap<>();
-        for(Reserver r : Reserver.values()) {
-           availableResources.put(new FacultyNameDTO(r.toString()), commonsResource);
+        for (Reserver r : Reserver.values()) {
+            availableResources.put(new FacultyNameDTO(r.toString()), commonsResource);
         }
         Map<FacultyNameDTO, sem.commons.Resource> returnedAvailableResources =
                 sut.getAvailableResourcesForAllFacultiesOnDate();

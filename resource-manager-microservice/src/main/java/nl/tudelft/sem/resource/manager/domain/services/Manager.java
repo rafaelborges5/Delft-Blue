@@ -135,7 +135,7 @@ public class Manager {
     }
 
     /**
-     * This method will retrieve all free resources from all faculties
+     * This method will retrieve all free resources from all faculties.
      * @return a map containing the available resources for all faculties
      */
     public Map<FacultyNameDTO, sem.commons.Resource> getAvailableResourcesForAllFacultiesOnDate() {
