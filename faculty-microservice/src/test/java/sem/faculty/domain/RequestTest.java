@@ -1,6 +1,7 @@
 package sem.faculty.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -225,5 +226,11 @@ class RequestTest {
                 request.getRequestFacultyInformation().getFaculty(),
                 request.getRequestResourceManagerInformation().getResource());
         assertThat(request.getStatus()).isEqualTo(RequestStatus.DENIED);
+    }
+
+    @Test
+    void facultyString() {
+        String ret = request.facultyString();
+        assertEquals("EEMCS", ret);
     }
 }

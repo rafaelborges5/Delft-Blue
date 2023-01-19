@@ -47,7 +47,7 @@ class FacultyHandlerServiceTest {
     }
 
     @Test
-    void requestListenerCatchMutant() throws NotValidResourcesException {
+    void requestListenerCatchManuallyInjectedMutant() throws NotValidResourcesException {
         RequestDTO requestDTO = new RequestDTO("name", "netId", FacultyName.EEMCS, "desc",
                 LocalDate.of(2015, 2, 3), new Resource(1, 1, 1));
 

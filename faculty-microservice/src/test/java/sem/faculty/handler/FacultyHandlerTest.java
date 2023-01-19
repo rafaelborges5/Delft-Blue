@@ -240,10 +240,6 @@ class FacultyHandlerTest {
         assertEquals(map.get(FacultyName.EEMCS).get(0), requestDTO);
     }
 
-    @Test
-    void acceptPendingRequestsForTomorrow() {
-
-    }
 
     @Test
     void getPendingRequestsForTomorrow() throws NotValidResourcesException {
