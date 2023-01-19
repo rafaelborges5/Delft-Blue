@@ -72,7 +72,7 @@ class MainFacultyControllerTest {
     }
 
     @Test
-    void acceptRequestsKillMutant() {
+    void acceptRequestsOKAndPrintln() {
         StatusDTO expected = new StatusDTO("OK");
         AcceptRequestsDTO acceptRequestsDTO = new AcceptRequestsDTO("EEMCS", List.of(1L));
         when(facultyHandlerService.acceptRequests("EEMCS", List.of(1L)))
@@ -88,7 +88,7 @@ class MainFacultyControllerTest {
     }
 
     @Test
-    void getPendingRequestsKillMutant() throws NotValidResourcesException {
+    void getCorrectPendingRequestsAndPrintln() throws NotValidResourcesException {
         RequestDTO req = new RequestDTO(1, "Name", "NetID", FacultyName.AE,
                 "Descr", LocalDate.of(2022, 1, 18),
                 new Resource(1, 1, 1));
@@ -102,7 +102,7 @@ class MainFacultyControllerTest {
     }
 
     @Test
-    void getScheduleForDateKillMutant() {
+    void getScheduleForDateIsNotChanged() {
         DateDTO dateDTO = new DateDTO(2015, 2, 3);
         LocalDate date = LocalDate.of(2015, 2, 3);
         SysadminScheduleDTO expected = new SysadminScheduleDTO(new HashMap<>());
