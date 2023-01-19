@@ -47,7 +47,7 @@ class ScheduleRequestControllerTest {
     ScheduleRequestController controller;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         replyingKafkaScheduleRequest = Mockito.mock(ReplyingKafkaTemplate.class);
         replyingKafkaReserveResources = Mockito.mock(ReplyingKafkaTemplate.class);
         controller = new ScheduleRequestController(replyingKafkaScheduleRequest, replyingKafkaReserveResources);

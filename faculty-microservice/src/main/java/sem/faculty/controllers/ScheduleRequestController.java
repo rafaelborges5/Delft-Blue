@@ -59,7 +59,7 @@ public class ScheduleRequestController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return null;
+        return ResponseEntity.ok(consumerRecord.value());
     }
 
     /**
