@@ -57,6 +57,24 @@ class PendingRequestsSchedulerTest {
         verifyNoMoreInteractions(faculty);
     }
 
+    //Added test for mutation testing: kills the mutant where the if statements is negated.
+    @Test
+    void saveRequestInFacultyRequestAlreadyInRepository() throws NotValidResourcesException {
+        LocalDate date = LocalDate.of(2022, Month.DECEMBER, 17);
+
+        RequestDetails rd = new RequestDetails("name", "description", date, RequestStatus.DROPPED);
+        Request request = new Request(rd, "netId", FacultyName.ARCH, new Resource(5, 1, 1));
+
+        Faculty faculty = mock(Faculty.class);
+        when(requestRepository.findByRequestId(request.getRequestId())).thenReturn(request);
+
+        scheduler.saveRequestInFaculty(request, faculty, date);
+
+        verify(requestRepository, times(1)).findByRequestId(request.getRequestId());
+        verify(requestRepository, times(1)).updateRequestStatusPending(request.getRequestId());
+        verifyNoMoreInteractions(requestRepository);
+    }
+
     // Test abstract parent class
     @Test
     void schedulePendingRequest() throws NotValidResourcesException, ExecutionException, InterruptedException {
