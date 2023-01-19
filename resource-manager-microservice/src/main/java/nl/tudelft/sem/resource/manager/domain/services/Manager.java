@@ -8,10 +8,15 @@ import nl.tudelft.sem.resource.manager.domain.node.exceptions.NodeNotFoundExcept
 import nl.tudelft.sem.resource.manager.domain.resource.Reserver;
 import nl.tudelft.sem.resource.manager.domain.resource.exceptions.NotEnoughResourcesException;
 import org.springframework.stereotype.Service;
+import sem.commons.FacultyNameDTO;
+import sem.commons.NotValidResourcesException;
 import sem.commons.Token;
 
 import java.time.LocalDate;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Facade that provides the functionality needed by controllers.
@@ -127,5 +132,28 @@ public class Manager {
             throw new NodeNotFoundException(token);
         }
         nodeRepository.removeByToken(token);
+    }
+
+    /**
+     * This method will retrieve all free resources from all faculties.
+     * @return a map containing the available resources for all faculties
+     */
+    public Map<FacultyNameDTO, sem.commons.Resource> getAvailableResourcesForAllFacultiesOnDate() {
+        Map<FacultyNameDTO, sem.commons.Resource> availableResources = new HashMap<>();
+
+        EnumSet.allOf(Reserver.class)
+                .forEach(faculty -> {
+                    Resource resourceObject = seeFreeResourcesTomorrow(faculty);
+
+                    try {
+                        availableResources.put(new FacultyNameDTO(faculty.toString()), new sem.commons
+                                .Resource(resourceObject.getCpuResources(), resourceObject.getGpuResources(),
+                                resourceObject.getMemResources()));
+                    } catch (NotValidResourcesException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        return availableResources;
     }
 }
