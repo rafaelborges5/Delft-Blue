@@ -189,4 +189,8 @@ public class FacultyHandler {
         scheduler = new AcceptRequestsScheduler(scheduleRequestController, requestRepository, kafkaTemplate);
         scheduler.scheduleRequest(acceptedRequest, faculties.get(facultyName));
     }
+
+    public LocalDate getCurrentDate() {
+        return timeProvider.getCurrentDate();
+    }
 }
